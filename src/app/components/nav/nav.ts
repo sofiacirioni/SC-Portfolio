@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-const NAV_ITEMS = ['About', 'Projects', 'Skills', 'Contact'] as const;
+const NAV_ITEMS = ['About', 'Skills', 'Projects', 'Contact'] as const;
 type NavItem = (typeof NAV_ITEMS)[number];
 
 @Component({

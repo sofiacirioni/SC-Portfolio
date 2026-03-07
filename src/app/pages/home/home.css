@@ -1,0 +1,55 @@
+/* Container that stacks hero animation and phrase in the same space */
+.hero-scene {
+  position: relative;
+}
+
+.phrase-section {
+  position: relative;
+  z-index: 1;
+  /* Pull the phrase up to lightly overlap the ASCII animation */
+  margin-top: -3rem;
+  pointer-events: none;
+}
+
+.phrase {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  margin: 0;
+  font-size: 6rem;
+  font-weight: 700;
+  line-height: 1.05;
+  color: #1a1a1a;
+}
+
+.phrase-letter {
+  display: inline-block;
+  opacity: 0;
+  animation: letter-appear 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.phrase-letter--mono {
+  font-family: var(--font-mono);
+}
+
+.phrase-letter--serif {
+  font-family: var(--font-serif);
+  font-style: italic;
+}
+
+/* Fixed-width word space, consistent regardless of adjacent font */
+.phrase-space {
+  display: inline-block;
+  width: 2rem;
+}
+
+@keyframes letter-appear {
+  from {
+    opacity: 0;
+    transform: translateY(0.15em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
