@@ -10,8 +10,7 @@ pre {
   top: 0;
   left: 50%;
 
-  /* Centers the pre horizontally, then scales it down 50% anchored at its top center.
-     Natural height: ~546px (31 lines × 17.6px) → visual height after scale: ~273px ≈ 270px */
+  /* Initial transform; overridden by ResizeObserver in hero.ts to fill the section width */
   transform: translateX(-50%) scale(0.5);
   transform-origin: top center;
 

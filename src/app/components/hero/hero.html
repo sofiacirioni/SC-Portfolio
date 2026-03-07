@@ -1,5 +1,5 @@
-<section>
-  <pre>{{ currentFrame }}</pre>
+<section #heroSection>
+  <pre #animPre>{{ currentFrame }}</pre>
 
   <button class="pause-btn" (click)="togglePause()" [attr.aria-label]="isPaused ? 'Play' : 'Pause'">
     @if (isPaused) {
