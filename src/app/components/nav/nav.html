@@ -1,0 +1,7 @@
+<nav class="flex justify-end items-center gap-8 py-[1rem]">
+  @for (item of items; track item) {
+    <a class="font-[family-name:var(--font-body)] text-[0.778rem] tracking-widest uppercase text-black/50 hover:text-black transition-colors duration-200 cursor-pointer select-none">
+      {{ item }}
+    </a>
+  }
+</nav>

@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg: #f2f0ec;
+  --color-accent: #9da8ff;
+
+  --font-body: 'IBM Plex Sans Condensed', sans-serif;
+  --font-serif: 'IBM Plex Serif', serif;
+  --font-mono: 'Martian Mono', monospace;
+}
+
+html {
+  font-size: 18px;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
+}

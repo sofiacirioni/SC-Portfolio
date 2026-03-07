@@ -1,0 +1,11 @@
+<section>
+  <pre>{{ currentFrame }}</pre>
+
+  <button class="pause-btn" (click)="togglePause()" [attr.aria-label]="isPaused ? 'Play' : 'Pause'">
+    @if (isPaused) {
+      <span class="icon">&#9654;</span>
+    } @else {
+      <span class="icon">&#10074;&#10074;</span>
+    }
+  </button>
+</section>
