@@ -18,10 +18,11 @@
             [lines]="phraseLines"
             [baseDelayS]="4"
             fontSize="6rem"
+            (complete)="onPhraseComplete()"
           />
         </section>
 
-        <div class="hero-cta">
+        <div class="hero-cta" [class.phrase-ready]="phraseReady">
           <app-pill-btn label="See projects" href="#projects" />
         </div>
       </div>

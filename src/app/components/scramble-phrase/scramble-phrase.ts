@@ -2,10 +2,12 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  EventEmitter,
   Input,
   NgZone,
   OnDestroy,
   OnInit,
+  Output,
   ViewChild,
 } from '@angular/core';
 import gsap from 'gsap';
@@ -57,6 +59,8 @@ export class ScramblePhraseComponent implements OnInit, AfterViewInit, OnDestroy
   @Input() idleMinMs = 6000;
   /** Max ms to wait between idle scramble triggers */
   @Input() idleMaxMs = 11000;
+  /** Emits once when the last letter finishes its initial scramble */
+  @Output() complete = new EventEmitter<void>();
 
   phraseLines: PhraseLine[] = [];
   @ViewChild('phraseContainer') private containerRef!: ElementRef<HTMLElement>;
@@ -107,6 +111,10 @@ export class ScramblePhraseComponent implements OnInit, AfterViewInit, OnDestroy
           this.runScramble(span, originalChar, FONT_VARS[originalFontKey], SCRAMBLE_DURATION_S);
 
           if (i === spans.length - 1) {
+            // Emit complete once the last letter finishes scrambling
+            gsap.delayedCall(SCRAMBLE_DURATION_S, () => {
+              this.ngZone.run(() => this.complete.emit());
+            });
             setTimeout(() => this.scheduleIdleScramble(), (SCRAMBLE_DURATION_S + 1.5) * 1000);
           }
         });

@@ -26,7 +26,12 @@
 
 .hero-cta {
   flex-shrink: 0;
-  /* Push button down past the overlap so it sits at animation's bottom edge */
-  padding-top: 3rem;
+  padding-top: 4rem;
   pointer-events: auto;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.hero-cta.phrase-ready {
+  opacity: 1;
 }

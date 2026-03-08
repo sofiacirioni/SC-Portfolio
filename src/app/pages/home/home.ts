@@ -18,4 +18,10 @@ export class Home {
     [{ text: 'Inspire' }],
     [{ text: 'through' }, { text: 'design' }],
   ];
+
+  phraseReady = false;
+
+  onPhraseComplete(): void {
+    this.phraseReady = true;
+  }
 }
