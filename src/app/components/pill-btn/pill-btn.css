@@ -1,0 +1,45 @@
+.pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+  border: 1px solid #1a1a1a;
+
+  font-family: var(--font-body);
+  font-size: 0.778rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  white-space: nowrap;
+
+  color: #1a1a1a;
+  background: transparent;
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.pill-btn:hover {
+  background: var(--color-accent);
+  color: white;
+  border-color: var(--color-accent);
+}
+
+.pill-btn:active {
+  background: #550825;
+  color: white;
+  border-color: #550825;
+}
+
+.pill-btn__icon {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.pill-btn:hover .pill-btn__icon {
+  transform: translate(1px, -1px);
+}

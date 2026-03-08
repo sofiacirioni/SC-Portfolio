@@ -2,9 +2,31 @@
   position: relative;
 }
 
-.phrase-section {
+/*
+  Flex row: phrase (left, grows) + button (right, fixed).
+  margin-top: -3rem pulls the whole row 3rem into the animation.
+  The button's padding-top: 3rem compensates, so it lands right at
+  the animation's natural bottom edge while the phrase stays overlapping.
+*/
+.hero-lower {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: -3rem;
   position: relative;
   z-index: 1;
-  margin-top: -3rem;
+}
+
+.phrase-section {
+  flex: 1;
+  min-width: 0;
   pointer-events: none;
+}
+
+.hero-cta {
+  flex-shrink: 0;
+  /* Push button down past the overlap so it sits at animation's bottom edge */
+  padding-top: 3rem;
+  pointer-events: auto;
 }

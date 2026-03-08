@@ -19,11 +19,14 @@ export interface ScrambleWordDef {
 interface PhraseToken {
   char: string;
   font: 'mono' | 'serif';
-  isSpace: boolean;
+}
+
+interface PhraseWord {
+  letters: PhraseToken[];
 }
 
 interface PhraseLine {
-  tokens: PhraseToken[];
+  words: PhraseWord[];
 }
 
 const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!#$%&?@0123456789';
@@ -56,7 +59,6 @@ export class ScramblePhraseComponent implements OnInit, AfterViewInit, OnDestroy
   @Input() idleMaxMs = 11000;
 
   phraseLines: PhraseLine[] = [];
-
   @ViewChild('phraseContainer') private containerRef!: ElementRef<HTMLElement>;
 
   private revealedSpans = new Set<HTMLElement>();
@@ -72,14 +74,13 @@ export class ScramblePhraseComponent implements OnInit, AfterViewInit, OnDestroy
 
   ngOnInit(): void {
     this.phraseLines = this.lines.map((lineDef) => {
-      const tokens: PhraseToken[] = [];
-      lineDef.forEach((word, wi) => {
-        if (wi > 0) tokens.push({ char: '', font: 'mono', isSpace: true });
-        for (const char of word.text) {
-          tokens.push({ char, font: word.font ?? 'mono', isSpace: false });
-        }
-      });
-      return { tokens };
+      const words: PhraseWord[] = lineDef.map((word) => ({
+        letters: Array.from(word.text).map((char) => ({
+          char,
+          font: word.font ?? ('mono' as const),
+        })),
+      }));
+      return { words };
     });
   }
 

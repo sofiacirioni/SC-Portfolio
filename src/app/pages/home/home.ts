@@ -5,10 +5,11 @@ import {
   ScramblePhraseComponent,
   ScrambleWordDef,
 } from '../../components/scramble-phrase/scramble-phrase';
+import { PillBtnComponent } from '../../components/pill-btn/pill-btn';
 
 @Component({
   selector: 'app-home',
-  imports: [Nav, Hero, ScramblePhraseComponent],
+  imports: [Nav, Hero, ScramblePhraseComponent, PillBtnComponent],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

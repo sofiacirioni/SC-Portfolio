@@ -5,13 +5,26 @@
     <div class="hero-scene">
       <app-hero />
 
-      <section class="phrase-section" aria-label="Inspire through design">
-        <app-scramble-phrase
-          [lines]="phraseLines"
-          [baseDelayS]="4"
-          fontSize="6rem"
-        />
-      </section>
+      <!--
+        hero-lower sits in normal flow right below the animation.
+        It uses flex to put the phrase on the left and the button on the right.
+        A negative margin-top pulls both 3rem up into the animation.
+        The button's padding-top compensates, visually placing it
+        at the animation's natural bottom edge.
+      -->
+      <div class="hero-lower">
+        <section class="phrase-section" aria-label="Inspire through design">
+          <app-scramble-phrase
+            [lines]="phraseLines"
+            [baseDelayS]="4"
+            fontSize="6rem"
+          />
+        </section>
+
+        <div class="hero-cta">
+          <app-pill-btn label="See projects" href="#projects" />
+        </div>
+      </div>
     </div>
   </main>
 </div>

@@ -1,15 +1,18 @@
 <div #phraseContainer>
   @for (line of phraseLines; track $index) {
     <p class="phrase" [style.font-size]="fontSize">
-      @for (token of line.tokens; track $index) {
-        @if (token.isSpace) {
+      @for (word of line.words; track $index) {
+        <span class="phrase-word">
+          @for (letter of word.letters; track $index) {
+            <span
+              class="phrase-letter"
+              [attr.data-char]="letter.char"
+              [attr.data-font]="letter.font"
+            >{{ letter.char }}</span>
+          }
+        </span>
+        @if (!$last) {
           <span class="phrase-space"></span>
-        } @else {
-          <span
-            class="phrase-letter"
-            [attr.data-char]="token.char"
-            [attr.data-font]="token.font"
-          >{{ token.char }}</span>
         }
       }
     </p>

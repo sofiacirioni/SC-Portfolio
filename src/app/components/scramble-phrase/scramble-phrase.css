@@ -8,6 +8,11 @@
   color: #1a1a1a;
 }
 
+/* Keeps each word as an unbreakable unit — line wraps happen between words only */
+.phrase-word {
+  display: inline-flex;
+}
+
 .phrase-letter {
   display: inline-block;
   opacity: 0;
