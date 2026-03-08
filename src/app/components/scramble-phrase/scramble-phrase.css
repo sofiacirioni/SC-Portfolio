@@ -1,0 +1,22 @@
+.phrase {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  margin: 0;
+  font-weight: 700;
+  line-height: 1.05;
+  color: #1a1a1a;
+}
+
+.phrase-letter {
+  display: inline-block;
+  opacity: 0;
+  cursor: default;
+  pointer-events: auto;
+}
+
+/* Word space scales with font-size via em */
+.phrase-space {
+  display: inline-block;
+  width: 0.38em;
+}

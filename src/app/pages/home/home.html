@@ -6,22 +6,11 @@
       <app-hero />
 
       <section class="phrase-section" aria-label="Inspire through design">
-        @for (line of phraseLines; track $index) {
-          <p class="phrase">
-            @for (letter of line.letters; track $index) {
-              @if (letter.char === ' ') {
-                <span class="phrase-space"></span>
-              } @else {
-                <span
-                  class="phrase-letter"
-                  [class.phrase-letter--mono]="letter.font === 'mono'"
-                  [class.phrase-letter--serif]="letter.font === 'serif'"
-                  [style.animation-delay]="letter.delay + 'ms'"
-                >{{ letter.char }}</span>
-              }
-            }
-          </p>
-        }
+        <app-scramble-phrase
+          [lines]="phraseLines"
+          [baseDelayS]="4"
+          fontSize="6rem"
+        />
       </section>
     </div>
   </main>
