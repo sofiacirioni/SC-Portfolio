@@ -1,0 +1,11 @@
+<div class="ticker-wrapper" #wrapper>
+  @for (row of rows; track $index) {
+    <div class="ticker-row">
+      <div class="ticker-track">
+        @for (copy of copies; track copy) {
+          <span class="ticker-copy">{{ row.text }}</span>
+        }
+      </div>
+    </div>
+  }
+</div>
