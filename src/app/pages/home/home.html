@@ -1,7 +1,9 @@
-<div class="min-h-screen px-[1rem]">
-  <app-nav />
+<div class="page-wrapper">
+  <header class="grid-full">
+    <app-nav />
+  </header>
 
-  <main class="mt-0">
+  <main class="grid-full">
     <div class="hero-scene">
       <app-hero />
 
@@ -25,6 +27,16 @@
         <div class="hero-cta" [class.phrase-ready]="phraseReady">
           <app-pill-btn label="See projects" href="#projects" />
         </div>
+      </div>
+
+      <div class="scroll-hint" [class.phrase-ready]="phraseReady" aria-hidden="true">
+        <span class="scroll-hint__circle">
+          <svg class="scroll-hint__arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <polyline points="19 12 12 19 5 12"/>
+          </svg>
+        </span>
+        <span class="scroll-hint__label">Scroll</span>
       </div>
     </div>
   </main>

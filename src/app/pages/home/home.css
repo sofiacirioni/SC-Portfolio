@@ -1,3 +1,36 @@
+/* ── Page grid ───────────────────────────────── */
+/*
+  6 columns on desktop, 4 on tablet, 2 on mobile.
+  Column gap = 1.5rem (medianiles).
+  Padding inline = 1rem (margen de ventana).
+*/
+.page-wrapper {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  column-gap: 1.5rem;
+  padding-inline: 1rem;
+  align-content: start;
+}
+
+@media (max-width: 1024px) {
+  .page-wrapper {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .page-wrapper {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Full-width grid items */
+.grid-full {
+  grid-column: 1 / -1;
+}
+
+/* ── Hero scene ──────────────────────────────── */
 .hero-scene {
   position: relative;
 }
@@ -34,4 +67,67 @@
 
 .hero-cta.phrase-ready {
   opacity: 1;
+}
+
+/* ── Scroll hint ─────────────────────────────── */
+.scroll-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+  user-select: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.scroll-hint.phrase-ready {
+  opacity: 1;
+}
+
+.scroll-hint__circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.scroll-hint__arrow {
+  width: 1rem;
+  height: 1rem;
+  animation: scroll-arrow 2.8s ease-in-out infinite;
+  animation-delay: 1.5s;
+}
+
+.scroll-hint__label {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgb(0 0 0 / 0.5);
+}
+
+@keyframes scroll-arrow {
+  0%,
+  35% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(130%);
+    opacity: 0;
+  }
+  50.001% {
+    transform: translateY(-130%);
+    opacity: 0;
+  }
+  65%,
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }

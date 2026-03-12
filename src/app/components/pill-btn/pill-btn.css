@@ -24,9 +24,9 @@
 }
 
 .pill-btn:hover {
-  background: var(--color-accent);
+  background: var(--color-primary);
   color: white;
-  border-color: var(--color-accent);
+  border-color: var(--color-primary);
 }
 
 .pill-btn:active {

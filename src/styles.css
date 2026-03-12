@@ -3,12 +3,33 @@
 @tailwind utilities;
 
 :root {
-  --color-bg: #f2f0ec;
-  --color-accent: #9da8ff;
+  /* ── Colors ────────────────────────────────── */
+  /* The old accent (#9da8ff) is now primary. All existing usages kept intact. */
+  --color-primary: #9da8ff;
+  /* New accent and secondary */
+  --color-accent: #0025ff;
+  --color-secondary: #5b71f4;
 
-  --font-body: 'IBM Plex Sans Condensed', sans-serif;
+  /* Base palette */
+  --color-base-primary: #f2f0ec;
+  --color-base-accent: #d8dbea;
+  --color-base-secondary: #a1a09d;
+
+  /* ── Typography scale (major-third · ratio 1.25 · base 1rem = 18px) ── */
+  --text-sm:   0.800rem;   /* 14.4px  */
+  --text-base: 1.000rem;   /* 18px  → <p>  */
+  --text-h6:   1.250rem;   /* 22.5px */
+  --text-h5:   1.563rem;   /* 28.1px */
+  --text-h4:   1.953rem;   /* 35.2px */
+  --text-h3:   2.441rem;   /* 43.9px */
+  --text-h2:   3.052rem;   /* 54.9px */
+  --text-h1:   3.815rem;   /* 68.7px */
+  --text-hero: 4.768rem;   /* 85.8px */
+
+  /* ── Fonts ─────────────────────────────────── */
+  --font-body:  'IBM Plex Sans Condensed', sans-serif;
   --font-serif: 'IBM Plex Serif', serif;
-  --font-mono: 'Martian Mono', monospace;
+  --font-mono:  'Martian Mono', monospace;
 }
 
 html {
@@ -17,5 +38,27 @@ html {
 
 body {
   font-family: var(--font-body);
-  background-color: var(--color-bg);
+  background-color: var(--color-base-primary);
+}
+
+/* ── Typographic defaults ───────────────────── */
+p {
+  font-size: var(--text-base);
+}
+
+h3 {
+  font-size: var(--text-h3);
+}
+
+h2 {
+  font-size: var(--text-h2);
+}
+
+h1 {
+  font-size: var(--text-h1);
+}
+
+/* Utility class for hero-sized text */
+.text-hero {
+  font-size: var(--text-hero);
 }

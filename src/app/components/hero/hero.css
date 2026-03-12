@@ -19,7 +19,7 @@ pre {
   line-height: 1.1;
   letter-spacing: 0;
 
-  color: var(--color-accent);
+  color: var(--color-primary);
   background: transparent;
   border: none;
 
@@ -43,8 +43,8 @@ pre {
   border-radius: 50%;
 
   background: transparent;
-  border: 1px solid color-mix(in srgb, var(--color-accent) 40%, transparent);
-  color: var(--color-accent);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
+  color: var(--color-primary);
   cursor: pointer;
 
   opacity: 0;
@@ -56,7 +56,7 @@ section:hover .pause-btn {
 }
 
 .pause-btn:hover {
-  border-color: var(--color-accent);
+  border-color: var(--color-primary);
 }
 
 .icon {

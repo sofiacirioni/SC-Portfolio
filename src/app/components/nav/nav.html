@@ -1,5 +1,10 @@
-<nav class="flex justify-end items-center gap-8 py-[1rem]">
+<nav class="site-nav">
+  <a class="nav-brand" href="/" aria-label="Home">SC</a>
   @for (item of items; track item) {
-    <a class="nav-link" [attr.data-label]="item">{{ item }}</a>
+    <a
+      class="nav-link"
+      [attr.data-label]="item"
+      [style.grid-column]="navColumns[item]"
+    >{{ item }}</a>
   }
 </nav>
