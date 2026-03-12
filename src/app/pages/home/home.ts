@@ -11,10 +11,11 @@ import {
   TickerTapeComponent,
   TickerRow,
 } from '../../components/ticker-tape/ticker-tape';
+import { About } from '../../components/about/about';
 
 @Component({
   selector: 'app-home',
-  imports: [Nav, Hero, ScramblePhraseComponent, PillBtnComponent, TickerTapeComponent],
+  imports: [Nav, Hero, ScramblePhraseComponent, PillBtnComponent, TickerTapeComponent, About],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

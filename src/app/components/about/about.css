@@ -1,0 +1,280 @@
+/* ── Section wrapper ─────────────────────────── */
+.about-section {
+  margin-top: -2.5rem;
+  /*
+    Break out of page-wrapper's padding-inline: 1rem
+    so the card stretches edge-to-edge.
+  */
+  margin-inline: -1rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* ── Card ────────────────────────────────────── */
+/*
+  padding-inline: 1rem restores alignment with the outer 6-col grid.
+  Both grids: repeat(6, 1fr) + gap: 1.5rem over (viewport - 2rem) → same col widths.
+*/
+.about-card {
+  background: var(--color-base-accent);
+  border-radius: 20px;
+  padding-block: 2.5rem 4rem;
+  padding-inline: 1rem;
+
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  column-gap: 1.5rem;
+  row-gap: 3rem;
+}
+
+/* ══════════════════════════════════════════════
+   ROW 1–2  ·  Intro: [About] | — | — | HELLO! | bio | photo
+   ══════════════════════════════════════════════ */
+
+/* Small section anchor */
+.about-label {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: start;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 300;
+  color: var(--color-base-secondary);
+}
+
+/* HELLO! heading — col 4, right-aligned so it "points" toward the bio */
+.about-hello {
+  grid-column: 4;
+  grid-row: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  align-self: start;
+}
+
+.about-title {
+  font-family: var(--font-mono);
+  font-size: var(--text-h2);
+  font-weight: 300;
+  color: var(--color-secondary);
+  margin: 0;
+  line-height: 1;
+  text-align: right;
+}
+
+/* Bio — col 5, rows 1–2 */
+.about-bio-block {
+  grid-column: 5;
+  grid-row: 1 / span 2;
+  align-self: start;
+}
+
+.about-bio {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: #1a1a1a;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.about-bio strong {
+  font-weight: 600;
+}
+
+/* Photo placeholder — col 6, rows 1–2 */
+.about-photo {
+  grid-column: 6;
+  grid-row: 1 / span 2;
+  background: var(--color-base-secondary);
+  border-radius: 8px;
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  align-self: start;
+}
+
+/* ══════════════════════════════════════════════
+   ROW 3  ·  Info: Education | content | Experience | content | Languages | content
+   ══════════════════════════════════════════════ */
+
+/* Titles are right-aligned in their column → visual arrow toward content */
+.about-edu {
+  grid-column: 1;
+  grid-row: 3;
+  text-align: right;
+}
+
+.about-edu-content {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.about-exp {
+  grid-column: 3;
+  grid-row: 3;
+  text-align: right;
+}
+
+.about-exp-content {
+  grid-column: 4;
+  grid-row: 3;
+}
+
+.about-lang {
+  grid-column: 5;
+  grid-row: 3;
+  text-align: right;
+}
+
+.about-lang-content {
+  grid-column: 6;
+  grid-row: 3;
+}
+
+/* Shared title style */
+.about-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.778rem;
+  font-weight: 400;
+  color: var(--color-secondary);
+  margin: 0 0 0.75rem;
+  /* No text-transform — sentence case from HTML */
+}
+
+/* Shared list style */
+.about-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.about-list__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.about-date {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-base-secondary);
+}
+
+.about-item-title {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: #1a1a1a;
+  margin: 0;
+  font-weight: 500;
+}
+
+.about-item-sub {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: #1a1a1a;
+  margin: 0;
+}
+
+/* ══════════════════════════════════════════════
+   ROW 4  ·  Skills
+   ══════════════════════════════════════════════ */
+
+.about-skills-label {
+  grid-column: 1;
+  grid-row: 4;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: var(--color-secondary);
+  line-height: 1.4;
+  align-self: start;
+  text-align: right;
+}
+
+.about-skills-grid {
+  grid-column: 2 / span 5;
+  grid-row: 4;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem 1.5rem;
+}
+
+/* ── Skill card ──────────────────────────────── */
+.skill-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  cursor: default;
+  transition: background 0.2s ease;
+}
+
+.skill-card:hover {
+  background: color-mix(in srgb, var(--color-base-secondary) 14%, transparent);
+}
+
+/* CSS mask technique: SVG shape used as mask, background-color is the tint */
+.skill-icon {
+  width: 1.8rem;
+  height: 1.8rem;
+  flex-shrink: 0;
+
+  background-color: var(--color-base-secondary);
+  -webkit-mask-image: var(--icon-url);
+  mask-image: var(--icon-url);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+
+  transition: background-color 0.2s ease;
+}
+
+.skill-card:hover .skill-icon {
+  background-color: var(--color-accent);
+}
+
+/* Name / dots swap on hover */
+.skill-name {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-base-secondary);
+  transition: opacity 0.15s ease;
+}
+
+.skill-dots {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.skill-card:hover .skill-name {
+  opacity: 0;
+}
+
+.skill-card:hover .skill-dots {
+  opacity: 1;
+}
+
+/* ── Skill dot ───────────────────────────────── */
+.skill-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-base-secondary);
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.skill-dot--filled {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}

@@ -1,0 +1,108 @@
+<section class="about-section">
+  <div class="about-card">
+
+    <!-- ══ ROW 1–2 · Intro ═══════════════════════════════
+         col 1: [About] label
+         col 4: HELLO! heading (right-aligned → points to bio)
+         col 5: bio text (rows 1–2)
+         col 6: photo placeholder (rows 1–2)
+    ════════════════════════════════════════════════════ -->
+
+    <span class="about-label">[About]</span>
+
+    <div class="about-hello">
+      <h2 class="about-title">HELLO!</h2>
+    </div>
+
+    <div class="about-bio-block">
+      <p class="about-bio">
+        I'm <strong>Sofia Cirioni</strong>, a graphic designer and
+        full-stack developer based in Argentina. Specialized in UX/UI Design.
+        With a strong eye in detail and focused in making useful interfaces.
+      </p>
+    </div>
+
+    <!-- ASCII animation overlay will go here in a later iteration -->
+    <div class="about-photo" aria-hidden="true"></div>
+
+    <!-- ══ ROW 3 · Info ══════════════════════════════════
+         Each pair: title col (right-aligned) → content col
+         Education col 1→2 | Experience col 3→4 | Languages col 5→6
+    ════════════════════════════════════════════════════ -->
+
+    <!-- Education -->
+    <div class="about-edu">
+      <h3 class="about-subtitle">Education</h3>
+    </div>
+    <div class="about-edu-content">
+      <ul class="about-list">
+        @for (item of education; track item.period) {
+          <li class="about-list__item">
+            <span class="about-date">{{ item.period }}</span>
+            <p class="about-item-title">{{ item.title }}</p>
+            <p class="about-item-sub">{{ item.institution }}</p>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <!-- Experience -->
+    <div class="about-exp">
+      <h3 class="about-subtitle">Experience</h3>
+    </div>
+    <div class="about-exp-content">
+      <ul class="about-list">
+        @for (item of experience; track item.period) {
+          <li class="about-list__item">
+            <span class="about-date">{{ item.period }}</span>
+            <p class="about-item-title">{{ item.role }}</p>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <!-- Languages -->
+    <div class="about-lang">
+      <h3 class="about-subtitle">Languages</h3>
+    </div>
+    <div class="about-lang-content">
+      <ul class="about-list">
+        @for (item of languages; track item.lang) {
+          <li class="about-list__item">
+            <p class="about-item-title">{{ item.lang }} | {{ item.level }}</p>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <!-- ══ ROW 4 · Technical skills ══════════════════════
+         col 1: label (right-aligned) | cols 2–6: 5 icons per row
+    ════════════════════════════════════════════════════ -->
+
+    <span class="about-skills-label">Technical<br>skills</span>
+
+    <div class="about-skills-grid">
+      @for (skill of skills; track skill.name) {
+        <div class="skill-card">
+          <div
+            class="skill-icon"
+            [style.--icon-url]="iconUrl(skill.icon)"
+            aria-hidden="true"
+          ></div>
+
+          <span class="skill-name">{{ skill.name }}</span>
+
+          <div class="skill-dots" [attr.aria-label]="'Level ' + skill.level + ' of 3'">
+            @for (dot of levelDots; track dot) {
+              <span
+                class="skill-dot"
+                [class.skill-dot--filled]="dot <= skill.level"
+              ></span>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+  </div>
+</section>
