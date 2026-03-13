@@ -1,13 +1,27 @@
 <section class="about-section">
-  <div class="about-card">
+  <!--
+    .global-grid applied here: same 12-col structure as the page.
+    padding-inline: 1rem in about.css restores column alignment after the
+    full-bleed margin-inline: -1rem on .about-section.
+  -->
+  <div class="about-card global-grid">
 
-    <!-- ══ ROW 1–2 · Intro ═══════════════════════════════
-         col 1: [About] label
-         col 4: HELLO! heading (right-aligned → points to bio)
-         col 5: bio text (rows 1–2)
-         col 6: photo placeholder (rows 1–2)
-    ════════════════════════════════════════════════════ -->
+    <!--
+      ══ SHORT TICKERS (3 rows) ════════════════════════
+      grid-column: 1 / 7 = left half of the 12-col grid.
+      z-index: 20 → float above card content.
+    ══════════════════════════════════════════════════ -->
+    <div class="short-tickers grid-half-left">
+      <app-ticker-tape [rows]="shortTickerRows" />
+    </div>
 
+    <!--
+      ══ ROW 1–2  ·  Intro ═════════════════════════════
+      col 1       → [About] label
+      col 7–8     → HELLO! heading  (right half, old col 4)
+      col 9–10    → bio text
+      col 11–12   → photo placeholder
+    ══════════════════════════════════════════════════ -->
     <span class="about-label">[About]</span>
 
     <div class="about-hello">
@@ -22,15 +36,16 @@
       </p>
     </div>
 
-    <!-- ASCII animation overlay will go here in a later iteration -->
+    <!-- ASCII animation overlay will go here -->
     <div class="about-photo" aria-hidden="true"></div>
 
-    <!-- ══ ROW 3 · Info ══════════════════════════════════
-         Each pair: title col (right-aligned) → content col
-         Education col 1→2 | Experience col 3→4 | Languages col 5→6
-    ════════════════════════════════════════════════════ -->
-
-    <!-- Education -->
+    <!--
+      ══ ROW 3  ·  Info ════════════════════════════════
+      Pattern: title (right-aligned) | content (next col)
+      Education   col 1   | col 2–4
+      Experience  col 5   | col 6–8
+      Languages   col 9   | col 10–12
+    ══════════════════════════════════════════════════ -->
     <div class="about-edu">
       <h3 class="about-subtitle">Education</h3>
     </div>
@@ -46,7 +61,6 @@
       </ul>
     </div>
 
-    <!-- Experience -->
     <div class="about-exp">
       <h3 class="about-subtitle">Experience</h3>
     </div>
@@ -61,7 +75,6 @@
       </ul>
     </div>
 
-    <!-- Languages -->
     <div class="about-lang">
       <h3 class="about-subtitle">Languages</h3>
     </div>
@@ -75,10 +88,11 @@
       </ul>
     </div>
 
-    <!-- ══ ROW 4 · Technical skills ══════════════════════
-         col 1: label (right-aligned) | cols 2–6: 5 icons per row
-    ════════════════════════════════════════════════════ -->
-
+    <!--
+      ══ ROW 4  ·  Technical skills ════════════════════
+      col 1       → label (right-aligned)
+      col 3–12    → 5 skill cards per row
+    ══════════════════════════════════════════════════ -->
     <span class="about-skills-label">Technical<br>skills</span>
 
     <div class="about-skills-grid">

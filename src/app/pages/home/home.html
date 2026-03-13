@@ -1,4 +1,4 @@
-<div class="page-wrapper">
+<div class="page-wrapper global-grid">
   <header class="grid-full">
     <app-nav />
   </header>
@@ -7,13 +7,6 @@
     <div class="hero-scene">
       <app-hero />
 
-      <!--
-        hero-lower sits in normal flow right below the animation.
-        It uses flex to put the phrase on the left and the button on the right.
-        A negative margin-top pulls both 3rem up into the animation.
-        The button's padding-top compensates, visually placing it
-        at the animation's natural bottom edge.
-      -->
       <div class="hero-lower">
         <section class="phrase-section" aria-label="Inspire through design">
           <app-scramble-phrase
@@ -40,7 +33,14 @@
       </div>
     </div>
 
-    <app-ticker-tape [rows]="tickerRows" />
+    <!--
+      Full-width tickers (4 rows, 100vw).
+      Positioned absolutely to cross the Hero bottom / About top boundary.
+      z-index: 20 — sit on top of both sections.
+    -->
+    <div class="boundary-tickers" aria-hidden="true">
+      <app-ticker-tape [rows]="fullTickerRows" />
+    </div>
 
     <app-about />
   </main>

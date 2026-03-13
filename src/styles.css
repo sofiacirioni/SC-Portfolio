@@ -2,6 +2,93 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ══════════════════════════════════════════════
+   Local fonts
+   ══════════════════════════════════════════════ */
+
+/* ── Martian Mono (variable font — covers weight 100–800) ─ */
+@font-face {
+  font-family: 'Martian Mono';
+  src: url('assets/fonts/Martian_Mono/MartianMono-VariableFont_wdth,wght.ttf') format('truetype');
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── IBM Plex Serif – normal ───────────────── */
+@font-face {
+  font-family: 'IBM Plex Serif';
+  src: url('assets/fonts/IBM_Plex_Serif/IBMPlexSerif-Thin.ttf') format('truetype');
+  font-weight: 100; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Serif';
+  src: url('assets/fonts/IBM_Plex_Serif/IBMPlexSerif-ExtraLight.ttf') format('truetype');
+  font-weight: 200; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Serif';
+  src: url('assets/fonts/IBM_Plex_Serif/IBMPlexSerif-Light.ttf') format('truetype');
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Serif';
+  src: url('assets/fonts/IBM_Plex_Serif/IBMPlexSerif-Regular.ttf') format('truetype');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Serif';
+  src: url('assets/fonts/IBM_Plex_Serif/IBMPlexSerif-Medium.ttf') format('truetype');
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Serif';
+  src: url('assets/fonts/IBM_Plex_Serif/IBMPlexSerif-SemiBold.ttf') format('truetype');
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Serif';
+  src: url('assets/fonts/IBM_Plex_Serif/IBMPlexSerif-Bold.ttf') format('truetype');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+
+/* ── IBM Plex Serif – italic ───────────────── */
+@font-face {
+  font-family: 'IBM Plex Serif';
+  src: url('assets/fonts/IBM_Plex_Serif/IBMPlexSerif-ThinItalic.ttf') format('truetype');
+  font-weight: 100; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Serif';
+  src: url('assets/fonts/IBM_Plex_Serif/IBMPlexSerif-ExtraLightItalic.ttf') format('truetype');
+  font-weight: 200; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Serif';
+  src: url('assets/fonts/IBM_Plex_Serif/IBMPlexSerif-LightItalic.ttf') format('truetype');
+  font-weight: 300; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Serif';
+  src: url('assets/fonts/IBM_Plex_Serif/IBMPlexSerif-Italic.ttf') format('truetype');
+  font-weight: 400; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Serif';
+  src: url('assets/fonts/IBM_Plex_Serif/IBMPlexSerif-MediumItalic.ttf') format('truetype');
+  font-weight: 500; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Serif';
+  src: url('assets/fonts/IBM_Plex_Serif/IBMPlexSerif-SemiBoldItalic.ttf') format('truetype');
+  font-weight: 600; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Serif';
+  src: url('assets/fonts/IBM_Plex_Serif/IBMPlexSerif-BoldItalic.ttf') format('truetype');
+  font-weight: 700; font-style: italic; font-display: swap;
+}
+
 :root {
   /* ── Colors ────────────────────────────────── */
   /* The old accent (#9da8ff) is now primary. All existing usages kept intact. */
@@ -62,3 +149,31 @@ h1 {
 .text-hero {
   font-size: var(--text-hero);
 }
+
+/* ── Global grid system ─────────────────────────
+   12 columns = 6 visual columns × 2, giving half-column precision.
+   column-gap: 0.75rem → same total gap space as 6-col × 1.5rem.
+   NO padding-inline here — each context handles its own inset.
+─────────────────────────────────────────────── */
+.global-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: 0.75rem;
+}
+
+@media (max-width: 1024px) {
+  .global-grid {
+    grid-template-columns: repeat(8, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .global-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Span helpers (used by grid children to break into half-cols) */
+.grid-full-span  { grid-column: 1 / -1; }
+.grid-half-left  { grid-column: 1 / 7; }   /* cols 1–6  = left half  */
+.grid-half-right { grid-column: 7 / -1; }  /* cols 7–12 = right half */

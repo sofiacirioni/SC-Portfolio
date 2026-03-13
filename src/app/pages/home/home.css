@@ -1,38 +1,42 @@
-/* ── Page grid ───────────────────────────────── */
+/* ── Page wrapper ────────────────────────────── */
 /*
-  6 columns on desktop, 4 on tablet, 2 on mobile.
-  Column gap = 1.5rem (medianiles).
-  Padding inline = 1rem (margen de ventana).
+  Grid columns come from .global-grid (applied in HTML).
+  This rule only adds non-grid layout properties.
 */
 .page-wrapper {
   min-height: 100vh;
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  column-gap: 1.5rem;
   padding-inline: 1rem;
   align-content: start;
 }
 
-@media (max-width: 1024px) {
-  .page-wrapper {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-@media (max-width: 640px) {
-  .page-wrapper {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* Full-width grid items */
+/* Full-width grid items (works for any column count) */
 .grid-full {
   grid-column: 1 / -1;
 }
 
+/* ── Full-width ticker boundary zone ─────────── */
+/*
+  Breaks out of page-wrapper's padding-inline: 1rem to span 100vw.
+  z-index: 20 — sits above both the hero (z:1) and about section (z:2).
+  The about section's margin-top: -2.5rem slides it partially under these tickers,
+  creating the "crossing boundary" visual effect.
+*/
+.boundary-tickers {
+  position: relative;
+  z-index: 20;
+  width: 100vw;
+  margin-left: -1rem;
+}
+
 /* ── Hero scene ──────────────────────────────── */
+/*
+  min-height: calc(100svh - 3.5rem) keeps the full hero visible in the
+  viewport (3.5rem ≈ nav bar height) so the boundary-tickers only appear
+  once the user starts scrolling.
+*/
 .hero-scene {
   position: relative;
+  min-height: calc(100svh - 3.5rem);
 }
 
 /*
@@ -74,7 +78,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-  margin-top: 1.5rem;
+  margin-top: 3rem;
   margin-bottom: 3rem;
   user-select: none;
   opacity: 0;

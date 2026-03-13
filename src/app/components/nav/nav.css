@@ -1,13 +1,10 @@
 /* ── Nav layout ──────────────────────────────── */
 
 /*
-  Desktop: mirrors the page 6-column grid so items snap to column boundaries.
-  Column gap and column count must match .page-wrapper in home.css.
+  Desktop: columns come from .global-grid applied in nav.html.
+  This rule adds nav-specific layout properties only.
 */
 .site-nav {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  column-gap: 1.5rem;
   align-items: center;
   padding-block: 1rem;
 }

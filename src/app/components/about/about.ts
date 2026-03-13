@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { TickerTapeComponent, TickerRow } from '../ticker-tape/ticker-tape';
 
 interface SkillItem {
   name: string;
@@ -21,6 +22,7 @@ interface ExperienceItem {
 
 @Component({
   selector: 'app-about',
+  imports: [TickerTapeComponent],
   templateUrl: './about.html',
   styleUrl: './about.css',
 })
@@ -47,6 +49,13 @@ export class About {
   readonly languages = [
     { lang: 'English', level: 'B1' },
     { lang: 'Spanish', level: 'Native' },
+  ];
+
+  /** 3 short tickers, left half of the about card */
+  readonly shortTickerRows: TickerRow[] = [
+    { text: '// GRAPHIC DESIGNER & FULLSTACK DEVELOPER', direction: 1 },
+    { text: '// UX/UI SPECIALIST — MAKING USEFUL INTERFACES', direction: -1 },
+    { text: '// CÓRDOBA · ARGENTINA — AVAILABLE FOR FREELANCE', direction: 1 },
   ];
 
   readonly skills: SkillItem[] = [

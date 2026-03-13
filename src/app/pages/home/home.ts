@@ -29,18 +29,21 @@ export class Home implements OnDestroy {
 
   phraseReady = false;
 
-  readonly tickerRows: TickerRow[] = [
+  /**
+   * 4 full-width ticker rows (100vw).
+   * Positioned at the Hero/About boundary — span both sections visually.
+   */
+  readonly fullTickerRows: TickerRow[] = [
     {
-      text: '// MAKING ENJOYABLE INTERFACES _________________ // THINKING IN USABILITY AND ACCESIBILITY',
+      text: '// MAKING ENJOYABLE INTERFACES // THINKING IN USABILITY AND ACCESIBILITY',
       direction: 1,
     },
     { text: '// PLANING WAYS TO GUIDE THE USER', direction: -1 },
     {
-      text: '// DESIGNING TO EMPHATIZE _________________ // enjoy doing unconventional designs conventionally',
+      text: '// DESIGNING TO EMPHATIZE // enjoy doing unconventional designs conventionally',
       direction: 1,
     },
     { text: '// NECESITIES-CENTER MINDSET', direction: -1 },
-    { text: '// Let me introduce myself', direction: 1 },
   ];
 
   constructor() {
