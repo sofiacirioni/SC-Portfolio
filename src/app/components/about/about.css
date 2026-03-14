@@ -1,53 +1,42 @@
 /* ── Section wrapper ─────────────────────────── */
 .about-section {
-  /*
-    -1.5rem: the about-card slides 1.5rem under the boundary-tickers,
-    creating the "crossing boundary" visual. Full-width tickers sit above
-    (z-index: 20 > about-section z-index: 2).
-  */
   margin-top: -1.5rem;
-  /*
-    Full bleed: cancel page-wrapper's padding-inline: 1rem on both sides.
-    The .about-card's own padding-inline: 1rem (below) restores column alignment.
-  */
   margin-inline: -1rem;
   position: relative;
   z-index: 2;
 }
 
 /* ── Card ────────────────────────────────────── */
-/*
-  display: grid comes from .global-grid applied in the HTML.
-  padding-inline: 1rem aligns the 12 internal columns with the outer grid.
-  padding-top: 3rem ensures the short tickers (row 1) start after the
-  last full-width boundary ticker, since the about-section overlaps by 1.5rem.
-  row-gap provides breathing room between content rows.
-*/
 .about-card {
   background: var(--color-base-accent);
   border-radius: 20px;
-  padding-block: 3rem 4rem;
+  overflow: hidden;           /* clips short-tickers flush to rounded edge */
+  padding-block: 3rem 2.5rem;
   padding-inline: 1rem;
   row-gap: 3rem;
-  /* No display:grid here — comes from .global-grid */
+  /* display:grid comes from .global-grid */
 }
 
 /* ══════════════════════════════════════════════
-   Short tickers
+   ROW 1 · Short tickers
    ══════════════════════════════════════════════ */
 .short-tickers {
-  /* grid-half-left provides grid-column: 1 / 7 */
+  /* grid-half-left: grid-column 1 / 7 */
+  /* margin-left: -1rem cancels card's padding so tickers start at card edge */
+  margin-left: -1rem;
   position: relative;
   z-index: 20;
 }
 
 /* ══════════════════════════════════════════════
-   ROW 1–2  ·  Intro (12-col positions)
+   ROW 2 · Intro
    ══════════════════════════════════════════════ */
 
+/* [About] — col 1, left-aligned */
 .about-label {
-  grid-column: 1 / span 2;
+  grid-column: 1;
   grid-row: 2;
+  justify-self: start;
   align-self: start;
   font-family: var(--font-mono);
   font-size: 0.7rem;
@@ -55,35 +44,34 @@
   color: var(--color-base-secondary);
 }
 
-/* HELLO! — right half, col 7–8 */
+/* HELLO! — col 6, right-aligned within the column */
 .about-hello {
-  grid-column: 7 / span 2;
+  grid-column: 6;
   grid-row: 2;
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-start;
+  justify-self: end;
   align-self: start;
+  text-align: right;
 }
 
 .about-title {
   font-family: var(--font-mono);
-  font-size: var(--text-h2);
-  font-weight: 300;
+  font-size: var(--text-base);
+  font-weight: 600;
   color: var(--color-secondary);
   margin: 0;
   line-height: 1;
 }
 
-/* Bio — col 9–10 */
+/* Bio — col 7–9 */
 .about-bio-block {
-  grid-column: 9 / span 2;
-  grid-row: 2 / span 2;
+  grid-column: 7 / span 3;
+  grid-row: 2;
   align-self: start;
 }
 
 .about-bio {
   font-family: var(--font-body);
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   color: #1a1a1a;
   line-height: 1.55;
   margin: 0;
@@ -91,11 +79,12 @@
 
 .about-bio strong {
   font-weight: 600;
+  font-style: italic;
 }
 
-/* Photo placeholder — col 11–12 */
+/* Photo / ASCII — col 10–12, spans rows 2–3 */
 .about-photo {
-  grid-column: 11 / span 2;
+  grid-column: 10 / span 3;
   grid-row: 2 / span 2;
   background: var(--color-base-secondary);
   border-radius: 8px;
@@ -105,50 +94,61 @@
 }
 
 /* ══════════════════════════════════════════════
-   ROW 3  ·  Info (title + content pairs)
-   Each pair occupies 4 columns (1 title + 3 content).
-   Education: col 1 | col 2–4
-   Experience: col 5 | col 6–8
-   Languages:  col 9 | col 10–12
+   ROW 3 · Education + Experience
    ══════════════════════════════════════════════ */
 
+/* Education label — col 2, right-aligned */
 .about-edu {
-  grid-column: 1 / span 1;
-  grid-row: 4;
+  grid-column: 2;
+  grid-row: 3;
   text-align: right;
   align-self: start;
 }
 
+/* Education content — col 3–5 */
 .about-edu-content {
-  grid-column: 2 / span 3;
-  grid-row: 4;
+  grid-column: 3 / span 3;
+  grid-row: 3;
+  align-self: start;
 }
 
+/* Experience label — col 6, right-aligned */
 .about-exp {
-  grid-column: 5 / span 1;
-  grid-row: 4;
+  grid-column: 6;
+  grid-row: 3;
   text-align: right;
   align-self: start;
 }
 
+/* Experience content — col 7–9 */
 .about-exp-content {
-  grid-column: 6 / span 3;
-  grid-row: 4;
-}
-
-.about-lang {
-  grid-column: 9 / span 1;
-  grid-row: 4;
-  text-align: right;
+  grid-column: 7 / span 3;
+  grid-row: 3;
   align-self: start;
 }
 
-.about-lang-content {
-  grid-column: 10 / span 3;
+/* ══════════════════════════════════════════════
+   ROW 4 · Languages (same cols as Experience, below)
+   ══════════════════════════════════════════════ */
+
+/* Languages label — col 6, right-aligned, pulled closer to Experience */
+.about-lang {
+  grid-column: 6;
   grid-row: 4;
+  text-align: right;
+  align-self: start;
+  margin-top: -2.5rem;
 }
 
-/* Shared subtitle */
+/* Languages content — col 7–9, pulled closer to Experience */
+.about-lang-content {
+  grid-column: 7 / span 3;
+  grid-row: 4;
+  align-self: start;
+  margin-top: -2.5rem;
+}
+
+/* ── Shared subtitle ─────────────────────────── */
 .about-subtitle {
   font-family: var(--font-mono);
   font-size: 0.778rem;
@@ -157,7 +157,7 @@
   margin: 0 0 0.75rem;
 }
 
-/* Shared list */
+/* ── Shared list ─────────────────────────────── */
 .about-list {
   list-style: none;
   margin: 0;
@@ -181,7 +181,7 @@
 
 .about-item-title {
   font-family: var(--font-body);
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   color: #1a1a1a;
   margin: 0;
   font-weight: 500;
@@ -194,50 +194,58 @@
   margin: 0;
 }
 
+/* Text after the pipe (| B1 · | freelance) — same weight as institution sub-lines */
+.about-item-light {
+  font-weight: 300;
+}
+
 /* ══════════════════════════════════════════════
-   ROW 4  ·  Technical skills
+   ROW 5+ · Technical skills
    ══════════════════════════════════════════════ */
 
+/* Label — col 2, right-aligned, aligns with first skill row */
 .about-skills-label {
-  grid-column: 1 / span 2;
+  grid-column: 2;
   grid-row: 5;
   font-family: var(--font-mono);
   font-size: 0.7rem;
   font-weight: 400;
   color: var(--color-secondary);
   line-height: 1.4;
-  align-self: start;
+  align-self: center;
   text-align: right;
 }
 
-/* 5 skills per row across cols 3–12 */
+/*
+  display:contents dissolves the wrapper so each .skill-card becomes a
+  direct child of .about-card's 12-col grid.
+  Each card receives [style.grid-column] and [style.grid-row] from the component.
+*/
 .about-skills-grid {
-  grid-column: 3 / span 10;
-  grid-row: 5;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 1rem 1.5rem;
+  display: contents;
 }
 
 /* ── Skill card ──────────────────────────────── */
 .skill-card {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  flex-direction: row;
+  align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem;
+  padding: 0.4rem 0.6rem;
   border-radius: 8px;
   cursor: default;
+  align-self: center;
   transition: background 0.2s ease;
 }
 
 .skill-card:hover {
-  background: color-mix(in srgb, var(--color-base-secondary) 14%, transparent);
+  background: transparent;
 }
 
+/* SVG icon — tinted via CSS mask */
 .skill-icon {
-  width: 1.8rem;
-  height: 1.8rem;
+  width: 1.4rem;
+  height: 1.4rem;
   flex-shrink: 0;
   background-color: var(--color-base-secondary);
   -webkit-mask-image: var(--icon-url);
@@ -255,11 +263,29 @@
   background-color: var(--color-accent);
 }
 
+/*
+  CSS grid single-cell trick: skill-name and skill-dots share the same
+  grid cell so they overlap. Opacity toggles between them on hover.
+*/
+.skill-text {
+  display: grid;
+  place-items: start;
+  min-width: 0;
+}
+
+.skill-name,
+.skill-dots {
+  grid-area: 1 / 1;
+  transition: opacity 0.15s ease;
+}
+
 .skill-name {
   font-family: var(--font-body);
   font-size: var(--text-sm);
   color: var(--color-base-secondary);
-  transition: opacity 0.15s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .skill-dots {
@@ -267,7 +293,6 @@
   gap: 0.3rem;
   align-items: center;
   opacity: 0;
-  transition: opacity 0.15s ease;
 }
 
 .skill-card:hover .skill-name { opacity: 0; }

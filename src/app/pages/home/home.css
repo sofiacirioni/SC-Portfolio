@@ -78,7 +78,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-  margin-top: 3rem;
+  margin-top: 5rem;
   margin-bottom: 3rem;
   user-select: none;
   opacity: 0;
@@ -114,6 +114,59 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: rgb(0 0 0 / 0.5);
+}
+
+/* ── Projects intro ──────────────────────────── */
+/*
+  Placeholder section bridging About and the future Projects section.
+  Uses the same global-grid and padding-inline as the rest of the page.
+  Content (phrases + ASCII animation) will be defined later.
+*/
+.projects-intro {
+  padding-block: 5rem 6rem;
+  padding-inline: 1rem;
+}
+
+/* Phrases — left half, bottom-aligned */
+.projects-phrases {
+  grid-column: 1 / span 6;
+  grid-row: 1;
+  align-self: end;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.projects-phrase {
+  font-family: var(--font-mono);
+  font-size: var(--text-h2);
+  font-weight: 400;
+  color: var(--color-accent);
+  line-height: 1.05;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+/* ASCII / animation placeholder — right half, spans both grid rows */
+.projects-ascii-placeholder {
+  grid-column: 7 / span 6;
+  grid-row: 1 / span 2;
+  align-self: start;
+  min-height: 20rem;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--color-accent) 5%, transparent);
+}
+
+/* [Projects] section label — bottom left, below phrases */
+.projects-label {
+  grid-column: 1;
+  grid-row: 2;
+  align-self: end;
+  padding-top: 2.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 300;
+  color: var(--color-base-secondary);
 }
 
 @keyframes scroll-arrow {

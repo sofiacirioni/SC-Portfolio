@@ -7,21 +7,22 @@
   <div class="about-card global-grid">
 
     <!--
-      ══ SHORT TICKERS (3 rows) ════════════════════════
-      grid-column: 1 / 7 = left half of the 12-col grid.
-      z-index: 20 → float above card content.
-    ══════════════════════════════════════════════════ -->
+      ══ ROW 1 · Short tickers (left half) ════════════════
+      grid-column: 1 / 7  (from .grid-half-left)
+      margin-left: -1rem cancels the card padding so tickers
+      start flush with the card's left edge.
+    ══════════════════════════════════════════════════════ -->
     <div class="short-tickers grid-half-left">
       <app-ticker-tape [rows]="shortTickerRows" />
     </div>
 
     <!--
-      ══ ROW 1–2  ·  Intro ═════════════════════════════
-      col 1       → [About] label
-      col 7–8     → HELLO! heading  (right half, old col 4)
-      col 9–10    → bio text
-      col 11–12   → photo placeholder
-    ══════════════════════════════════════════════════ -->
+      ══ ROW 2 · Intro ════════════════════════════════════
+      col 1          → [About] label
+      col 6          → HELLO! (right-aligned within col)
+      col 7–9        → bio text
+      col 10–12      → photo / ASCII placeholder (spans rows 2–3)
+    ══════════════════════════════════════════════════════ -->
     <span class="about-label">[About]</span>
 
     <div class="about-hello">
@@ -36,16 +37,14 @@
       </p>
     </div>
 
-    <!-- ASCII animation overlay will go here -->
+    <!-- ASCII animation / photo placeholder — col 10–12, rows 2–3 -->
     <div class="about-photo" aria-hidden="true"></div>
 
     <!--
-      ══ ROW 3  ·  Info ════════════════════════════════
-      Pattern: title (right-aligned) | content (next col)
-      Education   col 1   | col 2–4
-      Experience  col 5   | col 6–8
-      Languages   col 9   | col 10–12
-    ══════════════════════════════════════════════════ -->
+      ══ ROW 3 · Education + Experience ═══════════════════
+      Education:  label col 2 (right) · content col 3–5
+      Experience: label col 6 (right) · content col 7–8
+    ══════════════════════════════════════════════════════ -->
     <div class="about-edu">
       <h3 class="about-subtitle">Education</h3>
     </div>
@@ -69,12 +68,18 @@
         @for (item of experience; track item.period) {
           <li class="about-list__item">
             <span class="about-date">{{ item.period }}</span>
-            <p class="about-item-title">{{ item.role }}</p>
+            <p class="about-item-title">
+              {{ item.role }}@if (item.detail) {<span class="about-item-light"> | {{ item.detail }}</span>}
+            </p>
           </li>
         }
       </ul>
     </div>
 
+    <!--
+      ══ ROW 4 · Languages (same cols as Experience, below) ═
+      label col 6 (right) · content col 7–8
+    ══════════════════════════════════════════════════════ -->
     <div class="about-lang">
       <h3 class="about-subtitle">Languages</h3>
     </div>
@@ -82,37 +87,44 @@
       <ul class="about-list">
         @for (item of languages; track item.lang) {
           <li class="about-list__item">
-            <p class="about-item-title">{{ item.lang }} | {{ item.level }}</p>
+            <p class="about-item-title">{{ item.lang }}<span class="about-item-light"> | {{ item.level }}</span></p>
           </li>
         }
       </ul>
     </div>
 
     <!--
-      ══ ROW 4  ·  Technical skills ════════════════════
-      col 1       → label (right-aligned)
-      col 3–12    → 5 skill cards per row
-    ══════════════════════════════════════════════════ -->
+      ══ ROW 5+ · Technical skills ════════════════════════
+      label col 2 (right-aligned)
+      skills: display:contents unwraps cards as direct grid children.
+      Each card gets [style.grid-column] and [style.grid-row] from the component.
+      5 cards per row, cols 3-4 / 5-6 / 7-8 / 9-10 / 11-12
+    ══════════════════════════════════════════════════════ -->
     <span class="about-skills-label">Technical<br>skills</span>
 
     <div class="about-skills-grid">
-      @for (skill of skills; track skill.name) {
-        <div class="skill-card">
+      @for (skill of skills; track skill.name; let i = $index) {
+        <div
+          class="skill-card"
+          [style.grid-column]="skillColumn(i)"
+          [style.grid-row]="skillRow(i)"
+        >
           <div
             class="skill-icon"
             [style.--icon-url]="iconUrl(skill.icon)"
             aria-hidden="true"
           ></div>
 
-          <span class="skill-name">{{ skill.name }}</span>
-
-          <div class="skill-dots" [attr.aria-label]="'Level ' + skill.level + ' of 3'">
-            @for (dot of levelDots; track dot) {
-              <span
-                class="skill-dot"
-                [class.skill-dot--filled]="dot <= skill.level"
-              ></span>
-            }
+          <div class="skill-text">
+            <span class="skill-name">{{ skill.name }}</span>
+            <div class="skill-dots" [attr.aria-label]="'Level ' + skill.level + ' of 3'">
+              @for (dot of levelDots; track dot) {
+                <span
+                  class="skill-dot"
+                  [class.skill-dot--filled]="dot <= skill.level"
+                ></span>
+              }
+            </div>
           </div>
         </div>
       }

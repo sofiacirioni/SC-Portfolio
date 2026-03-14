@@ -121,11 +121,13 @@
 
 html {
   font-size: 18px;
+  overflow-x: hidden;
 }
 
 body {
   font-family: var(--font-body);
   background-color: var(--color-base-primary);
+  overflow-x: hidden;
 }
 
 /* ── Typographic defaults ───────────────────── */
