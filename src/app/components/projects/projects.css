@@ -10,112 +10,262 @@
   font-size: 0.7rem;
   font-weight: 300;
   color: var(--color-base-secondary);
-  margin-bottom: 1rem;
-}
-
-/* ── Accordion row ───────────────────────────── */
-.projects-row {
-  display: flex;
-  gap: 0.75rem;
-  height: 58vh;
-  min-height: 380px;
+  margin-bottom: 0.75rem;
 }
 
 /* ══════════════════════════════════════════════
-   Card — three states: default · hovered · active
+   INDEX VIEW
+   No background fill, no border-radius.
+   Top horizontal rule + vertical dividers only.
    ══════════════════════════════════════════════ */
-.project-card {
-  flex: 1 1 0;
-  min-width: 0;
+.projects-index {
+  display: flex;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  height: 52vh;
+  min-height: 340px;
   overflow: hidden;
-  position: relative;
-  background: var(--color-base-accent);
-  border-radius: 12px;
-  padding: 1.25rem;
-  cursor: pointer;
-  user-select: none;
+  /* Collapse transition when a project opens */
   transition:
-    flex-grow 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-    background 0.2s ease;
+    height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.25s ease;
 }
 
-.project-card:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-}
-
-/*
-  Hover expansion — only active when no card is clicked.
-  :has() lets us shrink siblings in pure CSS.
-*/
-.projects-row:not(.has-active):has(.project-card:hover) .project-card:not(:hover) {
-  flex-grow: 0.25;
-}
-
-.projects-row:not(.has-active) .project-card:hover {
-  flex-grow: 3.5;
-}
-
-/* Click / active state — wider than hover for full detail view */
-.project-card.is-active {
-  flex-grow: 5;
-  cursor: default;
-}
-
-.project-card.is-inactive {
-  flex-grow: 0.15;
-}
-
-/* ── Project number ──────────────────────────── */
-.project-num {
-  display: block;
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  font-weight: 300;
-  color: var(--color-base-secondary);
-  margin-bottom: 1rem;
-  white-space: nowrap;
-}
-
-/* ══════════════════════════════════════════════
-   Expanded content
-   Hidden by default, fades in on hover / active.
-   Small translateX creates a subtle slide-in.
-   The delay (0.15s) lets the card widen first.
-   ══════════════════════════════════════════════ */
-.project-content {
-  display: flex;
-  gap: 0.75rem;
-  height: calc(100% - 2rem);
+.projects-index.is-hidden {
+  height: 0;
+  min-height: 0;
   opacity: 0;
-  transform: translateX(-6px);
-  transition:
-    opacity 0.15s ease,
-    transform 0.15s ease;
   pointer-events: none;
 }
 
-.project-card:hover .project-content,
-.project-card.is-active .project-content {
-  opacity: 1;
-  transform: translateX(0);
-  pointer-events: auto;
-  transition:
-    opacity 0.25s ease 0.15s,
-    transform 0.25s ease 0.15s;
+/* ── Individual index item ───────────────────── */
+.project-idx-item {
+  flex: 1 1 0;
+  min-width: 0;
+  position: relative;
+  padding: 0.75rem;
+  cursor: pointer;
+  overflow: hidden;
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
 }
 
-/* ── Info panel (left) ───────────────────────── */
-.project-info {
-  flex: 0 0 180px;
+.project-idx-item:last-child {
+  border-right: none;
+}
+
+.project-idx-item:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+}
+
+/* ── Hover reveal ────────────────────────────── */
+
+/* Project number stays on top of the image (z-index) */
+.project-num--index {
+  position: relative;
+  z-index: 2;
+}
+
+/*
+  Image fills the ENTIRE item with no margins.
+  Fades in on hover; stays behind all text (z-index: 1).
+*/
+.project-idx-img {
+  position: absolute;
+  inset: 0;
+  background: var(--color-base-secondary);
+  opacity: 0;
+  z-index: 1;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.project-idx-item:hover .project-idx-img {
+  opacity: 1;
+}
+
+/*
+  Overlay text (title + areas) anchored to the bottom of the item.
+  Appears on hover on top of the image (z-index: 2).
+*/
+.project-idx-hover-info {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0.6rem 0.75rem;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.project-idx-item:hover .project-idx-hover-info {
+  opacity: 1;
+}
+
+.project-idx-title {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-accent);
+  margin: 0 0 0.15rem;
+}
+
+.project-idx-areas {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 300;
+  color: var(--color-base-secondary);
+  margin: 0;
+}
+
+/* ══════════════════════════════════════════════
+   DETAIL VIEW — full-width expanded state
+   ══════════════════════════════════════════════ */
+.project-detail {
+  position: relative;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.project-detail.is-visible {
+  height: 60vh;
+  min-height: 400px;
+  pointer-events: auto;
+  overflow: hidden;
+}
+
+/* ── Edge navigation arrows ──────────────────── */
+/*
+  Transparent hover zones at the left/right edges.
+  Top offset skips the header area so ← index stays clickable.
+  The arrow icon fades in only when the zone is hovered.
+  Disabled (first/last project) hides the zone entirely.
+*/
+.project-nav {
+  position: absolute;
+  top: 2.5rem;
+  bottom: 0.75rem;
+  width: 56px;
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+  padding: 0;
+}
+
+.project-nav--prev {
+  left: 0;
+  justify-content: flex-start;
+  padding-left: 0.75rem;
+}
+
+.project-nav--next {
+  right: 0;
+  justify-content: flex-end;
+  padding-right: 0.75rem;
+}
+
+.project-nav.is-disabled {
+  pointer-events: none;
+  opacity: 0;
+}
+
+.nav-icon {
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: var(--color-base-secondary);
+  opacity: 0;
+  transition: opacity 0.2s ease, color 0.2s ease;
+  user-select: none;
+}
+
+.project-nav:hover .nav-icon {
+  opacity: 1;
+  color: #1a1a1a;
+}
+
+/* ── Detail inner layout — CSS grid ─────────── */
+/*
+  3-column grid: [info 260px] [main img 1fr] [secondary square].
+  All three columns share the same grid row, so images start at
+  the exact same vertical position as the ← index header.
+  Wipes in left-to-right with clip-path on open; reverses fast
+  on navigate (controlled by .is-transitioning).
+*/
+.project-detail-inner {
+  height: 100%;
+  padding: 0.75rem 0;
+  display: grid;
+  /* [info 290px] [gap 1.5rem] [main img] [gap 18px] [secondary square] */
+  grid-template-columns: 290px 1.5rem 1fr 18px clamp(140px, 18vw, 210px);
+  gap: 0;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s;
+}
+
+.project-detail.is-visible .project-detail-inner {
+  clip-path: inset(0 0% 0 0);
+}
+
+/* Navigation wipe: keyframe re-triggers reliably on each navigate */
+@keyframes navWipeIn {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0% 0 0); }
+}
+
+.project-detail-inner.is-nav-animating {
+  animation: navWipeIn 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+/* ── Left column: header + info stacked ─────── */
+.project-detail-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.project-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.project-back {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 300;
+  color: var(--color-base-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.project-back:hover {
+  color: #1a1a1a;
+}
+
+/* ── Info panel (inside left column) ────────── */
+.project-detail-info {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
   overflow: hidden;
-  min-width: 0;
+  flex: 1;
 }
 
-.project-title {
+.project-detail-title {
   font-family: var(--font-body);
   font-size: var(--text-h3);
   font-weight: 400;
@@ -124,7 +274,7 @@
   line-height: 1.05;
 }
 
-.project-tags {
+.project-detail-tags {
   font-family: var(--font-mono);
   font-size: 0.65rem;
   font-weight: 300;
@@ -133,33 +283,34 @@
   line-height: 1.4;
 }
 
-.project-desc {
+.project-detail-desc {
   font-family: var(--font-body);
   font-size: var(--text-sm);
   color: #2a2a2a;
   margin: 0;
   line-height: 1.5;
   flex: 1;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 6;
-  -webkit-box-orient: vertical;
 }
 
-/* GitHub / external link button */
+.project-detail-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  align-items: flex-start;
+}
+
 .project-link {
   display: inline-flex;
   align-items: center;
-  width: fit-content;
-  padding: 0.35rem 0.85rem;
+  padding: 0.3rem 0.8rem;
   border: 1.5px solid #2a2a2a;
   border-radius: 999px;
   font-family: var(--font-body);
   font-size: var(--text-sm);
   color: #2a2a2a;
   text-decoration: none;
-  transition: color 0.2s ease, border-color 0.2s ease;
   white-space: nowrap;
+  transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 .project-link:hover {
@@ -167,10 +318,9 @@
   border-color: var(--color-accent);
 }
 
-/* Role section — pinned to the bottom of the info panel */
 .project-role {
   margin-top: auto;
-  padding-top: 0.75rem;
+  padding-top: 0.5rem;
 }
 
 .project-role-label {
@@ -179,7 +329,7 @@
   font-size: 0.65rem;
   font-weight: 300;
   color: var(--color-secondary);
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.3rem;
 }
 
 .project-role-list {
@@ -197,20 +347,32 @@
   color: var(--color-base-secondary);
 }
 
-/* ── Main image placeholder (center) ────────── */
-.project-img-main {
-  flex: 1 1 0;
-  min-width: 0;
-  background: var(--color-base-secondary);
-  border-radius: 8px;
-  height: 100%;
+/* ── Project number (shared style) ──────────── */
+.project-num {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 300;
+  color: var(--color-base-secondary);
 }
 
-/* ── Secondary image placeholder (top-right) ── */
-.project-img-secondary {
-  flex: 0 0 90px;
-  height: 45%;
-  align-self: flex-start;
+/* ── Image placeholders ──────────────────────── */
+/*
+  5-column grid: info | gap(1.5rem) | main-img | gap(18px) | secondary.
+  Images are explicitly placed in columns 3 and 5.
+*/
+.project-img-main {
+  grid-column: 3;
   background: var(--color-base-secondary);
-  border-radius: 8px;
+  border-radius: 4px;
+  min-height: 0;
+}
+
+.project-img-secondary {
+  grid-column: 5;
+  aspect-ratio: 1 / 1;
+  background: var(--color-base-secondary);
+  border-radius: 4px;
+  align-self: start;
+  width: 100%;
 }
