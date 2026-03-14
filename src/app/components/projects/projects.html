@@ -1,0 +1,65 @@
+<section class="projects-section">
+
+  <span class="projects-section-label">[Projects]</span>
+
+  <div class="projects-row" [class.has-active]="activeIndex !== null">
+    @for (project of projects; track project.id; let i = $index) {
+
+      <article
+        class="project-card"
+        [class.is-active]="activeIndex === i"
+        [class.is-inactive]="activeIndex !== null && activeIndex !== i"
+        (click)="toggleActive(i)"
+        [attr.aria-expanded]="activeIndex === i"
+        role="button"
+        tabindex="0"
+        (keydown.enter)="toggleActive(i)"
+        (keydown.space)="$event.preventDefault(); toggleActive(i)"
+      >
+        <!-- Project number — always visible, anchors the collapsed card -->
+        <span class="project-num">{{ project.id }}</span>
+
+        <!-- All content is hidden when collapsed, revealed on hover / click -->
+        <div class="project-content">
+
+          <!-- ── Left panel: project meta ── -->
+          <div class="project-info">
+            <h3 class="project-title">{{ project.title }}</h3>
+            <p class="project-tags">{{ formatTags(project.tags) }}</p>
+            <p class="project-desc">{{ project.description }}</p>
+
+            @if (project.githubUrl) {
+              <a
+                class="project-link"
+                [href]="project.githubUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                (click)="$event.stopPropagation()"
+              >
+                See on Github&nbsp;↗
+              </a>
+            }
+
+            <div class="project-role">
+              <span class="project-role-label">[My rol]</span>
+              <ul class="project-role-list">
+                @for (role of project.roles; track role) {
+                  <li>{{ role }}</li>
+                }
+              </ul>
+            </div>
+          </div>
+
+          <!-- ── Center: main image placeholder ── -->
+          <div class="project-img-main" aria-hidden="true"></div>
+
+          <!-- ── Right: secondary image placeholder ── -->
+          <div class="project-img-secondary" aria-hidden="true"></div>
+
+        </div>
+      </article>
+
+    }
+  </div>
+
+</section>
