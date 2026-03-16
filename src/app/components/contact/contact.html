@@ -1,0 +1,29 @@
+<section class="contact-section global-grid">
+
+  <!-- Section label -->
+  <span class="contact-label">[ Contact ]</span>
+
+  <!-- Phrase + CTA — left 5 columns -->
+  <div class="contact-phrase-area">
+
+    <div class="contact-phrase-wrapper" [class.is-exiting]="phraseExiting">
+      @if (phraseVisible) {
+        <app-scramble-phrase
+          [lines]="currentLines"
+          [baseDelayS]="0"
+          fontSize="4.5rem"
+          [idleMinMs]="15000"
+          [idleMaxMs]="25000"
+          (complete)="onPhraseComplete()"
+        />
+      }
+    </div>
+
+    <app-pill-btn label="Send an email" href="mailto:sofiacirioni@example.com" />
+
+  </div>
+
+  <!-- ASCII animation placeholder — right 6 columns -->
+  <div class="contact-ascii-placeholder" aria-hidden="true"></div>
+
+</section>

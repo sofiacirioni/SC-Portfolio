@@ -1,0 +1,47 @@
+/* ── Contact section ─────────────────────────── */
+.contact-section {
+  padding-block: 5rem 4rem;
+  padding-inline: 1rem;
+}
+
+/* [ Contact ] label — col 1, row 1 */
+.contact-label {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: start;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 300;
+  color: var(--color-base-secondary);
+  padding-bottom: 0.75rem;
+}
+
+/* Phrase area: cols 1–5, row 2 */
+.contact-phrase-area {
+  grid-column: 1 / span 5;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2.5rem;
+}
+
+/* Fade wrapper — opacity animates to 0 before phrase swap */
+.contact-phrase-wrapper {
+  width: 100%;
+  opacity: 1;
+  transition: opacity 0.45s ease;
+}
+
+.contact-phrase-wrapper.is-exiting {
+  opacity: 0;
+}
+
+/* ASCII placeholder — cols 7–12, rows 1–2 */
+.contact-ascii-placeholder {
+  grid-column: 7 / span 6;
+  grid-row: 1 / span 2;
+  min-height: 26rem;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--color-accent) 6%, transparent);
+}

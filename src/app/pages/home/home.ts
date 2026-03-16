@@ -13,10 +13,12 @@ import {
 } from '../../components/ticker-tape/ticker-tape';
 import { About } from '../../components/about/about';
 import { ProjectsSection } from '../../components/projects/projects';
+import { ContactSection } from '../../components/contact/contact';
+import { SiteFooter } from '../../components/footer/footer';
 
 @Component({
   selector: 'app-home',
-  imports: [Nav, Hero, ScramblePhraseComponent, PillBtnComponent, TickerTapeComponent, About, ProjectsSection],
+  imports: [Nav, Hero, ScramblePhraseComponent, PillBtnComponent, TickerTapeComponent, About, ProjectsSection, ContactSection, SiteFooter],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
