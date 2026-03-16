@@ -30,9 +30,9 @@
 }
 
 .pill-btn:active {
-  background: #550825;
+  background: var(--color-accent);
   color: white;
-  border-color: #550825;
+  border-color: var(--color-accent);
 }
 
 .pill-btn__icon {

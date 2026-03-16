@@ -1,0 +1,246 @@
+name: Gemini Code Review
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  code-review:
+    name: Gemini AI Review
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout with full history so we can diff ──────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # ── 2. Compute diff (only src files that matter for the design system) ─
+      - name: Get code diff
+        id: diff
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            BASE="${{ github.event.pull_request.base.sha }}"
+            HEAD="${{ github.event.pull_request.head.sha }}"
+          else
+            BASE="HEAD~1"
+            HEAD="HEAD"
+          fi
+
+          git diff "$BASE".."$HEAD" \
+            -- 'src/**/*.ts' 'src/**/*.html' 'src/**/*.css' \
+               'src/styles.css' 'src/index.html' \
+            > /tmp/diff.txt 2>/dev/null || true
+
+          # Hard cap at 90 KB to stay well within Gemini's token budget
+          DIFF_SIZE=$(wc -c < /tmp/diff.txt)
+          if [ "$DIFF_SIZE" -gt 92160 ]; then
+            head -c 92160 /tmp/diff.txt > /tmp/diff_trimmed.txt
+            mv /tmp/diff_trimmed.txt /tmp/diff.txt
+            echo "⚠️  Diff was larger than 90 KB and has been trimmed." >> /tmp/diff.txt
+          fi
+
+          if [ ! -s /tmp/diff.txt ]; then
+            echo "no_changes=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # ── 3. Call Gemini API and write the review to /tmp/review.md ─────────
+      - name: Run Gemini review
+        if: steps.diff.outputs.no_changes != 'true'
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python3 - << 'PYEOF'
+          import json, os, sys, urllib.request, urllib.error
+
+          # ── Read project context docs (optional — graceful fallback) ──
+          def slurp(path, limit=10000):
+              try:
+                  with open(path, encoding="utf-8") as f:
+                      return f.read(limit)
+              except OSError:
+                  return ""
+
+          design_system = slurp("docs/ux-ui-design-system.md")
+          clean_code    = slurp("docs/frontend-clean-code.md")
+          qa_checklist  = slurp("docs/qa-testing-checklist.md")
+          diff          = slurp("/tmp/diff.txt", limit=90000)
+
+          # ── Context blocks (only injected when the docs exist) ────────
+          def section(title, content):
+              if not content.strip():
+                  return ""
+              return f"\n\n### {title}\n{content}"
+
+          ctx  = section("DESIGN SYSTEM (ux-ui-design-system.md)", design_system)
+          ctx += section("FRONTEND ARCHITECTURE (frontend-clean-code.md)", clean_code)
+          ctx += section("QA CHECKLIST (qa-testing-checklist.md)", qa_checklist)
+
+          system_prompt = f"""You are a Senior Fullstack Developer and UX/UI Designer \
+specialising in Swiss minimalism and Angular SPAs. Your task is to review the incoming \
+code diff for a personal portfolio website and provide a thorough, constructive review.
+
+## Project overview
+- Framework: Angular 21 standalone components — no NgModule, no router, no Angular Forms.
+- Styling:   Pure CSS with CSS custom properties. No Tailwind, no component library.
+- Animation: GSAP 3 (scramble phrase, ticker tape). Native fetch() for ASCII frames.
+- Grid:      12-column global grid (.global-grid). Every element's x-position declared \
+via an explicit grid-column. Never freeform.
+- Fonts:     Martian Mono (local) · IBM Plex Serif (local) · IBM Plex Sans Condensed (Google Fonts).
+             Always referenced as var(--font-mono), var(--font-serif), var(--font-body).
+- Tokens:    Colors and type sizes live in :root custom properties only. \
+No hardcoded hex values or px font sizes inside component files.
+- NgZone:    All GSAP/DOM animation runs in NgZone.runOutsideAngular(). \
+Angular state is updated only when a bound property changes.
+- Cleanup:   Every interval, timeout, GSAP tween, and observer must be cleared in ngOnDestroy().
+{ctx}
+
+## Review guidelines
+1. **Be constructive.** Start by acknowledging what works well.
+2. **Grid audit.** Every new element must declare grid-column against the 12-column system.
+3. **Token audit.** Flag any hardcoded color hex or pixel font-size inside a component file.
+4. **Angular pattern audit.** Flag missing ngOnDestroy cleanup, missing runOutsideAngular, \
+or any use of deprecated APIs.
+5. **CSS hygiene.** Flag Tailwind utilities, inline styles (other than necessary dynamic \
+bindings), or redundant vendor prefixes.
+6. **Accessibility.** Check for missing aria-* attributes, non-semantic elements, and \
+missing keyboard interaction.
+7. **Animation correctness.** Verify ASCII frame lifecycle, scramble phrase input contract, \
+and ticker IntersectionObserver guard.
+8. **Aesthetic coherence.** Any suggestion must preserve the restrained, grid-anchored, \
+Swiss/minimalist design language.
+
+## Output format (strict Markdown)
+Use exactly these three sections — no extra headers:
+
+### ✅ Strengths
+Bullet list of what was done well.
+
+### 🔍 Issues Found
+Numbered list. Each item: **file & line range** · **severity** (🔴 Critical / 🟡 Warning / 🔵 Suggestion) · one-line description · short code snippet if useful.
+
+### 💡 Actionable Improvements
+Numbered list of concrete, specific recommendations ordered by priority.
+"""
+
+          user_prompt = (
+              "Please review the following code diff:\n\n"
+              "```diff\n"
+              + diff +
+              "\n```"
+          )
+
+          payload = {
+              "system_instruction": {
+                  "parts": [{"text": system_prompt}]
+              },
+              "contents": [
+                  {"parts": [{"text": user_prompt}]}
+              ],
+              "generationConfig": {
+                  "temperature": 0.2,
+                  "maxOutputTokens": 2048
+              }
+          }
+
+          api_key = os.environ["GEMINI_API_KEY"]
+          url = (
+              "https://generativelanguage.googleapis.com/v1beta"
+              f"/models/gemini-1.5-flash:generateContent?key={api_key}"
+          )
+
+          req = urllib.request.Request(
+              url,
+              data=json.dumps(payload).encode("utf-8"),
+              headers={"Content-Type": "application/json"},
+              method="POST"
+          )
+
+          try:
+              with urllib.request.urlopen(req, timeout=60) as resp:
+                  result = json.loads(resp.read().decode("utf-8"))
+                  review_text = result["candidates"][0]["content"]["parts"][0]["text"]
+          except urllib.error.HTTPError as e:
+              body = e.read().decode("utf-8", errors="replace")
+              review_text = (
+                  f"⚠️ **Gemini API error {e.code}:** {e.reason}\n\n"
+                  f"```\n{body[:1000]}\n```"
+              )
+          except Exception as e:
+              review_text = f"⚠️ **Unexpected error calling Gemini API:** `{e}`"
+
+          with open("/tmp/review.md", "w", encoding="utf-8") as f:
+              f.write(review_text)
+
+          print("✓ Gemini review written to /tmp/review.md")
+          PYEOF
+
+      # ── 4a. Post as PR review comment ─────────────────────────────────────
+      - name: Post review on pull request
+        if: >
+          github.event_name == 'pull_request' &&
+          steps.diff.outputs.no_changes != 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const review = fs.readFileSync('/tmp/review.md', 'utf8');
+
+            const header = [
+              '## 🤖 Gemini Code Review',
+              '',
+              '> Powered by **Gemini 1.5 Flash** · context: ',
+              '> [design system](docs/ux-ui-design-system.md) · ',
+              '[frontend guide](docs/frontend-clean-code.md) · ',
+              '[QA checklist](docs/qa-testing-checklist.md)',
+              '',
+            ].join('');
+
+            await github.rest.issues.createComment({
+              owner:        context.repo.owner,
+              repo:         context.repo.repo,
+              issue_number: context.issue.number,
+              body:         header + review,
+            });
+
+      # ── 4b. Post as commit comment on direct push to main ─────────────────
+      - name: Post review on commit
+        if: >
+          github.event_name == 'push' &&
+          steps.diff.outputs.no_changes != 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const review = fs.readFileSync('/tmp/review.md', 'utf8');
+
+            const header = [
+              '## 🤖 Gemini Code Review',
+              '',
+              '> Powered by **Gemini 1.5 Flash** · context: ',
+              '> [design system](docs/ux-ui-design-system.md) · ',
+              '[frontend guide](docs/frontend-clean-code.md) · ',
+              '[QA checklist](docs/qa-testing-checklist.md)',
+              '',
+            ].join('');
+
+            await github.rest.repos.createCommitComment({
+              owner:      context.repo.owner,
+              repo:       context.repo.repo,
+              commit_sha: context.sha,
+              body:       header + review,
+            });
+
+      # ── 5. Skip message when there is nothing to review ───────────────────
+      - name: No changes to review
+        if: steps.diff.outputs.no_changes == 'true'
+        run: echo "ℹ️ No changes in src/ detected — skipping Gemini review."
