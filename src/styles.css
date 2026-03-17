@@ -126,13 +126,15 @@ h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; }
 
 html {
   font-size: 18px;
-  overflow-x: hidden;
+  /* overflow-x: clip does NOT create a scroll container (unlike hidden),
+     so overflow-y stays visible and only ONE scrollbar is rendered. */
+  overflow-x: clip;
 }
 
 body {
   font-family: var(--font-body);
   background-color: var(--color-base-primary);
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* ── Typographic defaults ───────────────────── */

@@ -1,9 +1,10 @@
-import { Component, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import {
   ScramblePhraseComponent,
   ScrambleWordDef,
 } from '../scramble-phrase/scramble-phrase';
 import { PillBtnComponent } from '../pill-btn/pill-btn';
+import { ScrollRevealService } from '../../services/scroll-reveal.service';
 
 @Component({
   selector: 'app-contact',
@@ -11,7 +12,16 @@ import { PillBtnComponent } from '../pill-btn/pill-btn';
   templateUrl: './contact.html',
   styleUrl: './contact.css',
 })
-export class ContactSection implements OnDestroy {
+export class ContactSection implements AfterViewInit, OnDestroy {
+  @ViewChild('sectionEl') private sectionEl!: ElementRef<HTMLElement>;
+  private cleanupReveal?: () => void;
+
+  constructor(private scrollReveal: ScrollRevealService) {}
+
+  ngAfterViewInit(): void {
+    this.cleanupReveal = this.scrollReveal.reveal(this.sectionEl.nativeElement);
+  }
+
   /**
    * Two phrases that alternate every 10 s.
    * Each phrase is an array of lines; each line is an array of word defs.
@@ -61,6 +71,7 @@ export class ContactSection implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.cleanupReveal?.();
     if (this.cycleTimer !== null) clearTimeout(this.cycleTimer);
     if (this.exitTimer !== null) clearTimeout(this.exitTimer);
   }

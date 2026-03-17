@@ -14,7 +14,8 @@
   border-radius: 20px 20px 0 0;
   width: 100vw;
   margin-left: -1rem;
-  padding: 2.5rem 1rem 0;
+  /* padding-inline: 1rem left (aligns with page-wrapper) · 1.5rem right (27px min margin) */
+  padding: 2.5rem 1.5rem 0 1rem;
 }
 
 /* ── Social label — col 2, row 1 ────────────── */

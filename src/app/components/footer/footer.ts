@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { PillBtnComponent } from '../pill-btn/pill-btn';
+import { ScrollRevealService } from '../../services/scroll-reveal.service';
 
 @Component({
   selector: 'app-site-footer',
@@ -7,4 +8,17 @@ import { PillBtnComponent } from '../pill-btn/pill-btn';
   templateUrl: './footer.html',
   styleUrl: './footer.css',
 })
-export class SiteFooter {}
+export class SiteFooter implements AfterViewInit, OnDestroy {
+  @ViewChild('sectionEl') private sectionEl!: ElementRef<HTMLElement>;
+  private cleanupReveal?: () => void;
+
+  constructor(private scrollReveal: ScrollRevealService) {}
+
+  ngAfterViewInit(): void {
+    this.cleanupReveal = this.scrollReveal.reveal(this.sectionEl.nativeElement);
+  }
+
+  ngOnDestroy(): void {
+    this.cleanupReveal?.();
+  }
+}

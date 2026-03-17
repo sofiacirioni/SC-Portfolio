@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { TickerTapeComponent, TickerRow } from '../ticker-tape/ticker-tape';
+import { ScrollRevealService } from '../../services/scroll-reveal.service';
 
 interface SkillItem {
   name: string;
@@ -28,7 +29,43 @@ interface ExperienceItem {
   templateUrl: './about.html',
   styleUrl: './about.css',
 })
-export class About {
+export class About implements AfterViewInit, OnDestroy {
+  @ViewChild('sectionEl')   private sectionEl!:   ElementRef<HTMLElement>;
+  @ViewChild('aboutLabel')  private aboutLabel!:  ElementRef<HTMLElement>;
+  @ViewChild('helloEl')     private helloEl!:     ElementRef<HTMLElement>;
+  @ViewChild('bioEl')       private bioEl!:       ElementRef<HTMLElement>;
+  @ViewChild('photoEl')     private photoEl!:     ElementRef<HTMLElement>;
+  @ViewChild('eduLabel')    private eduLabel!:    ElementRef<HTMLElement>;
+  @ViewChild('eduContent')  private eduContent!:  ElementRef<HTMLElement>;
+  @ViewChild('expLabel')    private expLabel!:    ElementRef<HTMLElement>;
+  @ViewChild('expContent')  private expContent!:  ElementRef<HTMLElement>;
+  @ViewChild('langLabel')   private langLabel!:   ElementRef<HTMLElement>;
+  @ViewChild('langContent') private langContent!: ElementRef<HTMLElement>;
+  @ViewChild('skillsLabel') private skillsLabel!: ElementRef<HTMLElement>;
+  @ViewChildren('skillCard') private skillCards!: QueryList<ElementRef<HTMLElement>>;
+
+  private cleanupReveal?: () => void;
+
+  constructor(private scrollReveal: ScrollRevealService) {}
+
+  ngAfterViewInit(): void {
+    const el = (ref: ElementRef<HTMLElement>) => ref.nativeElement;
+    this.cleanupReveal = this.scrollReveal.revealSequential(
+      el(this.sectionEl),
+      [
+        [el(this.aboutLabel), el(this.helloEl), el(this.bioEl), el(this.photoEl)],
+        [el(this.eduLabel), el(this.eduContent)],
+        [el(this.expLabel), el(this.expContent)],
+        [el(this.langLabel), el(this.langContent)],
+        [el(this.skillsLabel), ...this.skillCards.map(el)],
+      ],
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.cleanupReveal?.();
+  }
+
   readonly levelDots = [1, 2, 3] as const;
 
   readonly education: EducationItem[] = [

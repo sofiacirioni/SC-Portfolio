@@ -31,6 +31,7 @@ La documentación completa vive en `/docs/` — este archivo es un índice opera
 
 | Componente | Estado | Notas |
 |------------|--------|-------|
+| `services/scroll-reveal.service.ts` | ✅ Completo | GSAP + IntersectionObserver, opacity 0→1 + translateY 24→0, cleanup retornado |
 | `nav/` | ✅ Completo | Underline serif italic on hover, `::before` reserva ancho |
 | `hero/` | ✅ Completo | ASCII 85f@30fps (welcome) → 608f@10fps (nubes loop), scramble phrase, ResizeObserver scale |
 | `scramble-phrase/` | ✅ Completo | Reutilizable, `lines: ScrambleWordDef[][]`, idle scramble, `complete` EventEmitter |
@@ -67,7 +68,46 @@ dda24eb Merge branch 'feature/contact-section' into develop
 
 ### Sesión actual — 2026-03-17
 
-*Pendiente de registrar al finalizar la sesión.*
+**Rama:** `develop`
+
+**Trabajo realizado:**
+- Creado `src/app/services/scroll-reveal.service.ts` — servicio compartido `providedIn: 'root'` que expone `reveal(el: HTMLElement): () => void`
+  - Aplica estado inicial via `gsap.set(el, { opacity: 0, y: 24 })`
+  - Usa `IntersectionObserver` (threshold 0.12) para disparar `gsap.to()` al entrar en viewport
+  - Todo corre dentro de `NgZone.runOutsideAngular()` — sin costo de change detection
+  - Retorna función de cleanup (disconnect + tween.kill)
+- Aplicado scroll reveal en: `about.ts`, `projects.ts`, `contact.ts`, `footer.ts`
+  - Cada uno: `@ViewChild('sectionEl')`, `AfterViewInit`, `OnDestroy`, cleanup en `ngOnDestroy`
+  - Ref `#sectionEl` agregada al root element de cada template HTML
+- Verificado con Playwright headless:
+  - About: opacity 0 antes del scroll → 1 después, transform `matrix(1,0,0,1,0,24)` → `matrix(1,0,0,1,0,0)`
+  - Projects, Contact, Footer: opacity 1 después de scroll ✅
+
+**Archivos nuevos/modificados:**
+- `src/app/services/scroll-reveal.service.ts` (nuevo)
+- `about/about.ts`, `about/about.html`
+- `projects/projects.ts`, `projects/projects.html`
+- `contact/contact.ts`, `contact/contact.html`
+- `footer/footer.ts`, `footer/footer.html`
+
+**Ajustes posteriores (misma sesión):**
+- `scroll-reveal.service.ts` — animación bidireccional + repeatable:
+  - Estado inicial: solo `opacity: 0` (sin `y`) para no inflar scrollHeight
+  - IntersectionObserver permanente (sin `disconnect` al entrar)
+  - En enter: `boundingClientRect.top >= 0` → `y: 48` (desde abajo), else `y: -48` (desde arriba), luego `gsap.to({ opacity: 1, y: 0 })`
+  - En exit: `boundingClientRect.bottom <= 0` → reset `y: -48`, else `y: 48`
+  - Cleanup: `clearProps: 'opacity,transform'`
+- `styles.css` — doble scrollbar corregido:
+  - `overflow-x: hidden` → `overflow-x: clip` en `html` y `body`
+  - `clip` no crea scroll container → `overflow-y` permanece `visible` → UN solo scrollbar
+- `footer.css` — margen derecho mínimo 27px:
+  - `padding: 2.5rem 1rem 0` → `padding: 2.5rem 1.5rem 0 1rem`
+  - Left: 1rem (alineado con page-wrapper) · Right: 1.5rem (27px)
+
+**Verificado con Playwright:**
+- `html.overflowY: visible`, `body.overflowY: visible`, `scrollContainers: []` — cero scrollbars extras ✅
+- Bidireccional: opacity 1 → 0 (al subir) → 1 (al volver a bajar) ✅
+- Footer area post-animación: `4173 vs 4170` (3px residual, vs 48px anterior) ✅
 
 ---
 

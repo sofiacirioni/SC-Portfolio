@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, ViewChild } from '@angular/core';
+import gsap from 'gsap';
+import { ScrollRevealService } from '../../services/scroll-reveal.service';
 
 export interface Project {
   id: string;
@@ -16,9 +18,26 @@ export interface Project {
   templateUrl: './projects.html',
   styleUrl: './projects.css',
 })
-export class ProjectsSection {
+export class ProjectsSection implements AfterViewInit, OnDestroy {
+  @ViewChild('sectionEl')  private sectionEl!:  ElementRef<HTMLElement>;
+  @ViewChild('detailInner') private detailInner?: ElementRef<HTMLElement>;
+  private cleanupReveal?: () => void;
+
+  constructor(
+    private scrollReveal: ScrollRevealService,
+    private ngZone: NgZone,
+  ) {}
+
+  ngAfterViewInit(): void {
+    this.cleanupReveal = this.scrollReveal.reveal(this.sectionEl.nativeElement);
+  }
+
+  ngOnDestroy(): void {
+    this.cleanupReveal?.();
+  }
+
   activeIndex: number | null = null;
-  isNavAnimating = false;
+  private isNavAnimating = false;
 
   readonly projects: Project[] = [
     {
@@ -74,14 +93,34 @@ export class ProjectsSection {
     const next = this.activeIndex + direction;
     if (next < 0 || next >= this.projects.length) return;
 
+    this.isNavAnimating = true;
+
+    // Step 1: clip the current content immediately (before Angular re-renders)
+    const inner = this.detailInner?.nativeElement;
+    this.ngZone.runOutsideAngular(() => {
+      if (inner) gsap.set(inner, { clipPath: 'inset(0 100% 0 0)' });
+    });
+
+    // Step 2: change index — Angular re-renders with new project, still clipped
     this.activeIndex = next;
-    // Toggle the animation class off-then-on so the keyframe re-triggers
-    this.isNavAnimating = false;
+
+    // Step 3: animate clip-path in after Angular has updated the DOM
     setTimeout(() => {
-      this.isNavAnimating = true;
-      setTimeout(() => {
-        this.isNavAnimating = false;
-      }, 450);
+      this.ngZone.runOutsideAngular(() => {
+        if (inner) {
+          gsap.to(inner, {
+            clipPath: 'inset(0 0% 0 0)',
+            duration: 0.45,
+            ease: 'power2.out',
+            onComplete: () => {
+              gsap.set(inner, { clearProps: 'clipPath' });
+              this.isNavAnimating = false;
+            },
+          });
+        } else {
+          this.isNavAnimating = false;
+        }
+      });
     }, 0);
   }
 

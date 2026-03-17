@@ -1,4 +1,4 @@
-<section class="about-section">
+<section class="about-section" #sectionEl>
   <!--
     .global-grid applied here: same 12-col structure as the page.
     padding-inline: 1rem in about.css restores column alignment after the
@@ -23,13 +23,13 @@
       col 7–9        → bio text
       col 10–12      → photo / ASCII placeholder (spans rows 2–3)
     ══════════════════════════════════════════════════════ -->
-    <span class="about-label">[About]</span>
+    <span class="about-label" #aboutLabel>[About]</span>
 
-    <div class="about-hello">
+    <div class="about-hello" #helloEl>
       <h2 class="about-title">HELLO!</h2>
     </div>
 
-    <div class="about-bio-block">
+    <div class="about-bio-block" #bioEl>
       <p class="about-bio">
         I'm <strong>Sofia Cirioni</strong>, a graphic designer and
         full-stack developer based in Argentina. Specialized in UX/UI Design.
@@ -38,17 +38,17 @@
     </div>
 
     <!-- ASCII animation / photo placeholder — col 10–12, rows 2–3 -->
-    <div class="about-photo" aria-hidden="true"></div>
+    <div class="about-photo" aria-hidden="true" #photoEl></div>
 
     <!--
       ══ ROW 3 · Education + Experience ═══════════════════
       Education:  label col 2 (right) · content col 3–5
       Experience: label col 6 (right) · content col 7–8
     ══════════════════════════════════════════════════════ -->
-    <div class="about-edu">
+    <div class="about-edu" #eduLabel>
       <h3 class="about-subtitle">Education</h3>
     </div>
-    <div class="about-edu-content">
+    <div class="about-edu-content" #eduContent>
       <ul class="about-list">
         @for (item of education; track item.period) {
           <li class="about-list__item">
@@ -69,8 +69,8 @@
     ══════════════════════════════════════════════════════ -->
     <div class="about-exp-lang-wrapper">
 
-      <h3 class="about-subtitle exp-lang-label">Experience</h3>
-      <ul class="about-list exp-lang-content">
+      <h3 class="about-subtitle exp-lang-label" #expLabel>Experience</h3>
+      <ul class="about-list exp-lang-content" #expContent>
         @for (item of experience; track item.period) {
           <li class="about-list__item">
             <span class="about-date">{{ item.period }}</span>
@@ -81,8 +81,8 @@
         }
       </ul>
 
-      <h3 class="about-subtitle exp-lang-label">Languages</h3>
-      <ul class="about-list exp-lang-content">
+      <h3 class="about-subtitle exp-lang-label" #langLabel>Languages</h3>
+      <ul class="about-list exp-lang-content" #langContent>
         @for (item of languages; track item.lang) {
           <li class="about-list__item">
             <p class="about-item-title">{{ item.lang }}<span class="about-item-light"> | {{ item.level }}</span></p>
@@ -99,12 +99,13 @@
       Each card gets [style.grid-column] and [style.grid-row] from the component.
       5 cards per row, cols 3-4 / 5-6 / 7-8 / 9-10 / 11-12
     ══════════════════════════════════════════════════════ -->
-    <span class="about-skills-label">Technical<br>skills</span>
+    <span class="about-skills-label" #skillsLabel>Technical<br>skills</span>
 
     <div class="about-skills-grid">
       @for (skill of skills; track skill.name; let i = $index) {
         <div
           class="skill-card"
+          #skillCard
           [style.grid-column]="skillColumn(i)"
           [style.grid-row]="skillRow(i)"
         >

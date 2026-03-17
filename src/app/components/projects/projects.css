@@ -215,15 +215,6 @@
   clip-path: inset(0 0% 0 0);
 }
 
-/* Navigation wipe: keyframe re-triggers reliably on each navigate */
-@keyframes navWipeIn {
-  from { clip-path: inset(0 100% 0 0); }
-  to   { clip-path: inset(0 0% 0 0); }
-}
-
-.project-detail-inner.is-nav-animating {
-  animation: navWipeIn 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-}
 
 /* ── Left column: header + info stacked ─────── */
 .project-detail-left {
