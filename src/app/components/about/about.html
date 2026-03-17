@@ -60,11 +60,17 @@
       </ul>
     </div>
 
-    <div class="about-exp">
-      <h3 class="about-subtitle">Experience</h3>
-    </div>
-    <div class="about-exp-content">
-      <ul class="about-list">
+    <!--
+      ══ ROW 3 (cont.) · Experience + Languages ═══════════
+      Single subgrid wrapper spans col 6–9.
+      row-gap: 1.5rem gives exactly 27 px between the two blocks.
+      Labels sit in subgrid col 1 (= page col 6, right-aligned).
+      Content spans subgrid cols 2–4 (= page cols 7–9).
+    ══════════════════════════════════════════════════════ -->
+    <div class="about-exp-lang-wrapper">
+
+      <h3 class="about-subtitle exp-lang-label">Experience</h3>
+      <ul class="about-list exp-lang-content">
         @for (item of experience; track item.period) {
           <li class="about-list__item">
             <span class="about-date">{{ item.period }}</span>
@@ -74,23 +80,16 @@
           </li>
         }
       </ul>
-    </div>
 
-    <!--
-      ══ ROW 4 · Languages (same cols as Experience, below) ═
-      label col 6 (right) · content col 7–8
-    ══════════════════════════════════════════════════════ -->
-    <div class="about-lang">
-      <h3 class="about-subtitle">Languages</h3>
-    </div>
-    <div class="about-lang-content">
-      <ul class="about-list">
+      <h3 class="about-subtitle exp-lang-label">Languages</h3>
+      <ul class="about-list exp-lang-content">
         @for (item of languages; track item.lang) {
           <li class="about-list__item">
             <p class="about-item-title">{{ item.lang }}<span class="about-item-light"> | {{ item.level }}</span></p>
           </li>
         }
       </ul>
+
     </div>
 
     <!--
