@@ -1,0 +1,13 @@
+# Excluir directorios superiores al proyecto
+../
+../../
+../../../
+
+# Evitar acceso a otras carpetas del sistema
+C:/Users/sofia/Mis Archivos/proyectos-progra/
+C:/Users/sofia/
+C:/Users/
+C:/
+
+# node_modules (ya ignorado por defecto, pero lo reforzamos)
+node_modules/
