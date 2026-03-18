@@ -31,83 +31,93 @@ La documentación completa vive en `/docs/` — este archivo es un índice opera
 
 | Componente | Estado | Notas |
 |------------|--------|-------|
-| `services/scroll-reveal.service.ts` | ✅ Completo | GSAP + IntersectionObserver, opacity 0→1 + translateY 24→0, cleanup retornado |
+| `services/scroll-reveal.service.ts` | ✅ Completo | `reveal()` + `revealSequential()`, bidireccional, exit suave, threshold 0.22/0.28 |
 | `nav/` | ✅ Completo | Underline serif italic on hover, `::before` reserva ancho |
 | `hero/` | ✅ Completo | ASCII 85f@30fps (welcome) → 608f@10fps (nubes loop), scramble phrase, ResizeObserver scale |
 | `scramble-phrase/` | ✅ Completo | Reutilizable, `lines: ScrambleWordDef[][]`, idle scramble, `complete` EventEmitter |
 | `pill-btn/` | ✅ Completo | CTA reutilizable, hover `--color-primary`, active `--color-accent` |
-| `ticker-tape/` | ✅ Completo | Scroll-velocity driven, 4 copias, IntersectionObserver, pause off-screen |
-| `about/` | ✅ Completo | Subgrid exp+lang, skill cards con CSS mask, full-bleed `--color-base-accent` |
-| `projects/` | ✅ Completo | Acordeón, clip-path wipe transition, grid 5 cols en detail view |
-| `contact/` | ✅ Completo | 2 frases alternantes cada 10s via `@if` destroy/recreate, email CTA |
+| `ticker-tape/` | ✅ Completo | Scroll-velocity driven, reveal scroll-driven desde los extremos por clip-path, `SPEED_MULTIPLIER = 5` |
+| `about/` | ✅ Completo | Reveal secuencial por bloques (card → intro → edu → exp → lang → skills), `@ViewChildren` para skill cards |
+| `projects/` | ✅ Completo | Acordeón, nav GSAP crossfade (fade-out → swap → fade-in+y), `border-top` en detail view, info col 340px |
+| `contact/` | ✅ Completo | Scramble inicia al entrar en viewport (IntersectionObserver), botón `mailto:sofiacirioni07@gmail.com` alineado arriba |
 | `footer/` | ✅ Completo | Social links, tagline IBM Plex Serif italic, go-top |
 
 ---
 
 ## Historial de sesiones
 
-### Sesión anterior — 2026-03-16 (id: 1d3920bc-0c17-4c27-ae8e-2a46816fea77)
+### Sesión 1 — 2026-03-16 (id: 1d3920bc-0c17-4c27-ae8e-2a46816fea77)
 
 **Rama:** `feature/contact-section` → mergeada a `develop`
 
 **Trabajo realizado:**
-- Implementación de `contact/` — dos frases scramble alternantes (`Want to work together?` / `Let's get in touch`), ciclo de 10s con fade-out de 0.45s antes del swap, email CTA con `PillBtnComponent`
-- Implementación de `footer/` — social links (col 2–4), tagline serif italic (col 5–9), go-top + credits (col 10–12)
-- Limpieza de dependencias no usadas (`skills.md` documentado)
-- Creación de `.claudeignore`
+- Implementación de `contact/` y `footer/`
+- Limpieza de dependencias no usadas, creación de `.claudeignore`
 - Setup de workflow de revisión con Gemini
-
-**Commits clave:**
-```
-dda24eb Merge branch 'feature/contact-section' into develop
-1bde240 added: contact and footer.
-0ccfd7b added: skills.md - done: unused dependency cleaning
-```
 
 ---
 
-### Sesión actual — 2026-03-17
+### Sesión 2 — 2026-03-17
 
 **Rama:** `develop`
 
 **Trabajo realizado:**
-- Creado `src/app/services/scroll-reveal.service.ts` — servicio compartido `providedIn: 'root'` que expone `reveal(el: HTMLElement): () => void`
-  - Aplica estado inicial via `gsap.set(el, { opacity: 0, y: 24 })`
-  - Usa `IntersectionObserver` (threshold 0.12) para disparar `gsap.to()` al entrar en viewport
-  - Todo corre dentro de `NgZone.runOutsideAngular()` — sin costo de change detection
-  - Retorna función de cleanup (disconnect + tween.kill)
-- Aplicado scroll reveal en: `about.ts`, `projects.ts`, `contact.ts`, `footer.ts`
-  - Cada uno: `@ViewChild('sectionEl')`, `AfterViewInit`, `OnDestroy`, cleanup en `ngOnDestroy`
-  - Ref `#sectionEl` agregada al root element de cada template HTML
-- Verificado con Playwright headless:
-  - About: opacity 0 antes del scroll → 1 después, transform `matrix(1,0,0,1,0,24)` → `matrix(1,0,0,1,0,0)`
-  - Projects, Contact, Footer: opacity 1 después de scroll ✅
+- Creado `scroll-reveal.service.ts` con `reveal()` bidireccional + repeatable
+- Aplicado scroll reveal en `about`, `projects`, `contact`, `footer`
+- Fix doble scrollbar: `overflow-x: clip` en `html` y `body`
+- Fix footer whitespace: y-offset solo se aplica al disparar la animación, no en init
+- Fix footer padding derecho mínimo 27px
 
-**Archivos nuevos/modificados:**
-- `src/app/services/scroll-reveal.service.ts` (nuevo)
+---
+
+### Sesión 3 — 2026-03-18
+
+**Rama:** `develop`
+
+**Trabajo realizado:**
+
+#### ScrollRevealService — refactor completo
+- Nuevo método `revealSequential(trigger, groups[][], staggerDelay)`:
+  - Observa el trigger (sección), anima grupos en secuencia con stagger de 0.18s
+  - Entrance: `y: 36` (desde abajo) o `-36` (desde arriba) + `opacity 0→1`, `duration: 0.85s`, `ease: power3.out`
+  - Exit suave: `gsap.to()` con `duration: 0.45s`, `ease: power2.in` (reemplaza el `gsap.set` instantáneo)
+  - Threshold: 0.28 para sequential, 0.22 para reveal simple
+- `reveal()` también recibe exit suave (no más snap instantáneo al salir)
+
+#### About — reveal secuencial por bloques
+- Grupos: `[cardEl]` → `[label, hello, bio, photo]` → `[eduLabel, eduContent]` → `[expLabel, expContent]` → `[langLabel, langContent]` → `[skillsLabel, ...skillCards]`
+- `#cardEl` en `.about-card` → el fondo aparece primero como grupo 0
+- `@ViewChildren('skillCard')` para animar las cards individuales (`.about-skills-grid` usa `display:contents`)
+
+#### Projects — navegación arreglada + ajustes visuales
+- **Bug flash corregido**: GSAP crossfade puro en `navigate()`:
+  - `gsap.to(inner, { opacity: 0, 0.3s })` → `ngZone.run(() => activeIndex = next)` → `gsap.fromTo(inner, { opacity:0, y:±12 }, { opacity:1, y:0, 0.65s })`
+  - El swap de `activeIndex` ocurre dentro de `ngZone.run()` desde el `onComplete` de GSAP → no hay frame visible entre contenidos
+- `border-top` en `.project-detail.is-visible` (solo al expandir, evita double border con index)
+- Info col: 290px → 340px; título: `--text-h3` → `--text-h4`
+- Eliminados `@keyframes navWipeIn` y `.is-nav-animating` del CSS
+
+#### Contact — layout y timing
+- `phraseVisible = false` por defecto; `IntersectionObserver` (threshold 0.25) lo activa al entrar en viewport → scramble ocurre al scrollear a la sección, no al cargar la página
+- Layout: `flex-direction: row; align-items: flex-start` → botón alineado al tope de la frase
+- `text-align: center` en phrase wrapper → frase centrada horizontalmente
+- Placeholder reducido: `grid-column: 8 / span 5`, `min-height: 20rem`
+- `href`: `mailto:sofiacirioni07@gmail.com`
+
+#### Ticker-tape — scroll-driven reveal
+- Reemplazado GSAP time-based entrance por reveal driven por `scrollVelocity`
+- Cada fila arranca con `clipPath` al 100% desde su extremo (dir 1 → `inset(0 100% 0 0)`, dir -1 → `inset(0 0 0 100%)`)
+- Por frame: `revealProgress[i] += Math.abs(scrollVelocity) * 0.04 + 0.0015`
+- Stagger natural: `revealProgress` inicializado en `-(i * 0.25)` por fila
+- Al llegar a 1: `clipPath = ''`, ticker continúa movimiento normal
+- `SPEED_MULTIPLIER`: 3 → 5
+
+**Archivos modificados en sesión 3:**
+- `services/scroll-reveal.service.ts`
 - `about/about.ts`, `about/about.html`
-- `projects/projects.ts`, `projects/projects.html`
-- `contact/contact.ts`, `contact/contact.html`
-- `footer/footer.ts`, `footer/footer.html`
-
-**Ajustes posteriores (misma sesión):**
-- `scroll-reveal.service.ts` — animación bidireccional + repeatable:
-  - Estado inicial: solo `opacity: 0` (sin `y`) para no inflar scrollHeight
-  - IntersectionObserver permanente (sin `disconnect` al entrar)
-  - En enter: `boundingClientRect.top >= 0` → `y: 48` (desde abajo), else `y: -48` (desde arriba), luego `gsap.to({ opacity: 1, y: 0 })`
-  - En exit: `boundingClientRect.bottom <= 0` → reset `y: -48`, else `y: 48`
-  - Cleanup: `clearProps: 'opacity,transform'`
-- `styles.css` — doble scrollbar corregido:
-  - `overflow-x: hidden` → `overflow-x: clip` en `html` y `body`
-  - `clip` no crea scroll container → `overflow-y` permanece `visible` → UN solo scrollbar
-- `footer.css` — margen derecho mínimo 27px:
-  - `padding: 2.5rem 1rem 0` → `padding: 2.5rem 1.5rem 0 1rem`
-  - Left: 1rem (alineado con page-wrapper) · Right: 1.5rem (27px)
-
-**Verificado con Playwright:**
-- `html.overflowY: visible`, `body.overflowY: visible`, `scrollContainers: []` — cero scrollbars extras ✅
-- Bidireccional: opacity 1 → 0 (al subir) → 1 (al volver a bajar) ✅
-- Footer area post-animación: `4173 vs 4170` (3px residual, vs 48px anterior) ✅
+- `projects/projects.ts`, `projects/projects.html`, `projects/projects.css`
+- `contact/contact.ts`, `contact/contact.css`
+- `ticker-tape/ticker-tape.ts`
 
 ---
 
