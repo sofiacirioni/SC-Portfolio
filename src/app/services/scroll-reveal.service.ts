@@ -32,7 +32,7 @@ export class ScrollRevealService {
 
           if (entry.isIntersecting) {
             const fromBelow = entry.boundingClientRect.top >= 0;
-            gsap.set(allEls, { y: fromBelow ? 48 : -48 });
+            gsap.set(allEls, { y: fromBelow ? 36 : -36 });
             groups.forEach((group, i) => {
               const tween = gsap.to(group, {
                 opacity: 1,
@@ -44,11 +44,18 @@ export class ScrollRevealService {
               tweens.push(tween);
             });
           } else {
-            const exitY = entry.boundingClientRect.bottom <= 0 ? -48 : 48;
-            gsap.set(allEls, { opacity: 0, y: exitY });
+            // Smooth exit — fade out with a short movement instead of instant snap
+            const exitY = entry.boundingClientRect.bottom <= 0 ? -24 : 24;
+            const exitTween = gsap.to(allEls, {
+              opacity: 0,
+              y: exitY,
+              duration: 0.45,
+              ease: 'power2.in',
+            });
+            tweens.push(exitTween);
           }
         },
-        { threshold: 0.08 },
+        { threshold: 0.28 },
       );
 
       observer.observe(trigger);
@@ -89,7 +96,7 @@ export class ScrollRevealService {
             // boundingClientRect.top >= 0  →  element entering from below (scroll down)
             // boundingClientRect.top <  0  →  element entering from above (scroll up)
             const fromBelow = entry.boundingClientRect.top >= 0;
-            gsap.set(el, { y: fromBelow ? 48 : -48 });
+            gsap.set(el, { y: fromBelow ? 36 : -36 });
             tween = gsap.to(el, {
               opacity: 1,
               y: 0,
@@ -97,14 +104,17 @@ export class ScrollRevealService {
               ease: 'power3.out',
             });
           } else {
-            // Leaving viewport — reset immediately so next reveal is correct.
-            // bottom <= 0  →  exited above viewport (user scrolled down past it)
-            // bottom >  0  →  exited below viewport (user scrolled up past it)
-            const exitY = entry.boundingClientRect.bottom <= 0 ? -48 : 48;
-            gsap.set(el, { opacity: 0, y: exitY });
+            // Smooth exit — fade out with a short movement instead of instant snap
+            const exitY = entry.boundingClientRect.bottom <= 0 ? -24 : 24;
+            tween = gsap.to(el, {
+              opacity: 0,
+              y: exitY,
+              duration: 0.45,
+              ease: 'power2.in',
+            });
           }
         },
-        { threshold: 0.12 },
+        { threshold: 0.22 },
       );
 
       observer.observe(el);

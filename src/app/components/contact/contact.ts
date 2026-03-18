@@ -15,11 +15,23 @@ import { ScrollRevealService } from '../../services/scroll-reveal.service';
 export class ContactSection implements AfterViewInit, OnDestroy {
   @ViewChild('sectionEl') private sectionEl!: ElementRef<HTMLElement>;
   private cleanupReveal?: () => void;
+  private visibilityObserver?: IntersectionObserver;
 
   constructor(private scrollReveal: ScrollRevealService) {}
 
   ngAfterViewInit(): void {
     this.cleanupReveal = this.scrollReveal.reveal(this.sectionEl.nativeElement);
+
+    // Delay phrase start until the section enters the viewport
+    this.visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        this.visibilityObserver?.disconnect();
+        this.phraseVisible = true;
+      },
+      { threshold: 0.25 },
+    );
+    this.visibilityObserver.observe(this.sectionEl.nativeElement);
   }
 
   /**
@@ -40,8 +52,8 @@ export class ContactSection implements AfterViewInit, OnDestroy {
   ];
 
   phraseIndex = 0;
-  /** Controls @if — destroying the component re-triggers scramble-in */
-  phraseVisible = true;
+  /** Controls @if — starts false, set to true when section enters viewport */
+  phraseVisible = false;
   /** Triggers CSS fade-out before swap */
   phraseExiting = false;
 
@@ -72,6 +84,7 @@ export class ContactSection implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.cleanupReveal?.();
+    this.visibilityObserver?.disconnect();
     if (this.cycleTimer !== null) clearTimeout(this.cycleTimer);
     if (this.exitTimer !== null) clearTimeout(this.exitTimer);
   }

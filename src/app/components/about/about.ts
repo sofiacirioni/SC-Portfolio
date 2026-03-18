@@ -31,6 +31,7 @@ interface ExperienceItem {
 })
 export class About implements AfterViewInit, OnDestroy {
   @ViewChild('sectionEl')   private sectionEl!:   ElementRef<HTMLElement>;
+  @ViewChild('cardEl')      private cardEl!:      ElementRef<HTMLElement>;
   @ViewChild('aboutLabel')  private aboutLabel!:  ElementRef<HTMLElement>;
   @ViewChild('helloEl')     private helloEl!:     ElementRef<HTMLElement>;
   @ViewChild('bioEl')       private bioEl!:       ElementRef<HTMLElement>;
@@ -53,6 +54,7 @@ export class About implements AfterViewInit, OnDestroy {
     this.cleanupReveal = this.scrollReveal.revealSequential(
       el(this.sectionEl),
       [
+        [el(this.cardEl)],
         [el(this.aboutLabel), el(this.helloEl), el(this.bioEl), el(this.photoEl)],
         [el(this.eduLabel), el(this.eduContent)],
         [el(this.expLabel), el(this.expContent)],

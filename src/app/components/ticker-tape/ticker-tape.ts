@@ -16,7 +16,7 @@ export interface TickerRow {
 }
 
 /** How many pixel-equivalents of movement per unit of scroll velocity */
-const SPEED_MULTIPLIER = 3;
+const SPEED_MULTIPLIER = 5;
 
 @Component({
   selector: 'app-ticker-tape',
@@ -31,8 +31,12 @@ export class TickerTapeComponent implements AfterViewInit, OnDestroy {
   readonly copies = [0, 1, 2, 3];
 
   private trackEls: HTMLElement[] = [];
+  private rowEls: HTMLElement[] = [];
   private positions: number[] = [];
   private copyWidths: number[] = [];
+  /** Per-row reveal progress 0→1; initialized with stagger offset */
+  private revealProgress: number[] = [];
+  private isRevealed: boolean[] = [];
 
   private scrollVelocity = 0;
   private lastScrollY = 0;
@@ -53,9 +57,20 @@ export class TickerTapeComponent implements AfterViewInit, OnDestroy {
   private init(): void {
     const wrapper = this.wrapperRef.nativeElement;
 
+    this.rowEls = Array.from(wrapper.querySelectorAll<HTMLElement>('.ticker-row'));
     this.trackEls = Array.from(
       wrapper.querySelectorAll<HTMLElement>('.ticker-track'),
     );
+
+    // Reveal progress: stagger each row by -0.25 so they enter sequentially
+    this.revealProgress = this.rows.map((_, i) => -(i * 0.25));
+    this.isRevealed = this.rows.map(() => false);
+
+    // Set initial clip-path: each row hidden from its respective edge
+    this.rowEls.forEach((rowEl, i) => {
+      const dir = this.rows[i]?.direction ?? 1;
+      rowEl.style.clipPath = dir === 1 ? 'inset(0 100% 0 0)' : 'inset(0 0 0 100%)';
+    });
 
     this.positions = this.rows.map(() => 0);
     this.measureCopyWidths();
@@ -100,21 +115,40 @@ export class TickerTapeComponent implements AfterViewInit, OnDestroy {
       if (!this.isVisible) return;
 
       const speed = Math.abs(this.scrollVelocity) * SPEED_MULTIPLIER;
-      if (speed < 0.01) return;
 
       this.trackEls.forEach((track, i) => {
         const w = this.copyWidths[i];
         if (w === 0) return;
 
-        // Position always advances 0 → w then wraps seamlessly
+        const dir = this.rows[i]?.direction ?? 1;
+
+        // ── Scroll-driven reveal ──
+        // Progress driven by scroll velocity + tiny base so it eventually resolves
+        if (!this.isRevealed[i]) {
+          const step = Math.abs(this.scrollVelocity) * 0.04 + 0.0015;
+          this.revealProgress[i] = Math.min(1, this.revealProgress[i] + step);
+
+          const pct = this.revealProgress[i];
+          if (pct > 0) {
+            const hiddenPct = (1 - pct) * 100;
+            this.rowEls[i].style.clipPath = dir === 1
+              ? `inset(0 ${hiddenPct}% 0 0)`
+              : `inset(0 0 0 ${hiddenPct}%)`;
+          }
+          if (pct >= 1) {
+            this.isRevealed[i] = true;
+            this.rowEls[i].style.clipPath = '';
+          }
+        }
+
+        // ── Normal scroll movement ──
+        if (speed < 0.01) return;
+
         this.positions[i] = (this.positions[i] + speed) % w;
 
-        const dir = this.rows[i]?.direction ?? 1;
         if (dir === 1) {
-          // Left: translateX goes 0 → -w
           track.style.transform = `translateX(-${this.positions[i]}px)`;
         } else {
-          // Right: translateX goes -w → 0 (rightward)
           track.style.transform = `translateX(${this.positions[i] - w}px)`;
         }
       });

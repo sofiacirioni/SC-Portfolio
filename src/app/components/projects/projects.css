@@ -137,6 +137,7 @@
   min-height: 400px;
   pointer-events: auto;
   overflow: hidden;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
 }
 
 /* ── Edge navigation arrows ──────────────────── */
@@ -204,8 +205,8 @@
   height: 100%;
   padding: 0.75rem 0;
   display: grid;
-  /* [info 290px] [gap 1.5rem] [main img] [gap 18px] [secondary square] */
-  grid-template-columns: 290px 1.5rem 1fr 18px clamp(140px, 18vw, 210px);
+  /* [info 340px] [gap 1.5rem] [main img] [gap 18px] [secondary square] */
+  grid-template-columns: 340px 1.5rem 1fr 18px clamp(140px, 18vw, 210px);
   gap: 0;
   clip-path: inset(0 100% 0 0);
   transition: clip-path 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s;
@@ -258,7 +259,7 @@
 
 .project-detail-title {
   font-family: var(--font-body);
-  font-size: var(--text-h3);
+  font-size: var(--text-h4);
   font-weight: 400;
   color: var(--color-accent);
   margin: 0;

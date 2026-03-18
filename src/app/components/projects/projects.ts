@@ -94,34 +94,44 @@ export class ProjectsSection implements AfterViewInit, OnDestroy {
     if (next < 0 || next >= this.projects.length) return;
 
     this.isNavAnimating = true;
-
-    // Step 1: clip the current content immediately (before Angular re-renders)
     const inner = this.detailInner?.nativeElement;
+
+    if (!inner) {
+      this.activeIndex = next;
+      this.isNavAnimating = false;
+      return;
+    }
+
     this.ngZone.runOutsideAngular(() => {
-      if (inner) gsap.set(inner, { clipPath: 'inset(0 100% 0 0)' });
-    });
+      // Phase 1: fade out current content
+      gsap.to(inner, {
+        opacity: 0,
+        duration: 0.3,
+        ease: 'power2.in',
+        onComplete: () => {
+          // Phase 2: swap content inside Angular zone (invisible, no flash)
+          this.ngZone.run(() => { this.activeIndex = next; });
 
-    // Step 2: change index — Angular re-renders with new project, still clipped
-    this.activeIndex = next;
-
-    // Step 3: animate clip-path in after Angular has updated the DOM
-    setTimeout(() => {
-      this.ngZone.runOutsideAngular(() => {
-        if (inner) {
-          gsap.to(inner, {
-            clipPath: 'inset(0 0% 0 0)',
-            duration: 0.45,
-            ease: 'power2.out',
-            onComplete: () => {
-              gsap.set(inner, { clearProps: 'clipPath' });
-              this.isNavAnimating = false;
-            },
-          });
-        } else {
-          this.isNavAnimating = false;
-        }
+          // Phase 3: fade + subtle slide in after Angular renders new content
+          setTimeout(() => {
+            gsap.fromTo(
+              inner,
+              { opacity: 0, y: direction * 12 },
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.65,
+                ease: 'power3.out',
+                onComplete: () => {
+                  gsap.set(inner, { clearProps: 'opacity,transform' });
+                  this.ngZone.run(() => { this.isNavAnimating = false; });
+                },
+              },
+            );
+          }, 0);
+        },
       });
-    }, 0);
+    });
   }
 
   formatTags(tags: string[]): string {
