@@ -29,6 +29,20 @@ pre {
   user-select: none;
 }
 
+/*
+  Source video for the ASCII engine. Kept in the render tree (not display:none,
+  which can pause decoding) but pushed off-screen and invisible.
+*/
+.cloud-source {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  left: -9999px;
+  top: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .pause-btn {
   position: absolute;
   top: 1rem;

@@ -1,5 +1,18 @@
 <section #heroSection>
-  <pre #animPre>{{ currentFrame }}</pre>
+  <pre #animPre></pre>
+
+  <!-- Hidden source: the ASCII engine samples this video frame-by-frame onto a canvas. -->
+  <video
+    #cloudVideo
+    class="cloud-source"
+    src="assets/video/nubes-loop.mp4"
+    muted
+    loop
+    autoplay
+    playsinline
+    preload="auto"
+    aria-hidden="true"
+  ></video>
 
   <button class="pause-btn" (click)="togglePause()" [attr.aria-label]="isPaused ? 'Play' : 'Pause'">
     @if (isPaused) {
