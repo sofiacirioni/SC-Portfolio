@@ -49,12 +49,10 @@ export class Home implements OnDestroy {
       text: '// MAKING ENJOYABLE INTERFACES // THINKING IN USABILITY AND ACCESSIBILITY',
       direction: 1,
     },
-    { text: '// PLANNING WAYS TO GUIDE THE USER', direction: -1 },
     {
       text: '// DESIGNING TO EMPATHIZE // enjoy doing unconventional designs conventionally',
-      direction: 1,
+      direction: -1,
     },
-    { text: '// NEEDS-CENTERED MINDSET', direction: -1 },
   ];
 
   constructor() {

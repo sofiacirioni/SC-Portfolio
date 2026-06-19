@@ -6,7 +6,7 @@
 
 .about-section {
   margin-top: -1.5rem;
-  margin-inline: -1rem;       /* full-bleed so the ticker strip reaches the edges */
+  margin-inline: -1rem;       /* full-bleed alignment with the page wrapper */
   position: relative;
   z-index: 2;
 }
@@ -18,19 +18,10 @@
   /* display:grid (12 cols) comes from .global-grid */
 }
 
-/* ══ Top ticker strip ══════════════════════════ */
-.short-tickers {
-  grid-column: 1 / -1;
-  grid-row: 1;
-  margin-inline: -1rem;       /* break out of inner padding to span full width */
-  position: relative;
-  z-index: 20;
-}
-
 /* ══ Intro ═════════════════════════════════════ */
 .about-label {
   grid-column: 1 / -1;
-  grid-row: 2;
+  grid-row: 1;
   justify-self: start;
   font-family: var(--font-mono);
   font-size: 0.7rem;
@@ -41,7 +32,7 @@
 
 .about-intro {
   grid-column: 1 / span 8;
-  grid-row: 3;
+  grid-row: 2;
   align-self: start;
 }
 
@@ -71,7 +62,7 @@
 /* ══ Portrait — top-right, half-size (3 cols) ══ */
 .about-photo {
   grid-column: 10 / span 3;
-  grid-row: 3;
+  grid-row: 2;
   align-self: start;
   aspect-ratio: 3 / 4;
   width: 100%;
@@ -92,7 +83,7 @@
 /* ══ Meta row — Education / Experience / Languages ══ */
 .about-meta {
   grid-column: 1 / -1;
-  grid-row: 4;
+  grid-row: 3;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   column-gap: 0.75rem;
@@ -158,7 +149,7 @@
 /* ══ Skills — application names only ════════════ */
 .about-skills {
   grid-column: 1 / -1;
-  grid-row: 5;
+  grid-row: 4;
   border-top: 1px solid color-mix(in srgb, #1a1a1a 18%, transparent);
   padding-top: 1.1rem;
   display: flex;
@@ -221,15 +212,15 @@
 }
 
 @media (max-width: 640px) {
-  .about-intro { grid-column: 1 / -1; grid-row: 3; }
+  .about-intro { grid-column: 1 / -1; grid-row: 2; }
   .about-photo {
     grid-column: 1 / span 2;
-    grid-row: 4;
+    grid-row: 3;
     max-width: 9rem;
   }
   .about-meta {
-    grid-row: 5;
+    grid-row: 4;
     grid-template-columns: 1fr;
   }
-  .about-skills { grid-row: 6; }
+  .about-skills { grid-row: 5; }
 }

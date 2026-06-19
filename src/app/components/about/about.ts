@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { TickerTapeComponent, TickerRow } from '../ticker-tape/ticker-tape';
 import { ScrollRevealService } from '../../services/scroll-reveal.service';
 
 interface SkillItem {
@@ -25,13 +24,12 @@ interface ExperienceItem {
 
 @Component({
   selector: 'app-about',
-  imports: [TickerTapeComponent],
+  imports: [],
   templateUrl: './about.html',
   styleUrl: './about.css',
 })
 export class About implements AfterViewInit, OnDestroy {
   @ViewChild('sectionEl')   private sectionEl!:   ElementRef<HTMLElement>;
-  @ViewChild('tickersEl')   private tickersEl!:   ElementRef<HTMLElement>;
   @ViewChild('aboutLabel')  private aboutLabel!:  ElementRef<HTMLElement>;
   @ViewChild('helloEl')     private helloEl!:     ElementRef<HTMLElement>;
   @ViewChild('bioEl')       private bioEl!:       ElementRef<HTMLElement>;
@@ -54,7 +52,7 @@ export class About implements AfterViewInit, OnDestroy {
     this.cleanupReveal = this.scrollReveal.revealSequential(
       el(this.sectionEl),
       [
-        [el(this.tickersEl), el(this.aboutLabel)],
+        [el(this.aboutLabel)],
         [el(this.helloEl), el(this.bioEl), el(this.photoEl)],
         [el(this.eduLabel), el(this.eduContent)],
         [el(this.expLabel), el(this.expContent)],
@@ -88,13 +86,6 @@ export class About implements AfterViewInit, OnDestroy {
   readonly languages = [
     { lang: 'English', level: 'B1' },
     { lang: 'Spanish', level: 'Native' },
-  ];
-
-  /** 3 short tickers, left half of the about card */
-  readonly shortTickerRows: TickerRow[] = [
-    { text: '// GRAPHIC DESIGNER & FULLSTACK DEVELOPER', direction: 1 },
-    { text: '// UX/UI DESIGNER — MAKING USEFUL INTERFACES', direction: -1 },
-    { text: '// CÓRDOBA — ARGENTINA — MAKE IT HAPPEN', direction: 1 },
   ];
 
   readonly skills: SkillItem[] = [

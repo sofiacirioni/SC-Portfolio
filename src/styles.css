@@ -95,17 +95,18 @@ h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; }
 }
 
 :root {
-  /* ── Colors · Azure scale ──────────────────────
-     Coherent azure hue (~track 205–215°), dark → light:
-       accent    → boldest, for emphasis text & CTAs
-       primary   → brand azure (underlines, hover, accents)
-       secondary → muted azure for supporting text
-       cloud     → light sky azure for the ASCII animation
+  /* ── Colors · Indigo + electric scale ──────────
+     Neutral base (cream + black) with an indigo family and a near-ultramarine
+     electric blue for attention points. Roles:
+       accent    → electric ultramarine, for emphasis text, CTAs, links
+       primary   → indigo brand (underlines, hover, accents)
+       secondary → muted indigo for supporting text
+       cloud     → light indigo for the ASCII animation
   ─────────────────────────────────────────────── */
-  --color-accent: #0b5fd0;
-  --color-primary: #2e8bd8;
-  --color-secondary: #2a6fb0;
-  --color-cloud: #a9d6f2;
+  --color-accent: #0f1fff;
+  --color-primary: #5d5fef;
+  --color-secondary: #4338ca;
+  --color-cloud: #b4b7f2;
 
   /* Base palette */
   --color-base-primary: #f2f0ec;
