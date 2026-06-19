@@ -1,156 +1,119 @@
-/* ── Section wrapper ─────────────────────────── */
+/* ══════════════════════════════════════════════
+   About — editorial composition (no filled card)
+   Content sits on the page bg; structure comes from the 12-col grid,
+   whitespace, and hairline rules — not a colored box.
+   ══════════════════════════════════════════════ */
+
 .about-section {
   margin-top: -1.5rem;
-  margin-inline: -1rem;
+  margin-inline: -1rem;       /* full-bleed so the ticker strip reaches the edges */
   position: relative;
   z-index: 2;
 }
 
-/* ── Card ────────────────────────────────────── */
-.about-card {
-  background: var(--color-base-accent);
-  border-radius: 20px;
-  overflow: hidden;           /* clips short-tickers flush to rounded edge */
-  padding-block: 3rem 2.5rem;
-  padding-inline: 1rem;
+.about-inner {
+  padding-block: 3.5rem 4rem;
+  padding-inline: 1rem;       /* restores column alignment after the full bleed */
   row-gap: 3rem;
-  /* display:grid comes from .global-grid */
+  /* display:grid (12 cols) comes from .global-grid */
 }
 
-/* ══════════════════════════════════════════════
-   ROW 1 · Short tickers
-   ══════════════════════════════════════════════ */
+/* ══ Top ticker strip ══════════════════════════ */
 .short-tickers {
-  /* grid-half-left: grid-column 1 / 7 */
-  /* margin-left: -1rem cancels card's padding so tickers start at card edge */
-  margin-left: -1rem;
+  grid-column: 1 / -1;
+  grid-row: 1;
+  margin-inline: -1rem;       /* break out of inner padding to span full width */
   position: relative;
   z-index: 20;
 }
 
-/* ══════════════════════════════════════════════
-   ROW 2 · Intro
-   ══════════════════════════════════════════════ */
-
-/* [About] — col 1, left-aligned */
+/* ══ Intro ═════════════════════════════════════ */
 .about-label {
-  grid-column: 1;
+  grid-column: 1 / -1;
   grid-row: 2;
   justify-self: start;
-  align-self: start;
   font-family: var(--font-mono);
   font-size: 0.7rem;
   font-weight: 300;
+  letter-spacing: 0.06em;
   color: var(--color-base-secondary);
 }
 
-/* HELLO! — col 6, right-aligned within the column */
-.about-hello {
-  grid-column: 6;
-  grid-row: 2;
-  justify-self: end;
+.about-intro {
+  grid-column: 1 / span 8;
+  grid-row: 3;
   align-self: start;
-  text-align: right;
 }
 
-.about-title {
-  font-family: var(--font-mono);
-  font-size: var(--text-base);
-  font-weight: 600;
-  color: var(--color-secondary);
+.about-greeting {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--text-h3);
+  line-height: 1.12;
+  color: #1a1a1a;
   margin: 0;
-  line-height: 1;
 }
 
-/* Bio — col 7–9 */
-.about-bio-block {
-  grid-column: 7 / span 3;
-  grid-row: 2;
-  align-self: start;
+.about-greeting em {
+  font-style: italic;
+  color: var(--color-accent);
 }
 
 .about-bio {
   font-family: var(--font-body);
-  font-size: var(--text-sm);
-  color: #1a1a1a;
+  font-size: var(--text-base);
   line-height: 1.55;
-  margin: 0;
+  color: #46453f;
+  margin: 1.25rem 0 0;
+  max-width: 46ch;
 }
 
-.about-bio strong {
-  font-weight: 600;
-  font-style: italic;
-}
-
-/* Photo / ASCII — col 10–12, spans rows 2–3 */
+/* ══ Portrait — top-right, half-size (3 cols) ══ */
 .about-photo {
   grid-column: 10 / span 3;
-  grid-row: 2 / span 2;
-  background: var(--color-base-secondary);
-  border-radius: 8px;
-  aspect-ratio: 1 / 1;
+  grid-row: 3;
+  align-self: start;
+  aspect-ratio: 3 / 4;
   width: 100%;
-  align-self: start;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-base-accent));
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* ══════════════════════════════════════════════
-   ROW 3 · Education + Experience
-   ══════════════════════════════════════════════ */
-
-/* Education label — col 2, right-aligned */
-.about-edu {
-  grid-column: 2;
-  grid-row: 3;
-  text-align: right;
-  align-self: start;
+.about-photo__label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  color: var(--color-base-secondary);
 }
 
-/* Education content — col 3–5 */
-.about-edu-content {
-  grid-column: 3 / span 3;
-  grid-row: 3;
-  align-self: start;
-}
-
-/* ── Experience + Languages — subgrid wrapper ── */
-/*
-  Spans page cols 6–9 (4 columns) in row 3.
-  grid-template-columns: subgrid inherits the parent's exact column tracks
-  so labels land on page-col 6 and content spans page-cols 7–9.
-  row-gap: 1.5rem = exactly 27 px between Experience and Languages.
-*/
-.about-exp-lang-wrapper {
-  grid-column: 6 / span 4;
-  grid-row: 3;
+/* ══ Meta row — Education / Experience / Languages ══ */
+.about-meta {
+  grid-column: 1 / -1;
+  grid-row: 4;
   display: grid;
-  grid-template-columns: subgrid;
-  row-gap: 1.5rem;
-  align-self: start;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 0.75rem;
+  row-gap: 2rem;
 }
 
-/* Label column — subgrid col 1 = page col 6, right-aligned */
-.exp-lang-label {
-  grid-column: 1;
-  text-align: right;
-  align-self: start;
+.about-meta__col {
+  border-top: 1px solid #1a1a1a;
+  padding-top: 0.9rem;
 }
 
-/* Content column — subgrid cols 2–4 = page cols 7–9 */
-.exp-lang-content {
-  grid-column: 2 / span 3;
-  align-self: start;
-}
-
-/* ── Shared subtitle ─────────────────────────── */
-.about-subtitle {
+.about-meta__label {
   font-family: var(--font-mono);
   font-size: 0.778rem;
   font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: var(--color-secondary);
-  margin: 0 0 0.75rem;
+  margin: 0 0 0.9rem;
 }
 
-/* ── Shared list ─────────────────────────────── */
 .about-list {
   list-style: none;
   margin: 0;
@@ -183,62 +146,51 @@
 .about-item-sub {
   font-family: var(--font-body);
   font-size: var(--text-sm);
-  color: #1a1a1a;
+  color: #46453f;
   margin: 0;
 }
 
-/* Text after the pipe (| B1 · | freelance) — same weight as institution sub-lines */
 .about-item-light {
   font-weight: 300;
+  color: var(--color-base-secondary);
 }
 
-/* ══════════════════════════════════════════════
-   ROW 5+ · Technical skills
-   ══════════════════════════════════════════════ */
-
-/* Label — col 2, right-aligned, aligns with first skill row */
-.about-skills-label {
-  grid-column: 2;
+/* ══ Skills — application names only ════════════ */
+.about-skills {
+  grid-column: 1 / -1;
   grid-row: 5;
+  border-top: 1px solid color-mix(in srgb, #1a1a1a 18%, transparent);
+  padding-top: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.about-skills-label {
   font-family: var(--font-mono);
   font-size: 0.7rem;
   font-weight: 400;
-  color: var(--color-secondary);
-  line-height: 1.4;
-  align-self: center;
-  text-align: right;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-base-secondary);
 }
 
-/*
-  display:contents dissolves the wrapper so each .skill-card becomes a
-  direct child of .about-card's 12-col grid.
-  Each card receives [style.grid-column] and [style.grid-row] from the component.
-*/
-.about-skills-grid {
-  display: contents;
-}
-
-/* ── Skill card ──────────────────────────────── */
-.skill-card {
+.about-skills-list {
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.85rem 1.6rem;
+}
+
+.skill-item {
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.4rem 0.6rem;
-  border-radius: 8px;
-  cursor: default;
-  align-self: center;
-  transition: background 0.2s ease;
-}
-
-.skill-card:hover {
-  background: transparent;
 }
 
 /* SVG icon — tinted via CSS mask */
 .skill-icon {
-  width: 1.4rem;
-  height: 1.4rem;
+  width: 1.25rem;
+  height: 1.25rem;
   flex-shrink: 0;
   background-color: var(--color-base-secondary);
   -webkit-mask-image: var(--icon-url);
@@ -252,55 +204,32 @@
   transition: background-color 0.2s ease;
 }
 
-.skill-card:hover .skill-icon {
+.skill-item:hover .skill-icon {
   background-color: var(--color-accent);
-}
-
-/*
-  CSS grid single-cell trick: skill-name and skill-dots share the same
-  grid cell so they overlap. Opacity toggles between them on hover.
-*/
-.skill-text {
-  display: grid;
-  place-items: start;
-  min-width: 0;
-}
-
-.skill-name,
-.skill-dots {
-  grid-area: 1 / 1;
-  transition: opacity 0.15s ease;
 }
 
 .skill-name {
   font-family: var(--font-body);
   font-size: var(--text-sm);
-  color: var(--color-base-secondary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: #1a1a1a;
 }
 
-.skill-dots {
-  display: flex;
-  gap: 0.3rem;
-  align-items: center;
-  opacity: 0;
+/* ══ Responsive ════════════════════════════════ */
+@media (max-width: 1024px) {
+  .about-intro { grid-column: 1 / span 6; }
+  .about-photo { grid-column: 7 / span 2; }
 }
 
-.skill-card:hover .skill-name { opacity: 0; }
-.skill-card:hover .skill-dots { opacity: 1; }
-
-.skill-dot {
-  width: 0.45rem;
-  height: 0.45rem;
-  border-radius: 50%;
-  border: 1.5px solid var(--color-base-secondary);
-  background: transparent;
-  flex-shrink: 0;
-}
-
-.skill-dot--filled {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
+@media (max-width: 640px) {
+  .about-intro { grid-column: 1 / -1; grid-row: 3; }
+  .about-photo {
+    grid-column: 1 / span 2;
+    grid-row: 4;
+    max-width: 9rem;
+  }
+  .about-meta {
+    grid-row: 5;
+    grid-template-columns: 1fr;
+  }
+  .about-skills { grid-row: 6; }
 }
