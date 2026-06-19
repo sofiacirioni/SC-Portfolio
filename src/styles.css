@@ -101,12 +101,12 @@ h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; }
        accent    → electric ultramarine, for emphasis text, CTAs, links
        primary   → indigo brand (underlines, hover, accents)
        secondary → muted indigo for supporting text
-       cloud     → light indigo for the ASCII animation
+       cloud     → light sky-blue (lightened accent) for the ASCII clouds
   ─────────────────────────────────────────────── */
   --color-accent: #0f1fff;
   --color-primary: #5d5fef;
   --color-secondary: #4338ca;
-  --color-cloud: #b4b7f2;
+  --color-cloud: #9db4ff;
 
   /* Base palette */
   --color-base-primary: #f2f0ec;
