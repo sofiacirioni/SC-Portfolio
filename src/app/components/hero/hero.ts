@@ -38,7 +38,7 @@ export class Hero implements OnInit, AfterViewInit, OnDestroy {
    * Flip `cloudInvert` if clouds end up as the empty areas instead of the dense ones.
    */
   private readonly RAMP = ' .:-=+*#%@';
-  private cloudInvert = false;
+  private cloudInvert = true;
 
   private cloudCanvas: HTMLCanvasElement | null = null;
   private cloudCtx: CanvasRenderingContext2D | null = null;

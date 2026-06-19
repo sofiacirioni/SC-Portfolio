@@ -19,7 +19,8 @@ pre {
   line-height: 1.1;
   letter-spacing: 0;
 
-  color: var(--color-primary);
+  /* ASCII clouds use a lighter sky-azure than the rest of the brand palette */
+  color: var(--color-cloud);
   background: transparent;
   border: none;
 

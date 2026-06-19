@@ -95,12 +95,17 @@ h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; }
 }
 
 :root {
-  /* ── Colors ────────────────────────────────── */
-  /* The old accent (#9da8ff) is now primary. All existing usages kept intact. */
-  --color-primary: #9da8ff;
-  /* New accent and secondary */
-  --color-accent: #0025ff;
-  --color-secondary: #5b71f4;
+  /* ── Colors · Azure scale ──────────────────────
+     Coherent azure hue (~track 205–215°), dark → light:
+       accent    → boldest, for emphasis text & CTAs
+       primary   → brand azure (underlines, hover, accents)
+       secondary → muted azure for supporting text
+       cloud     → light sky azure for the ASCII animation
+  ─────────────────────────────────────────────── */
+  --color-accent: #0b5fd0;
+  --color-primary: #2e8bd8;
+  --color-secondary: #2a6fb0;
+  --color-cloud: #a9d6f2;
 
   /* Base palette */
   --color-base-primary: #f2f0ec;
