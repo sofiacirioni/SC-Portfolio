@@ -129,6 +129,17 @@ html {
   /* overflow-x: clip does NOT create a scroll container (unlike hidden),
      so overflow-y stays visible and only ONE scrollbar is rendered. */
   overflow-x: clip;
+  /* Smooth in-page navigation for nav anchor links (#about, #projects, #contact) */
+  scroll-behavior: smooth;
+  /* Anchored sections land with breathing room instead of flush at the top */
+  scroll-padding-top: 2rem;
+}
+
+/* Respect users who prefer reduced motion: disable smooth scrolling */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 body {

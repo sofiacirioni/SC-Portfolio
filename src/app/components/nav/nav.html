@@ -3,6 +3,7 @@
   @for (item of items; track item) {
     <a
       class="nav-link"
+      [href]="navHrefs[item]"
       [attr.data-label]="item"
       [style.grid-column]="navColumns[item]"
     >{{ item }}</a>

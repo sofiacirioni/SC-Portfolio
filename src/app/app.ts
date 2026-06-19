@@ -5,10 +5,6 @@ import { Home } from './pages/home/home';
   selector: 'app-root',
   standalone: true,
   imports: [Home],
-  template: `
-    <div class="min-h-screen">
-      <app-home />
-    </div>
-  `,
+  template: `<app-home />`,
 })
 export class AppComponent {}

@@ -33,32 +33,52 @@ export class Home implements OnDestroy {
   phraseReady = false;
 
   /**
+   * Safety net: if the hero scramble never emits `complete` (e.g. fonts fail
+   * to load), the body would stay scroll-locked forever. This timer unlocks
+   * it unconditionally after a max wait.
+   */
+  private readonly SCROLL_UNLOCK_FALLBACK_MS = 8000;
+  private unlockFallbackTimer: ReturnType<typeof setTimeout> | null = null;
+
+  /**
    * 4 full-width ticker rows (100vw).
    * Positioned at the Hero/About boundary — span both sections visually.
    */
   readonly fullTickerRows: TickerRow[] = [
     {
-      text: '// MAKING ENJOYABLE INTERFACES // THINKING IN USABILITY AND ACCESIBILITY',
+      text: '// MAKING ENJOYABLE INTERFACES // THINKING IN USABILITY AND ACCESSIBILITY',
       direction: 1,
     },
-    { text: '// PLANING WAYS TO GUIDE THE USER', direction: -1 },
+    { text: '// PLANNING WAYS TO GUIDE THE USER', direction: -1 },
     {
-      text: '// DESIGNING TO EMPHATIZE // enjoy doing unconventional designs conventionally',
+      text: '// DESIGNING TO EMPATHIZE // enjoy doing unconventional designs conventionally',
       direction: 1,
     },
-    { text: '// NECESITIES-CENTER MINDSET', direction: -1 },
+    { text: '// NEEDS-CENTERED MINDSET', direction: -1 },
   ];
 
   constructor() {
     this.doc.body.style.overflow = 'hidden';
+    this.unlockFallbackTimer = setTimeout(
+      () => this.unlockScroll(),
+      this.SCROLL_UNLOCK_FALLBACK_MS,
+    );
   }
 
   onPhraseComplete(): void {
     this.phraseReady = true;
+    this.unlockScroll();
+  }
+
+  private unlockScroll(): void {
     this.doc.body.style.overflow = '';
+    if (this.unlockFallbackTimer !== null) {
+      clearTimeout(this.unlockFallbackTimer);
+      this.unlockFallbackTimer = null;
+    }
   }
 
   ngOnDestroy(): void {
-    this.doc.body.style.overflow = '';
+    this.unlockScroll();
   }
 }

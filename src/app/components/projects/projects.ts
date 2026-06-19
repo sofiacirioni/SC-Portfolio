@@ -43,7 +43,7 @@ export class ProjectsSection implements AfterViewInit, OnDestroy {
     {
       id: 'P-01',
       title: 'Laboratory system',
-      tags: ['Academic proyect', 'colaborative', 'real client'],
+      tags: ['Academic project', 'collaborative', 'real client'],
       description:
         'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.',
       githubUrl: '#',

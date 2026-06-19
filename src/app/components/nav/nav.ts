@@ -14,6 +14,13 @@ const NAV_COLUMNS: Record<NavItem, number> = {
   Contact: 12,
 };
 
+/** In-page anchor target for each nav item (matches section ids on the home page) */
+const NAV_HREFS: Record<NavItem, string> = {
+  About: '#about',
+  Projects: '#projects',
+  Contact: '#contact',
+};
+
 @Component({
   selector: 'app-nav',
   imports: [],
@@ -23,4 +30,5 @@ const NAV_COLUMNS: Record<NavItem, number> = {
 export class Nav {
   items: NavItem[] = [...NAV_ITEMS];
   navColumns = NAV_COLUMNS;
+  navHrefs = NAV_HREFS;
 }
