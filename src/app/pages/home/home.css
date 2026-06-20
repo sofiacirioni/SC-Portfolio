@@ -30,16 +30,16 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 7rem;
+  height: 4rem;
   background: linear-gradient(
     to bottom,
-    var(--color-base-primary) 30%,
+    var(--color-base-primary) 45%,
     transparent
   );
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
-  -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent);
-  mask-image: linear-gradient(to bottom, #000 45%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent);
+  mask-image: linear-gradient(to bottom, #000 60%, transparent);
   pointer-events: none;
   z-index: -1;
 }
