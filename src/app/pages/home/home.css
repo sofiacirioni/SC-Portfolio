@@ -6,7 +6,42 @@
 .page-wrapper {
   min-height: 100vh;
   padding-inline: 1rem;
+  /* Room for the fixed header that now overlays the top of the page */
+  padding-top: 3.5rem;
   align-content: start;
+}
+
+/* ── Fixed header with progressive blur ───────────
+   The nav stays pinned at the top; a blurred, cream-fading band sits behind
+   it so content dissolves as it scrolls underneath (always-visible bar).
+*/
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding-inline: 1rem;
+}
+
+.site-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 7rem;
+  background: linear-gradient(
+    to bottom,
+    var(--color-base-primary) 30%,
+    transparent
+  );
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent);
+  mask-image: linear-gradient(to bottom, #000 45%, transparent);
+  pointer-events: none;
+  z-index: -1;
 }
 
 /* Full-width grid items (works for any column count) */

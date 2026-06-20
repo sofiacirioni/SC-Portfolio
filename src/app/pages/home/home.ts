@@ -1,5 +1,6 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, inject, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, inject, OnDestroy } from '@angular/core';
+import { SmoothScrollService } from '../../services/smooth-scroll.service';
 import { Nav } from '../../components/nav/nav';
 import { Hero } from '../../components/hero/hero';
 import {
@@ -22,8 +23,9 @@ import { SiteFooter } from '../../components/footer/footer';
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
-export class Home implements OnDestroy {
+export class Home implements AfterViewInit, OnDestroy {
   private readonly doc = inject(DOCUMENT);
+  private readonly smoothScroll = inject(SmoothScrollService);
 
   readonly phraseLines: ScrambleWordDef[][] = [
     [{ text: 'Inspire' }],
@@ -63,6 +65,12 @@ export class Home implements OnDestroy {
     );
   }
 
+  ngAfterViewInit(): void {
+    // Lenis owns scrolling from here; keep it stopped while the intro is locked.
+    this.smoothScroll.init();
+    this.smoothScroll.stop();
+  }
+
   onPhraseComplete(): void {
     this.phraseReady = true;
     this.unlockScroll();
@@ -70,6 +78,7 @@ export class Home implements OnDestroy {
 
   private unlockScroll(): void {
     this.doc.body.style.overflow = '';
+    this.smoothScroll.start();
     if (this.unlockFallbackTimer !== null) {
       clearTimeout(this.unlockFallbackTimer);
       this.unlockFallbackTimer = null;
@@ -78,5 +87,6 @@ export class Home implements OnDestroy {
 
   ngOnDestroy(): void {
     this.unlockScroll();
+    this.smoothScroll.destroy();
   }
 }

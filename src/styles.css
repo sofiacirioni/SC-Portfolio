@@ -106,7 +106,7 @@ h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; }
   --color-accent: #0f1fff;
   --color-primary: #5d5fef;
   --color-secondary: #4338ca;
-  --color-cloud: #9db4ff;
+  --color-cloud: #7d9dff;
 
   /* Base palette */
   --color-base-primary: #f2f0ec;
@@ -135,17 +135,12 @@ html {
   /* overflow-x: clip does NOT create a scroll container (unlike hidden),
      so overflow-y stays visible and only ONE scrollbar is rendered. */
   overflow-x: clip;
-  /* Smooth in-page navigation for nav anchor links (#about, #projects, #contact) */
-  scroll-behavior: smooth;
-  /* Anchored sections land with breathing room instead of flush at the top */
-  scroll-padding-top: 2rem;
-}
-
-/* Respect users who prefer reduced motion: disable smooth scrolling */
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
+  /*
+    Smooth scrolling is handled by Lenis (SmoothScrollService), NOT CSS —
+    native scroll-behavior conflicts with it. scroll-padding-top stays as a
+    fallback for prefers-reduced-motion (Lenis is a no-op there, anchors jump).
+  */
+  scroll-padding-top: 4rem;
 }
 
 body {
