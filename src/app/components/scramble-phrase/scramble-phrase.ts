@@ -213,7 +213,7 @@ export class ScramblePhraseComponent implements OnInit, AfterViewInit, OnDestroy
         element.textContent = SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
         element.style.fontFamily = useSerif ? FONT_VARS.serif : FONT_VARS.mono;
         element.style.fontStyle = useSerif ? 'italic' : 'normal';
-        element.style.color = 'var(--color-primary)';
+        element.style.color = 'var(--color-accent)';
       },
       onComplete: () => {
         element.textContent = finalChar;

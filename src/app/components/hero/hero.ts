@@ -16,98 +16,121 @@ import {
 export class Hero implements AfterViewInit, OnDestroy {
   isPaused = false;
 
-  // ── Clouds (live ASCII from the source video) ──────────────────
+  // ── ASCII conversion (shared by intro + clouds) ────────────────
   /** ASCII grid width in characters. Higher = more detail, smaller scale. */
   private readonly ASCII_COLS = 280;
   /** ASCII grid height in characters. Tuned for a wide cinematic band. */
   private readonly ASCII_ROWS = 36;
-  /** Frames per second for the cloud ASCII update (clouds move slowly). */
-  private readonly CLOUD_FPS = 14;
   /** Monospace char width / height ratio — used to center-crop without distortion. */
   private readonly CHAR_ASPECT = 0.5;
-  /**
-   * Luminance → glyph ramp, sparse (dark) → dense (bright).
-   * Flip `cloudInvert` if clouds end up as the empty areas instead of the dense ones.
-   */
+  /** Luminance → glyph ramp, sparse (dark) → dense (bright). */
   private readonly RAMP = ' .:-=+*#%@';
-  private cloudInvert = true;
+
+  private readonly HELLO_FPS = 24;
+  private readonly CLOUD_FPS = 14;
+  /** Flip if the clouds/letters end up as the empty areas instead of the dense ones. */
+  private readonly cloudInvert = true;
+  private readonly helloInvert = true;
 
   private cloudCanvas: HTMLCanvasElement | null = null;
   private cloudCtx: CanvasRenderingContext2D | null = null;
   private rafId: number | null = null;
-  private lastCloudDraw = 0;
+  private lastDraw = 0;
 
   // Smoothed luminance bounds for per-frame contrast normalization (avoids flicker).
   private loSmoothed = 0;
   private hiSmoothed = 1;
   private boundsInit = false;
 
+  private phase: 'hello' | 'clouds' = 'hello';
+  private activeVideo: HTMLVideoElement | null = null;
+  private onHelloEnded = (): void => this.startClouds();
+
   private scaleReady = false;
   private resizeObserver: ResizeObserver | null = null;
 
   @ViewChild('heroSection') private sectionRef!: ElementRef<HTMLElement>;
   @ViewChild('animPre') private preRef!: ElementRef<HTMLPreElement>;
-  @ViewChild('cloudVideo') private videoRef!: ElementRef<HTMLVideoElement>;
+  @ViewChild('helloVideo') private helloRef!: ElementRef<HTMLVideoElement>;
+  @ViewChild('cloudVideo') private cloudRef!: ElementRef<HTMLVideoElement>;
 
   constructor(private ngZone: NgZone) {}
 
   ngAfterViewInit(): void {
     this.resizeObserver = new ResizeObserver(() => this.updateScale());
     this.resizeObserver.observe(this.sectionRef.nativeElement);
-    this.startClouds();
-  }
 
-  ngOnDestroy(): void {
-    if (this.rafId !== null) cancelAnimationFrame(this.rafId);
-    this.resizeObserver?.disconnect();
-    this.videoRef?.nativeElement.pause();
-  }
-
-  togglePause(): void {
-    this.isPaused = !this.isPaused;
-    const video = this.videoRef?.nativeElement;
-    if (!video) return;
-    if (this.isPaused) video.pause();
-    else void video.play().catch(() => {});
-  }
-
-  // ── Clouds (video → ASCII) ─────────────────────────────────────
-
-  private startClouds(): void {
     this.cloudCanvas = document.createElement('canvas');
     this.cloudCanvas.width = this.ASCII_COLS;
     this.cloudCanvas.height = this.ASCII_ROWS;
     this.cloudCtx = this.cloudCanvas.getContext('2d', { willReadFrequently: true });
 
-    const video = this.videoRef.nativeElement;
-    // Set muted as a property (Angular doesn't reliably bind the `muted` attribute),
-    // otherwise autoplay is blocked.
+    this.startHello();
+  }
+
+  ngOnDestroy(): void {
+    if (this.rafId !== null) cancelAnimationFrame(this.rafId);
+    this.resizeObserver?.disconnect();
+    this.helloRef?.nativeElement.removeEventListener('ended', this.onHelloEnded);
+    this.helloRef?.nativeElement.pause();
+    this.cloudRef?.nativeElement.pause();
+  }
+
+  togglePause(): void {
+    this.isPaused = !this.isPaused;
+    const video = this.activeVideo;
+    if (!video) return;
+    if (this.isPaused) video.pause();
+    else void video.play().catch(() => {});
+  }
+
+  // ── Intro "hello" (plays once) ─────────────────────────────────
+
+  private startHello(): void {
+    this.phase = 'hello';
+    const video = this.helloRef.nativeElement;
     video.muted = true;
+    video.addEventListener('ended', this.onHelloEnded, { once: true });
+    this.activeVideo = video;
     void video.play().catch(() => {});
 
     this.ngZone.runOutsideAngular(() => {
-      this.lastCloudDraw = 0;
-      this.cloudLoop();
+      this.lastDraw = 0;
+      this.renderLoop();
     });
   }
 
-  private cloudLoop = (): void => {
-    this.rafId = requestAnimationFrame(this.cloudLoop);
+  // ── Clouds loop (takes over after the intro) ───────────────────
+
+  private startClouds(): void {
+    this.phase = 'clouds';
+    this.boundsInit = false; // renormalize contrast for the new source
+    const video = this.cloudRef.nativeElement;
+    video.muted = true;
+    this.activeVideo = video;
+    void video.play().catch(() => {});
+  }
+
+  // ── Shared render loop ─────────────────────────────────────────
+
+  private renderLoop = (): void => {
+    this.rafId = requestAnimationFrame(this.renderLoop);
     if (this.isPaused) return;
 
+    const fps = this.phase === 'hello' ? this.HELLO_FPS : this.CLOUD_FPS;
     const now = performance.now();
-    if (now - this.lastCloudDraw < 1000 / this.CLOUD_FPS) return;
-    this.lastCloudDraw = now;
+    if (now - this.lastDraw < 1000 / fps) return;
+    this.lastDraw = now;
 
-    this.drawCloudFrame();
+    this.drawFrame();
   };
 
-  private drawCloudFrame(): void {
-    const video = this.videoRef.nativeElement;
+  private drawFrame(): void {
+    const video = this.activeVideo;
     const ctx = this.cloudCtx;
-    if (!ctx || video.readyState < 2 || !video.videoWidth) return;
+    if (!video || !ctx || video.readyState < 2 || !video.videoWidth) return;
 
-    // Center-crop the video to the band's aspect so clouds aren't squished.
+    // Center-crop the source to the band's aspect so it isn't squished.
     const targetAspect = (this.ASCII_COLS * this.CHAR_ASPECT) / this.ASCII_ROWS;
     const vw = video.videoWidth;
     const vh = video.videoHeight;
@@ -123,8 +146,8 @@ export class Hero implements AfterViewInit, OnDestroy {
     ctx.drawImage(video, sx, sy, sw, sh, 0, 0, this.ASCII_COLS, this.ASCII_ROWS);
     const { data } = ctx.getImageData(0, 0, this.ASCII_COLS, this.ASCII_ROWS);
 
-    // Pass 1: find this frame's luminance bounds, then smooth them across frames
-    // so the contrast stretch doesn't flicker as clouds drift.
+    // Pass 1: per-frame luminance bounds, smoothed across frames so the
+    // contrast stretch doesn't flicker.
     let lo = 1;
     let hi = 0;
     for (let p = 0; p < data.length; p += 4) {
@@ -142,7 +165,8 @@ export class Hero implements AfterViewInit, OnDestroy {
     }
     const range = Math.max(0.001, this.hiSmoothed - this.loSmoothed);
 
-    // Pass 2: normalize each cell into the full ramp so cloud structure reads.
+    // Pass 2: normalize each cell into the full ramp so structure reads.
+    const invert = this.phase === 'hello' ? this.helloInvert : this.cloudInvert;
     const rampMax = this.RAMP.length - 1;
     let out = '';
     for (let y = 0; y < this.ASCII_ROWS; y++) {
@@ -151,7 +175,7 @@ export class Hero implements AfterViewInit, OnDestroy {
         const lum = (data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114) / 255;
         let n = (lum - this.loSmoothed) / range;
         n = n < 0 ? 0 : n > 1 ? 1 : n;
-        const v = this.cloudInvert ? 1 - n : n;
+        const v = invert ? 1 - n : n;
         out += this.RAMP[Math.round(v * rampMax)];
       }
       out += '\n';

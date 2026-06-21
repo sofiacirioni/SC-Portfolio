@@ -65,6 +65,17 @@
         </ul>
       </div>
 
+      <div class="about-meta__col">
+        <h3 class="about-meta__label" #softLabel>Soft skills</h3>
+        <ul class="about-list">
+          @for (soft of softSkills; track soft) {
+            <li class="about-list__item" #softItem>
+              <p class="about-item-title">{{ soft }}</p>
+            </li>
+          }
+        </ul>
+      </div>
+
     </div>
 
     <!-- ══ Technical skills — application names only ══ -->
@@ -76,16 +87,6 @@
             <span class="skill-icon" [style.--icon-url]="iconUrl(skill.icon)" aria-hidden="true"></span>
             <span class="skill-name">{{ skill.name }}</span>
           </span>
-        }
-      </div>
-    </div>
-
-    <!-- ══ Soft skills — traits ══ -->
-    <div class="about-soft">
-      <span class="about-skills-label" #softLabel>Soft skills</span>
-      <div class="about-soft-list">
-        @for (soft of softSkills; track soft) {
-          <span class="soft-item" #softItem>{{ soft }}</span>
         }
       </div>
     </div>
