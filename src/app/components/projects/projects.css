@@ -356,7 +356,6 @@
 .project-img-main {
   grid-column: 3;
   background: var(--color-base-secondary);
-  border-radius: 4px;
   min-height: 0;
 }
 
@@ -364,7 +363,6 @@
   grid-column: 5;
   aspect-ratio: 1 / 1;
   background: var(--color-base-secondary);
-  border-radius: 4px;
   align-self: start;
   width: 100%;
 }

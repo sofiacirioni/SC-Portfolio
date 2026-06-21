@@ -66,7 +66,6 @@
   align-self: start;
   aspect-ratio: 3 / 4;
   width: 100%;
-  border-radius: 8px;
   background: color-mix(in srgb, var(--color-primary) 10%, var(--color-base-accent));
   display: flex;
   align-items: center;

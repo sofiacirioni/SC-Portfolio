@@ -22,24 +22,18 @@
   right: 0;
   z-index: 100;
   padding-inline: 1rem;
+  /* The bar's defining line (prototype A) */
+  border-bottom: 1px solid color-mix(in srgb, #1a1a1a 16%, transparent);
 }
 
+/* Blur contained within the bar zone (top → line), not a long fade below it */
 .site-header::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4rem;
-  background: linear-gradient(
-    to bottom,
-    var(--color-base-primary) 45%,
-    transparent
-  );
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
-  -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent);
-  mask-image: linear-gradient(to bottom, #000 60%, transparent);
+  inset: 0;
+  background: color-mix(in srgb, var(--color-base-primary) 55%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   pointer-events: none;
   z-index: -1;
 }
