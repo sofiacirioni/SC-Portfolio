@@ -66,17 +66,14 @@
   align-self: start;
   aspect-ratio: 3 / 4;
   width: 100%;
-  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-base-accent));
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow: hidden; /* clip the cover crop — sharp corners, no radius */
 }
 
-.about-photo__label {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.12em;
-  color: var(--color-base-secondary);
+.about-photo__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 /* ══ Meta row — Education / Experience / Languages ══ */

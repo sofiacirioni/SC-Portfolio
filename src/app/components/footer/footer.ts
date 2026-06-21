@@ -1,11 +1,11 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { ScrollRevealService } from '../../services/scroll-reveal.service';
 import { ArrowIcon } from '../arrow-icon/arrow-icon';
-import { GravityWordmark } from '../gravity-wordmark/gravity-wordmark';
+import { GravityAscii } from '../gravity-ascii/gravity-ascii';
 
 @Component({
   selector: 'app-site-footer',
-  imports: [ArrowIcon, GravityWordmark],
+  imports: [ArrowIcon, GravityAscii],
   templateUrl: './footer.html',
   styleUrl: './footer.css',
 })
