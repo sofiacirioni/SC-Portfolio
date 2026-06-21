@@ -4,7 +4,6 @@ import {
   ElementRef,
   NgZone,
   OnDestroy,
-  OnInit,
   ViewChild,
 } from '@angular/core';
 
@@ -14,15 +13,8 @@ import {
   templateUrl: './hero.html',
   styleUrl: './hero.css',
 })
-export class Hero implements OnInit, AfterViewInit, OnDestroy {
+export class Hero implements AfterViewInit, OnDestroy {
   isPaused = false;
-
-  // ── Welcome intro (kept as pre-rendered ASCII frames) ──────────
-  private readonly WELCOME_TOTAL = 85;
-  private readonly WELCOME_FPS = 30;
-  private welcomeFrames: (string | null)[] = new Array(85).fill(null);
-  private welcomeIndex = 0;
-  private welcomeTimer: ReturnType<typeof setInterval> | null = null;
 
   // ── Clouds (live ASCII from the source video) ──────────────────
   /** ASCII grid width in characters. Higher = more detail, smaller scale. */
@@ -50,8 +42,6 @@ export class Hero implements OnInit, AfterViewInit, OnDestroy {
   private hiSmoothed = 1;
   private boundsInit = false;
 
-  // ── Shared layout ──────────────────────────────────────────────
-  private phase: 'welcome' | 'clouds' = 'welcome';
   private scaleReady = false;
   private resizeObserver: ResizeObserver | null = null;
 
@@ -61,17 +51,13 @@ export class Hero implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private ngZone: NgZone) {}
 
-  ngOnInit(): void {
-    void this.loadWelcome();
-  }
-
   ngAfterViewInit(): void {
     this.resizeObserver = new ResizeObserver(() => this.updateScale());
     this.resizeObserver.observe(this.sectionRef.nativeElement);
+    this.startClouds();
   }
 
   ngOnDestroy(): void {
-    if (this.welcomeTimer !== null) clearInterval(this.welcomeTimer);
     if (this.rafId !== null) cancelAnimationFrame(this.rafId);
     this.resizeObserver?.disconnect();
     this.videoRef?.nativeElement.pause();
@@ -82,52 +68,12 @@ export class Hero implements OnInit, AfterViewInit, OnDestroy {
     const video = this.videoRef?.nativeElement;
     if (!video) return;
     if (this.isPaused) video.pause();
-    else if (this.phase === 'clouds') void video.play().catch(() => {});
-  }
-
-  // ── Welcome intro ──────────────────────────────────────────────
-
-  private async loadWelcome(): Promise<void> {
-    const fetches = this.welcomeFrames.map((_, i) => {
-      const frameNum = String(i + 1).padStart(4, '0');
-      return fetch(`assets/ascii-frames/welcome-ascii-animation/frame_${frameNum}.txt`)
-        .then((r) => (r.ok ? r.text() : ''))
-        .then((text) => {
-          this.welcomeFrames[i] = text;
-        })
-        .catch(() => {
-          this.welcomeFrames[i] = '';
-        });
-    });
-
-    // Start as soon as the first frame is ready; keep loading the rest in parallel.
-    await fetches[0];
-    this.startWelcome();
-  }
-
-  private startWelcome(): void {
-    this.ngZone.runOutsideAngular(() => {
-      this.welcomeTimer = setInterval(() => {
-        if (this.isPaused) return;
-
-        const frame = this.welcomeFrames[this.welcomeIndex];
-        if (frame) this.renderText(frame);
-        this.welcomeIndex++;
-
-        if (this.welcomeIndex >= this.WELCOME_TOTAL) {
-          if (this.welcomeTimer !== null) clearInterval(this.welcomeTimer);
-          this.welcomeTimer = null;
-          this.startClouds();
-        }
-      }, Math.round(1000 / this.WELCOME_FPS));
-    });
+    else void video.play().catch(() => {});
   }
 
   // ── Clouds (video → ASCII) ─────────────────────────────────────
 
   private startClouds(): void {
-    this.phase = 'clouds';
-
     this.cloudCanvas = document.createElement('canvas');
     this.cloudCanvas.width = this.ASCII_COLS;
     this.cloudCanvas.height = this.ASCII_ROWS;

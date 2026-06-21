@@ -8,7 +8,7 @@
   <div class="about-inner global-grid" #cardEl>
 
     <!-- ══ Intro ══ -->
-    <span class="about-label" #aboutLabel>[About]</span>
+    <span class="about-label" #aboutLabel>[ About ]</span>
 
     <div class="about-intro">
       <h2 class="about-greeting" #helloEl>Hello, I'm <em>Sofía&nbsp;Cirioni</em></h2>
@@ -67,7 +67,7 @@
 
     </div>
 
-    <!-- ══ Skills — application names only ══ -->
+    <!-- ══ Technical skills — application names only ══ -->
     <div class="about-skills">
       <span class="about-skills-label" #skillsLabel>Technical skills</span>
       <div class="about-skills-list">
@@ -76,6 +76,16 @@
             <span class="skill-icon" [style.--icon-url]="iconUrl(skill.icon)" aria-hidden="true"></span>
             <span class="skill-name">{{ skill.name }}</span>
           </span>
+        }
+      </div>
+    </div>
+
+    <!-- ══ Soft skills — traits ══ -->
+    <div class="about-soft">
+      <span class="about-skills-label" #softLabel>Soft skills</span>
+      <div class="about-soft-list">
+        @for (soft of softSkills; track soft) {
+          <span class="soft-item" #softItem>{{ soft }}</span>
         }
       </div>
     </div>

@@ -1,4 +1,3 @@
-import { DOCUMENT } from '@angular/common';
 import { AfterViewInit, Component, inject, OnDestroy } from '@angular/core';
 import { SmoothScrollService } from '../../services/smooth-scroll.service';
 import { Nav } from '../../components/nav/nav';
@@ -25,7 +24,6 @@ import { ArrowIcon } from '../../components/arrow-icon/arrow-icon';
   styleUrl: './home.css',
 })
 export class Home implements AfterViewInit, OnDestroy {
-  private readonly doc = inject(DOCUMENT);
   private readonly smoothScroll = inject(SmoothScrollService);
 
   readonly phraseLines: ScrambleWordDef[][] = [
@@ -34,14 +32,6 @@ export class Home implements AfterViewInit, OnDestroy {
   ];
 
   phraseReady = false;
-
-  /**
-   * Safety net: if the hero scramble never emits `complete` (e.g. fonts fail
-   * to load), the body would stay scroll-locked forever. This timer unlocks
-   * it unconditionally after a max wait.
-   */
-  private readonly SCROLL_UNLOCK_FALLBACK_MS = 8000;
-  private unlockFallbackTimer: ReturnType<typeof setTimeout> | null = null;
 
   /**
    * 4 full-width ticker rows (100vw).
@@ -58,36 +48,16 @@ export class Home implements AfterViewInit, OnDestroy {
     },
   ];
 
-  constructor() {
-    this.doc.body.style.overflow = 'hidden';
-    this.unlockFallbackTimer = setTimeout(
-      () => this.unlockScroll(),
-      this.SCROLL_UNLOCK_FALLBACK_MS,
-    );
-  }
-
   ngAfterViewInit(): void {
-    // Lenis owns scrolling from here; keep it stopped while the intro is locked.
     this.smoothScroll.init();
-    this.smoothScroll.stop();
   }
 
+  /** Reveals the CTA + scroll hint once the hero phrase finishes scrambling. */
   onPhraseComplete(): void {
     this.phraseReady = true;
-    this.unlockScroll();
-  }
-
-  private unlockScroll(): void {
-    this.doc.body.style.overflow = '';
-    this.smoothScroll.start();
-    if (this.unlockFallbackTimer !== null) {
-      clearTimeout(this.unlockFallbackTimer);
-      this.unlockFallbackTimer = null;
-    }
   }
 
   ngOnDestroy(): void {
-    this.unlockScroll();
     this.smoothScroll.destroy();
   }
 }

@@ -42,6 +42,8 @@ export class About implements AfterViewInit, OnDestroy {
   @ViewChild('langContent') private langContent!: ElementRef<HTMLElement>;
   @ViewChild('skillsLabel') private skillsLabel!: ElementRef<HTMLElement>;
   @ViewChildren('skillCard') private skillCards!: QueryList<ElementRef<HTMLElement>>;
+  @ViewChild('softLabel')   private softLabel!:   ElementRef<HTMLElement>;
+  @ViewChildren('softItem')  private softItems!:  QueryList<ElementRef<HTMLElement>>;
 
   private cleanupReveal?: () => void;
 
@@ -58,6 +60,7 @@ export class About implements AfterViewInit, OnDestroy {
         [el(this.expLabel), el(this.expContent)],
         [el(this.langLabel), el(this.langContent)],
         [el(this.skillsLabel), ...this.skillCards.map(el)],
+        [el(this.softLabel), ...this.softItems.map(el)],
       ],
     );
   }
@@ -99,6 +102,13 @@ export class About implements AfterViewInit, OnDestroy {
     { name: 'Docker', icon: 'docker-logo.svg', level: 2 },
     { name: 'Database', icon: 'db-logo.svg', level: 1 },
     { name: 'GitHub', icon: 'github-logo.svg', level: 2 },
+  ];
+
+  readonly softSkills: string[] = [
+    'Fast learner',
+    'Self-taught',
+    'Agile methodologies',
+    'Problem-solving',
   ];
 
   iconUrl(icon: string): string {
