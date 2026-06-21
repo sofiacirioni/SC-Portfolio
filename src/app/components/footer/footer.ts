@@ -1,9 +1,10 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { ScrollRevealService } from '../../services/scroll-reveal.service';
+import { ArrowIcon } from '../arrow-icon/arrow-icon';
 
 @Component({
   selector: 'app-site-footer',
-  imports: [],
+  imports: [ArrowIcon],
   templateUrl: './footer.html',
   styleUrl: './footer.css',
 })

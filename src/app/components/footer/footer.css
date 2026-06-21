@@ -44,15 +44,30 @@
 }
 
 .footer-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   font-family: var(--font-mono);
   font-size: 0.75rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #1a1a1a;
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+
+.footer-link-text {
   text-decoration: underline;
   text-underline-offset: 4px;
   text-decoration-thickness: 1px;
-  transition: color 0.18s ease;
+}
+
+.footer-links a app-arrow-icon {
+  transition: transform 0.18s ease;
+}
+
+.footer-links a:hover app-arrow-icon {
+  transform: translate(2px, -2px);
 }
 
 .footer-link-arrow {

@@ -79,7 +79,7 @@
   left: 0;
   width: 0;
   height: 1px;
-  background-color: var(--color-primary);
+  background-color: var(--color-accent);
   transition: width 0.3s ease;
 }
 
