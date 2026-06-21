@@ -1,8 +1,9 @@
 import { Component, Input } from '@angular/core';
+import { ArrowIcon } from '../arrow-icon/arrow-icon';
 
 @Component({
   selector: 'app-pill-btn',
-  imports: [],
+  imports: [ArrowIcon],
   templateUrl: './pill-btn.html',
   styleUrl: './pill-btn.css',
 })

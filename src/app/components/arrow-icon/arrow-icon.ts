@@ -1,26 +1,31 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 /**
- * Diagonal up-right arrow (↗), inherits `color` via currentColor and scales
- * with the parent font-size. Shared by pill-btn and footer/inline links.
+ * Single shared line-style arrow (shaft + head, rounded caps).
+ * Base direction is DOWN; rotate it per context via `angle` (degrees, CW):
+ *   0 = down · -135 = up-right · -90 = right · 180 = up · 90 = left.
+ * Inherits `color` via currentColor and scales with the parent font-size.
  */
 @Component({
   selector: 'app-arrow-icon',
   imports: [],
-  template: `<svg viewBox="0 0 11 11" fill="none" aria-hidden="true">
-    <path
-      d="M1 10L10 1M10 1H3.5M10 1V7.5"
-      stroke="currentColor"
-      stroke-width="1.5"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
+  template: `<svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    [style.transform]="'rotate(' + angle + 'deg)'"
+  >
+    <line x1="12" y1="5" x2="12" y2="19" />
+    <polyline points="19 12 12 19 5 12" />
   </svg>`,
   styles: `
     :host {
       display: inline-block;
-      width: 0.62em;
-      height: 0.62em;
+      width: 1em;
+      height: 1em;
       line-height: 0;
     }
     svg {
@@ -30,4 +35,7 @@ import { Component } from '@angular/core';
     }
   `,
 })
-export class ArrowIcon {}
+export class ArrowIcon {
+  /** Rotation in degrees (clockwise). 0 = down. */
+  @Input() angle = 0;
+}

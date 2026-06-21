@@ -30,6 +30,7 @@
 
 .pill-btn__icon {
   flex-shrink: 0;
+  font-size: 0.8rem;
   transition: transform 0.2s ease;
 }
 

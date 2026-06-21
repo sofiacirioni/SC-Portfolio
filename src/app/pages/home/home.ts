@@ -16,10 +16,11 @@ import { About } from '../../components/about/about';
 import { ProjectsSection } from '../../components/projects/projects';
 import { ContactSection } from '../../components/contact/contact';
 import { SiteFooter } from '../../components/footer/footer';
+import { ArrowIcon } from '../../components/arrow-icon/arrow-icon';
 
 @Component({
   selector: 'app-home',
-  imports: [Nav, Hero, ScramblePhraseComponent, PillBtnComponent, TickerTapeComponent, About, ProjectsSection, ContactSection, SiteFooter],
+  imports: [Nav, Hero, ScramblePhraseComponent, PillBtnComponent, TickerTapeComponent, About, ProjectsSection, ContactSection, SiteFooter, ArrowIcon],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

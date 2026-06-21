@@ -1,20 +1,4 @@
 <a class="pill-btn" [href]="href">
   <span class="pill-btn__label">{{ label }}</span>
-  <svg
-    class="pill-btn__icon"
-    width="11"
-    height="11"
-    viewBox="0 0 11 11"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    aria-hidden="true"
-  >
-    <path
-      d="M1 10L10 1M10 1H3.5M10 1V7.5"
-      stroke="currentColor"
-      stroke-width="1.5"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
-  </svg>
+  <app-arrow-icon class="pill-btn__icon" [angle]="-135" />
 </a>

@@ -63,6 +63,7 @@
 }
 
 .footer-links a app-arrow-icon {
+  font-size: 0.9em;
   transition: transform 0.18s ease;
 }
 
