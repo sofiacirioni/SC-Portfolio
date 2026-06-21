@@ -39,19 +39,19 @@
   margin: 0;
   padding: 0;
   display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.4rem;
 }
 
 .footer-links a {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.25rem;
-  font-family: var(--font-body);
-  font-size: var(--text-base);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: #1a1a1a;
-  text-decoration: none;
-  width: fit-content;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
   transition: color 0.18s ease;
 }
 
@@ -66,7 +66,6 @@
   color: var(--color-accent);
 }
 
-.footer-links a:hover .footer-link-arrow,
 .footer-top:hover .footer-link-arrow {
   color: var(--color-accent);
   transform: translate(2px, -2px);
@@ -116,11 +115,12 @@
   margin: 0;
   font-family: var(--font-mono);
   font-weight: 600;
-  font-size: clamp(2.5rem, 13vw, 11rem);
+  /* Sized to fit one line without clipping (9.5vw ≈ Martian Mono's real width
+     for 13 chars); wraps gracefully rather than clipping if ever too wide */
+  font-size: clamp(2rem, 9.5vw, 9rem);
   line-height: 0.9;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   color: #1a1a1a;
-  white-space: nowrap;
 }
 
 /* ── Legal line ──────────────────────────────── */
