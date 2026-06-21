@@ -124,19 +124,11 @@
   transition: color 0.18s ease;
 }
 
-/* ── Oversized wordmark ──────────────────────── */
+/* ── Oversized wordmark (typography lives in app-gravity-wordmark) ── */
 .footer-wordmark {
   grid-column: 1 / -1;
   grid-row: 2;
   margin: 0;
-  font-family: var(--font-mono);
-  font-weight: 600;
-  /* Sized to fit one line without clipping (9.5vw ≈ Martian Mono's real width
-     for 13 chars); wraps gracefully rather than clipping if ever too wide */
-  font-size: clamp(2rem, 9.5vw, 9rem);
-  line-height: 0.9;
-  letter-spacing: -0.02em;
-  color: #1a1a1a;
 }
 
 /* ── Legal line ──────────────────────────────── */
