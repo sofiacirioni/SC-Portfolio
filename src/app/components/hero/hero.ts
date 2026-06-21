@@ -42,9 +42,10 @@ export class Hero implements AfterViewInit, OnDestroy {
   private hiSmoothed = 1;
   private boundsInit = false;
 
+  private readonly CROSSFADE_MS = 500;
   private phase: 'hello' | 'clouds' = 'hello';
   private activeVideo: HTMLVideoElement | null = null;
-  private onHelloEnded = (): void => this.startClouds();
+  private onHelloEnded = (): void => this.dissolveToClouds();
 
   private scaleReady = false;
   private resizeObserver: ResizeObserver | null = null;
@@ -101,6 +102,18 @@ export class Hero implements AfterViewInit, OnDestroy {
   }
 
   // ── Clouds loop (takes over after the intro) ───────────────────
+
+  /** Fade the intro out, swap the source while invisible, fade the clouds in. */
+  private dissolveToClouds(): void {
+    const pre = this.preRef.nativeElement;
+    pre.style.opacity = '0';
+    setTimeout(() => {
+      this.startClouds();
+      requestAnimationFrame(() => {
+        pre.style.opacity = '1';
+      });
+    }, this.CROSSFADE_MS);
+  }
 
   private startClouds(): void {
     this.phase = 'clouds';

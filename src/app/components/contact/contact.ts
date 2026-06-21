@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import {
   ScramblePhraseComponent,
   ScrambleWordDef,
@@ -17,17 +17,22 @@ export class ContactSection implements AfterViewInit, OnDestroy {
   private cleanupReveal?: () => void;
   private visibilityObserver?: IntersectionObserver;
 
-  constructor(private scrollReveal: ScrollRevealService) {}
+  constructor(
+    private scrollReveal: ScrollRevealService,
+    private ngZone: NgZone,
+  ) {}
 
   ngAfterViewInit(): void {
     this.cleanupReveal = this.scrollReveal.reveal(this.sectionEl.nativeElement);
 
-    // Delay phrase start until the section enters the viewport
+    // Start the phrase scramble only once the section enters the viewport.
+    // IntersectionObserver isn't zone-patched, so re-enter Angular's zone to
+    // make the @if update.
     this.visibilityObserver = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
         this.visibilityObserver?.disconnect();
-        this.phraseVisible = true;
+        this.ngZone.run(() => (this.phraseVisible = true));
       },
       { threshold: 0.25 },
     );
