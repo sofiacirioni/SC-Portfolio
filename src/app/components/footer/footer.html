@@ -1,36 +1,48 @@
 <footer class="site-footer" #sectionEl>
-  <div class="footer-card global-grid">
+  <div class="footer-inner global-grid">
 
-    <!-- ── Row 1: Social label ────────────────── -->
-    <span class="footer-social-label">SOCIAL</span>
+    <!-- ── Social links (text, not buttons) ───────── -->
+    <nav class="footer-social" aria-label="Social links">
+      <span class="footer-label">[ Social ]</span>
+      <ul class="footer-links">
+        <li>
+          <a href="https://linkedin.com/in/sofiacirioni" target="_blank" rel="noopener noreferrer">
+            LinkedIn<span class="footer-link-arrow">↗</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/sofiacirioni" target="_blank" rel="noopener noreferrer">
+            GitHub<span class="footer-link-arrow">↗</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://behance.net/sofiacirioni" target="_blank" rel="noopener noreferrer">
+            Behance<span class="footer-link-arrow">↗</span>
+          </a>
+        </li>
+        <li>
+          <a href="mailto:sofiacirioni07@gmail.com">
+            Email<span class="footer-link-arrow">↗</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
 
-    <!-- ── Row 2: Social links ───────────────── -->
-    <div class="footer-links">
-      <app-pill-btn label="LinkedIn" href="https://linkedin.com/in/sofiacirioni" />
-      <app-pill-btn label="GitHub"   href="https://github.com/sofiacirioni" />
-      <app-pill-btn label="Behance"  href="https://behance.net/sofiacirioni" />
+    <!-- ── Closing note + back to top (right) ──────── -->
+    <div class="footer-meta">
+      <p class="footer-note">design that <em>inspires</em> —<br>let's make it move.</p>
+      <a class="footer-top" href="#top">Back to top<span class="footer-link-arrow">↑</span></a>
     </div>
 
-    <!-- ── Tagline (center) ───────────────────── -->
-    <p class="footer-tagline">Thanks for visiting!&nbsp;&nbsp;&lt;3</p>
+    <!-- ── Oversized wordmark (visual anchor) ──────── -->
+    <h2 class="footer-wordmark">SOFÍA CIRIONI</h2>
 
-    <!-- ── Right: go top + credits ───────────── -->
-    <div class="footer-right">
-      <app-pill-btn label="Go top" href="#top" />
-      <p class="footer-copy">All rights reserved 2026</p>
-      <p class="footer-copy">Made in Argentina 🌐</p>
-      <p class="footer-credit">
-        ASCII animations built upon
-        <a
-          href="https://github.com/vietnhatthai/txt-animation"
-          target="_blank"
-          rel="noopener noreferrer"
-        >open-source code</a>.
-      </p>
+    <!-- ── Legal line ──────────────────────────────── -->
+    <div class="footer-legal">
+      <span>© 2026 Sofía Cirioni</span>
+      <span>All rights reserved</span>
+      <span>Made in Córdoba, Argentina</span>
     </div>
-
-    <!-- ── ASCII art placeholder (future implementation) ── -->
-    <div class="footer-ascii" aria-hidden="true"></div>
 
   </div>
 </footer>

@@ -1,108 +1,164 @@
-/* ── Footer wrapper ──────────────────────────── */
+/* ══════════════════════════════════════════════
+   Footer — editorial, no filled box, no rounded corners.
+   Oversized wordmark as the closing visual anchor.
+   ══════════════════════════════════════════════ */
+
 .site-footer {
-  margin-top: 3rem;
+  margin-top: 6rem;
 }
 
-/* ── Footer card ─────────────────────────────── */
-/*
-  Breaks out of page-wrapper's 1rem side padding to span 100vw.
-  Uses .global-grid (applied in HTML) for 12-column alignment.
-  Top corners rounded; bottom corners flush (content reaches the edge).
-*/
-.footer-card {
-  background: var(--color-base-accent);
-  border-radius: 20px 20px 0 0;
+.footer-inner {
   width: 100vw;
   margin-left: -1rem;
-  /* padding-inline: 1rem left (aligns with page-wrapper) · 1.5rem right (27px min margin) */
-  padding: 2.5rem 1.5rem 0 1rem;
+  padding: 2.5rem 1.5rem 1.5rem 1rem;
+  border-top: 1px solid color-mix(in srgb, #1a1a1a 22%, transparent);
+  /* display:grid (12 cols) comes from .global-grid */
+  row-gap: 2.5rem;
 }
 
-/* ── Social label — col 2, row 1 ────────────── */
-.footer-social-label {
-  grid-column: 2;
-  grid-row: 1;
-  align-self: end;
+/* ── Shared label ────────────────────────────── */
+.footer-label {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: var(--color-accent);
-  letter-spacing: 0.1em;
-  padding-bottom: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: var(--color-base-secondary);
 }
 
-/* ── Social links — cols 2–4, row 2 ─────────── */
-.footer-links {
-  grid-column: 2 / span 3;
-  grid-row: 2;
+/* ── Social links (text, not buttons) ────────── */
+.footer-social {
+  grid-column: 1 / span 4;
+  grid-row: 1;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 0.4rem;
-  padding-bottom: 2rem;
+  gap: 1rem;
 }
 
-/* ── Tagline — cols 5–9, rows 1–2 ───────────── */
-.footer-tagline {
-  grid-column: 5 / span 5;
-  grid-row: 1 / span 2;
-  align-self: center;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: clamp(1.8rem, 3.5vw, 3.5rem);
-  font-weight: 400;
-  color: var(--color-accent);
+.footer-links {
+  list-style: none;
   margin: 0;
-  text-align: center;
-  line-height: 1.2;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
 }
 
-/* ── Right column — cols 10–12, rows 1–2 ────── */
-.footer-right {
-  grid-column: 10 / span 3;
-  grid-row: 1 / span 2;
+.footer-links a {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: #1a1a1a;
+  text-decoration: none;
+  width: fit-content;
+  transition: color 0.18s ease;
+}
+
+.footer-link-arrow {
+  font-size: 0.7em;
+  color: var(--color-base-secondary);
+  transition: transform 0.18s ease, color 0.18s ease;
+}
+
+.footer-links a:hover,
+.footer-top:hover {
+  color: var(--color-accent);
+}
+
+.footer-links a:hover .footer-link-arrow,
+.footer-top:hover .footer-link-arrow {
+  color: var(--color-accent);
+  transform: translate(2px, -2px);
+}
+
+/* ── Closing note + back to top ──────────────── */
+.footer-meta {
+  grid-column: 9 / span 4;
+  grid-row: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.footer-copy {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  font-weight: 300;
-  color: var(--color-base-secondary);
-  margin: 0;
+  gap: 1.25rem;
   text-align: right;
 }
 
-.footer-credit {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  font-weight: 300;
-  color: var(--color-base-secondary);
+.footer-note {
   margin: 0;
-  text-align: right;
-  line-height: 1.5;
+  font-family: var(--font-serif);
+  font-size: var(--text-h5);
+  line-height: 1.3;
+  color: #1a1a1a;
 }
 
-.footer-credit a {
+.footer-note em {
+  font-style: italic;
   color: var(--color-accent);
+}
+
+.footer-top {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #1a1a1a;
   text-decoration: none;
+  transition: color 0.18s ease;
 }
 
-.footer-credit a:hover {
-  text-decoration: underline;
+/* ── Oversized wordmark ──────────────────────── */
+.footer-wordmark {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: clamp(2.5rem, 13vw, 11rem);
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  color: #1a1a1a;
+  white-space: nowrap;
 }
 
-/* ── ASCII animation placeholder — full width, row 3 ── */
-.footer-ascii {
+/* ── Legal line ──────────────────────────────── */
+.footer-legal {
   grid-column: 1 / -1;
   grid-row: 3;
-  height: 10rem;
-  margin-top: 2rem;
-  background: color-mix(in srgb, var(--color-accent) 6%, transparent);
-  border-radius: 4px 4px 0 0;
-  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid color-mix(in srgb, #1a1a1a 12%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 300;
+  color: var(--color-base-secondary);
+}
+
+/* ── Responsive ──────────────────────────────── */
+@media (max-width: 1024px) {
+  .footer-social { grid-column: 1 / span 5; }
+  .footer-meta { grid-column: 6 / span 3; }
+}
+
+@media (max-width: 640px) {
+  .footer-social { grid-column: 1 / -1; grid-row: 1; }
+  .footer-meta {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    align-items: flex-start;
+    text-align: left;
+  }
+  .footer-wordmark {
+    grid-row: 3;
+    font-size: clamp(2rem, 16vw, 4rem);
+  }
+  .footer-legal {
+    grid-row: 4;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
 }

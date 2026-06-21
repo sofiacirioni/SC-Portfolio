@@ -1,10 +1,9 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
-import { PillBtnComponent } from '../pill-btn/pill-btn';
 import { ScrollRevealService } from '../../services/scroll-reveal.service';
 
 @Component({
   selector: 'app-site-footer',
-  imports: [PillBtnComponent],
+  imports: [],
   templateUrl: './footer.html',
   styleUrl: './footer.css',
 })
