@@ -11,26 +11,29 @@ import {
   ViewChildren,
 } from '@angular/core';
 import gsap from 'gsap';
-import { Bodies, Body, Composite, Engine } from 'matter-js';
+import { Bodies, Body, Composite, Engine, Sleeping } from 'matter-js';
 
 /**
- * ASCII rendering of the name (pre-generated from sofia-mark.png at 95×10).
+ * ASCII rendering of the name (pre-generated from sofia-mark.png at 130×13).
  * Trailing spaces are trimmed per line; only non-space cells are rendered.
  */
 const GRID = {
-  cols: 95,
-  rows: 10,
+  cols: 130,
+  rows: 13,
   lines: [
-    '                        :  =-                         -             -                        -.',
-    '                    -#  =  .                          =            :=                        =.',
-    '                   .@*',
-    '  ++ .*   *:  #:   #@   .%%    #=  :#       .#  *=  *@.  .%*  #*  #@    +:  #-   %#  :@*   +@-',
-    '  @#     @*   %%   @+    @=   @+   @*      :@:  :   %%    @*      @*   @*   %%   @#   @=   *@',
-    '   #%.  *@   .@+  =@    +@   *@   +@       %%      .@-   *@      -@   +@    @+  =@.  *@    @+',
-    '    @#  *%   #*   %*    @*   %%   %#       @#      *@    @+      %#   *%   ##   @*   @=   =@',
-    '=*  -    =  :.   :@     #+   -#-  +*       :*-.    +*.  .*       *+    =  :.    *    #=   =#:',
-    '                 %*',
-    '              %::=',
+    '                              .:::   =#:                                 .-:                .-:                                :-.',
+    '                            =%+ *@+ -%=                                  %@%                %@#                               -@@*',
+    '                           *@%   .  -',
+    '     :.:-.     .---:     :=@@#:.   .-       -=-   :            --:.     .::     .-  :=-    .::      .---:      .::  .==:      .:',
+    '   #%: =@#   -%*.  #%:   .%@%:  .=%@@.    *@#: -=#%         .#%- :#%  -*@@=   =%@#:--@@+ -#@@-    =%*   %%.  :+@@+.=-*@@:   =%@@',
+    '  +@@.      *@%    #@#    @@+     %@*    %@*    @@+        .%@=  +%*   *@%     %@#-  ..   #@%    #@#    #@*   :@@+:  +@@     %@*',
+    '  .%@%=    =@@=   .@@#   +@%     =@@.   #@%    *@%         %@%         @@+    -@@+       .@@=   +@@-   :@@*   #@@:   @@+    =@@.',
+    '    +@@#   %@%    +@@:   %@+     %@#   .@@*   -@@+        :@@+        +@@     #@%        *@%    %@#    *@@.  :@@+   *@%     %@#',
+    ' .   +@@   #@*   .@@=   +@@.    -@@: = -@@=  :*@@. -      -@@=   .+   %@* -. -@@-        @@+ -  %@=   :@@-   *@%   .@@+ -  -@@: =',
+    '*@*  *#:   .%#. -#*.    %@*     +@@+=   %@%== -@%+=        #@%=-==   .@@*=.  #@#        -@@*=.  :%#. -#*    .@@=   -@@*=   *@@+=',
+    ' .. .        .::.      =@@.      .:      .:    .:            ::.      .:.                .:.      .:..              .:      .:',
+    '                   **  %@=',
+    '                   #%-+*.',
   ],
 };
 
@@ -91,15 +94,17 @@ export class GravityAscii implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('cell') private cellEls!: QueryList<ElementRef<HTMLElement>>;
 
   private readonly CHAR_ASPECT = 0.55; // cell width / height
+  private readonly MAX_CW = 8; // cap cell width on wide screens → smaller name, shorter footer
   private readonly RELEASE_DELAY_MS = 3000;
   private readonly MOUSE_RADIUS = 120;
   private readonly MOUSE_STRENGTH = 0.014;
 
-  private readonly FALL_FACTOR = 2.2; // band height multiplier: name on top + room to fall
+  private readonly FALL_FACTOR = 1.3; // band height multiplier: name + a small drop
   private cw = 0;
   private ch = 0;
   private bandH = 0;
   private worldH = 0;
+  private offsetX = 0; // left offset to center the block when capped narrower than the host
 
   private engine: Engine | null = null;
   private live: Live[] = [];
@@ -168,9 +173,10 @@ export class GravityAscii implements OnInit, AfterViewInit, OnDestroy {
     const W = host.clientWidth;
     if (W === 0) return;
 
-    this.cw = W / GRID.cols;
+    this.cw = Math.min(W / GRID.cols, this.MAX_CW);
     this.ch = this.cw / this.CHAR_ASPECT;
     this.bandH = GRID.rows * this.ch;
+    this.offsetX = (W - GRID.cols * this.cw) / 2; // center the block
     // Reserve the fall zone up-front (name on top, empty room below) so the
     // layout never shifts and the letters can never reach the legal line.
     this.worldH = this.bandH * this.FALL_FACTOR;
@@ -182,9 +188,10 @@ export class GravityAscii implements OnInit, AfterViewInit, OnDestroy {
       const cell = this.cells[i];
       el.style.width = `${this.cw}px`;
       el.style.height = `${this.ch}px`;
-      el.style.fontSize = `${this.ch * 0.7}px`;
+      el.style.fontSize = `${this.ch * 0.85}px`;
       el.style.lineHeight = `${this.ch}px`;
-      el.style.transform = `translate(${cell.col * this.cw}px, ${cell.row * this.ch}px)`;
+      el.style.transform =
+        `translate(${this.offsetX + cell.col * this.cw}px, ${cell.row * this.ch}px)`;
     });
   }
 
@@ -200,20 +207,25 @@ export class GravityAscii implements OnInit, AfterViewInit, OnDestroy {
     this.ngZone.runOutsideAngular(() => {
       const engine = Engine.create();
       engine.gravity.y = 1;
+      // Settled letters sleep → ~530 colliding bodies stay cheap; the mouse wakes them.
+      engine.enableSleeping = true;
       this.engine = engine;
 
       const t = 200;
+      const blockW = GRID.cols * this.cw;
+      const left = this.offsetX;
+      const right = this.offsetX + blockW;
       Composite.add(engine.world, [
         Bodies.rectangle(W / 2, worldH + t / 2, W + t * 2, t, { isStatic: true }), // floor
         Bodies.rectangle(W / 2, -t / 2, W + t * 2, t, { isStatic: true }), // ceiling
-        Bodies.rectangle(-t / 2, worldH / 2, t, worldH + t * 2, { isStatic: true }), // left
-        Bodies.rectangle(W + t / 2, worldH / 2, t, worldH + t * 2, { isStatic: true }), // right
+        Bodies.rectangle(left - t / 2, worldH / 2, t, worldH + t * 2, { isStatic: true }), // left
+        Bodies.rectangle(right + t / 2, worldH / 2, t, worldH + t * 2, { isStatic: true }), // right
       ]);
 
       const els = this.cellEls.toArray();
       els.forEach((ref, i) => {
         const cell = this.cells[i];
-        const cx = cell.col * this.cw + this.cw / 2;
+        const cx = this.offsetX + cell.col * this.cw + this.cw / 2;
         const cy = cell.row * this.ch + this.ch / 2;
         const body = Bodies.rectangle(cx, cy, this.cw * 0.72, this.ch * 0.72, {
           // collisions ON → characters stack into a pile instead of overlapping
@@ -242,6 +254,7 @@ export class GravityAscii implements OnInit, AfterViewInit, OnDestroy {
             const dy = L.body.position.y - this.mouse.y;
             const dist = Math.hypot(dx, dy);
             if (dist < this.MOUSE_RADIUS && dist > 0.01) {
+              Sleeping.set(L.body, false); // wake it so it reacts
               const f = (1 - dist / this.MOUSE_RADIUS) * this.MOUSE_STRENGTH * L.body.mass;
               Body.applyForce(L.body, L.body.position, { x: (dx / dist) * f, y: (dy / dist) * f });
             }
@@ -251,6 +264,7 @@ export class GravityAscii implements OnInit, AfterViewInit, OnDestroy {
         Engine.update(this.engine, Math.min(33, Math.max(8, deltaTime)));
 
         for (const L of this.live) {
+          if (L.body.isSleeping) continue; // settled — transform already up to date
           const p = L.body.position;
           L.el.style.transform =
             `translate(${p.x - this.cw / 2}px, ${p.y - this.ch / 2}px) rotate(${L.body.angle}rad)`;
