@@ -14,24 +14,23 @@ import gsap from 'gsap';
 import { Bodies, Body, Composite, Engine } from 'matter-js';
 
 /**
- * ASCII rendering of the name (pre-generated from sofia-mark.png at 110×11).
+ * ASCII rendering of the name (pre-generated from sofia-mark.png at 95×10).
  * Trailing spaces are trimmed per line; only non-space cells are rendered.
  */
 const GRID = {
-  cols: 110,
-  rows: 11,
+  cols: 95,
+  rows: 10,
   lines: [
-    '                            .   *                             .:              .:                            -',
-    '                        #= -#  =                              **              **                           =*:',
-    '                       %@',
-    '   =: =%    --  +-    #@*   :+#:    -*-   *         -=  =   -*#   .+#. :%#  -*#     =:  *.   :*#  :*%-   :+#.',
-    '  #@      .@*   +@.   %@     @%    %%   :@*        %%  -%.  =@+    @%:  .   =@+   -@=   #@    @%.  =@=    @%',
-    '  :@%.    @@    %@.  :@+    =@=   #@.   #@        %@.       %@    :@%       %@   .@%    @@   +@*   %@    =@=',
-    '    #@+  =@*   :@#   #@     %@    @%   =@#        @%       :@*    #@       :@*   *@-   +@+   @%   =@=    %@',
-    '.=  .@=  .@-   %+   .@*    -@* . .@%   +@-        @@   .   #@:   .@*       #@:   -@.   %=   +@=   @@.   -@* .',
-    '.=  .      -  :     #@      +-    :+-   +:         ==:     :+:   .-        :+:     : ..     --    =+.    +-',
-    '                    @+',
-    '                #* +.',
+    '                        :  =-                         -             -                        -.',
+    '                    -#  =  .                          =            :=                        =.',
+    '                   .@*',
+    '  ++ .*   *:  #:   #@   .%%    #=  :#       .#  *=  *@.  .%*  #*  #@    +:  #-   %#  :@*   +@-',
+    '  @#     @*   %%   @+    @=   @+   @*      :@:  :   %%    @*      @*   @*   %%   @#   @=   *@',
+    '   #%.  *@   .@+  =@    +@   *@   +@       %%      .@-   *@      -@   +@    @+  =@.  *@    @+',
+    '    @#  *%   #*   %*    @*   %%   %#       @#      *@    @+      %#   *%   ##   @*   @=   =@',
+    '=*  -    =  :.   :@     #+   -#-  +*       :*-.    +*.  .*       *+    =  :.    *    #=   =#:',
+    '                 %*',
+    '              %::=',
   ],
 };
 
@@ -183,7 +182,7 @@ export class GravityAscii implements OnInit, AfterViewInit, OnDestroy {
       const cell = this.cells[i];
       el.style.width = `${this.cw}px`;
       el.style.height = `${this.ch}px`;
-      el.style.fontSize = `${this.ch * 0.95}px`;
+      el.style.fontSize = `${this.ch * 0.7}px`;
       el.style.lineHeight = `${this.ch}px`;
       el.style.transform = `translate(${cell.col * this.cw}px, ${cell.row * this.ch}px)`;
     });
@@ -216,11 +215,11 @@ export class GravityAscii implements OnInit, AfterViewInit, OnDestroy {
         const cell = this.cells[i];
         const cx = cell.col * this.cw + this.cw / 2;
         const cy = cell.row * this.ch + this.ch / 2;
-        const body = Bodies.rectangle(cx, cy, this.cw * 0.9, this.ch * 0.9, {
-          // negative group → cells never collide with each other (only the walls)
-          collisionFilter: { group: -1 },
-          restitution: 0.2,
-          frictionAir: 0.015,
+        const body = Bodies.rectangle(cx, cy, this.cw * 0.72, this.ch * 0.72, {
+          // collisions ON → characters stack into a pile instead of overlapping
+          restitution: 0.15,
+          friction: 0.6,
+          frictionAir: 0.012,
         });
         Composite.add(engine.world, body);
         this.live.push({ el: ref.nativeElement, body });
