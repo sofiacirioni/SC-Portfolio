@@ -94,7 +94,6 @@ export class GravityAscii implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('cell') private cellEls!: QueryList<ElementRef<HTMLElement>>;
 
   private readonly CHAR_ASPECT = 0.55; // cell width / height
-  private readonly MAX_CW = 8; // cap cell width on wide screens → smaller name, shorter footer
   private readonly RELEASE_DELAY_MS = 3000;
   private readonly MOUSE_RADIUS = 120;
   private readonly MOUSE_STRENGTH = 0.014;
@@ -173,10 +172,10 @@ export class GravityAscii implements OnInit, AfterViewInit, OnDestroy {
     const W = host.clientWidth;
     if (W === 0) return;
 
-    this.cw = Math.min(W / GRID.cols, this.MAX_CW);
+    this.cw = W / GRID.cols; // full content width
     this.ch = this.cw / this.CHAR_ASPECT;
     this.bandH = GRID.rows * this.ch;
-    this.offsetX = (W - GRID.cols * this.cw) / 2; // center the block
+    this.offsetX = (W - GRID.cols * this.cw) / 2; // 0 at full width; centers if ever capped
     // Reserve the fall zone up-front (name on top, empty room below) so the
     // layout never shifts and the letters can never reach the legal line.
     this.worldH = this.bandH * this.FALL_FACTOR;
