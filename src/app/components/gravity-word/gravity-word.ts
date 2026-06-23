@@ -40,10 +40,14 @@ interface Letter {
     }
     .gw {
       position: relative;
-      display: inline-block;
+      display: block;
+      /* full-bleed: the play area spans the whole viewport width, word centered */
+      width: 100vw;
+      margin-left: -1rem;
+      text-align: center;
       white-space: pre;
       pointer-events: none;
-      opacity: 0.5;
+      opacity: 0.2;
       font-family: var(--font-serif);
       font-weight: 700;
       font-style: italic;
@@ -112,9 +116,10 @@ export class GravityWord implements OnInit, AfterViewInit, OnDestroy {
           this.startTimer = setTimeout(() => this.start(), this.RELEASE_DELAY_MS);
         }
       },
-      { threshold: 0.4 },
+      { threshold: 0.2 },
     );
-    this.observer.observe(this.containerRef.nativeElement);
+    // Observe the component host (normal box), not the full-bleed .gw.
+    this.observer.observe(this.hostEl.nativeElement);
   }
 
   ngOnDestroy(): void {
