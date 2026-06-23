@@ -14,26 +14,45 @@ import gsap from 'gsap';
 import { Bodies, Body, Composite, Engine, Sleeping } from 'matter-js';
 
 /**
- * ASCII rendering of the name (pre-generated from sofia-mark.png at 130×13).
- * Trailing spaces are trimmed per line; only non-space cells are rendered.
+ * ASCII renderings of the name (pre-generated from sofia-mark.png).
+ * LG (160×16) for wide screens, SM (85×9) for small ones — responsive: fewer,
+ * larger, lighter characters on phones. Only non-space cells get a body.
  */
-const GRID = {
-  cols: 130,
-  rows: 13,
+const GRID_LG = {
+  cols: 160,
+  rows: 16,
   lines: [
-    '                              .:::   =#:                                 .-:                .-:                                :-.',
-    '                            =%+ *@+ -%=                                  %@%                %@#                               -@@*',
-    '                           *@%   .  -',
-    '     :.:-.     .---:     :=@@#:.   .-       -=-   :            --:.     .::     .-  :=-    .::      .---:      .::  .==:      .:',
-    '   #%: =@#   -%*.  #%:   .%@%:  .=%@@.    *@#: -=#%         .#%- :#%  -*@@=   =%@#:--@@+ -#@@-    =%*   %%.  :+@@+.=-*@@:   =%@@',
-    '  +@@.      *@%    #@#    @@+     %@*    %@*    @@+        .%@=  +%*   *@%     %@#-  ..   #@%    #@#    #@*   :@@+:  +@@     %@*',
-    '  .%@%=    =@@=   .@@#   +@%     =@@.   #@%    *@%         %@%         @@+    -@@+       .@@=   +@@-   :@@*   #@@:   @@+    =@@.',
-    '    +@@#   %@%    +@@:   %@+     %@#   .@@*   -@@+        :@@+        +@@     #@%        *@%    %@#    *@@.  :@@+   *@%     %@#',
-    ' .   +@@   #@*   .@@=   +@@.    -@@: = -@@=  :*@@. -      -@@=   .+   %@* -. -@@-        @@+ -  %@=   :@@-   *@%   .@@+ -  -@@: =',
-    '*@*  *#:   .%#. -#*.    %@*     +@@+=   %@%== -@%+=        #@%=-==   .@@*=.  #@#        -@@*=.  :%#. -#*    .@@=   -@@*=   *@@+=',
-    ' .. .        .::.      =@@.      .:      .:    .:            ::.      .:.                .:.      .:..              .:      .:',
-    '                   **  %@=',
-    '                   #%-+*.',
+    '                                      ...     **:                                          :.                     .:                                         :.',
+    '                                   =##:-%@+  +@*.                                        .%@@+                   #@@#                                      .%@@#',
+    '                                  #@@. .**: +#.                                           +*+                    =**:                                       +*+.',
+    '                                 *@@*',
+    '     :==:+*-      .=++++-     -=+@@@#==  .:-=+       .=**+:  :=              =+==-:    .:-=+     .-=+  :+**:  .:-=+.       -++++=.     .:-=+   =***:     .:-=+',
+    '   :%@=  #@@.   :#@+   =@%:    .#@@#    =+@@@#     :#@@=. ==+@#            *@%.  +%#  =+@@@#   .=#@@#.+.*@@% :+%@@%      +%%:   %@*   :=#@@# -+-*@@@    =+@@@#',
+    '   @@@:   :    +@@+    :@@#     %@@:      @@@:    -@@%.    @@@-          :%@%.  *@@*    @@@:     *@@+=  .+=    #@@+    :%@%     #@@:    *@@+=:  =@@%      @@@:',
+    '   %@@%:      +@@%     +@@%    +@@#      +@@#    :@@@:    =@@%           %@@+    :.    +@@#      @@@#         :@@@     %@@+     @@@-   .@@@#    %@@=     +@@#',
+    '    *@@@*     @@@+     %@@*    %@@-      %@@-    #@@#     %@@=          +@@@           %@@-     +@@%          #@@*    *@@%     +@@@    +@@%    =@@%      %@@-',
+    '     :%@@#   -@@@     +@@%    =@@%      =@@%     @@@=    #@@%           #@@#      .   =@@%      %@@=         .@@@.    %@@+     %@@+    %@@-    %@@=     =@@%',
+    ' ..   :@@%   :@@#     %@%:    %@@=      %@@= :+ :@@@:  .=*@@= :+        %@@*     *-   %@@= :+  =@@%          *@@* .+  #@@:    +@@+    +@@#    =@@%  +.  %@@= -+',
+    '#@@-  +@%:    *@%   :%@+     -@@%      .@@@=+=   %@@*-+= #@@=+=         =@@%-.:=*.   .@@@=+=   %@@=          %@@*=*   :%@=   +@#-     %@@-    #@@#=*   :@@@=+=',
+    '.=*-:==.       .+++++-       #@@=       =**=      +**=.  :**=.           .+***=.      =**=     ===           -**+:      -++++=.       +==     :**+:     =**=',
+    '                            :@@%',
+    '                       #@%  #@#',
+    '                       =%#=**:',
+  ],
+};
+const GRID_SM = {
+  cols: 85,
+  rows: 9,
+  lines: [
+    '                   ::=. +=                      +-          -+                     +=',
+    '                  #* -. :                       =.          --                     =:',
+    '   :.=    :.-   .*@+  .=    :-: .        :.:  .::  .-: -=  :-    ::::   .-  -=   .:-',
+    ' .@- -  +#  -@   %#   #@   ##  +%      =%  %- -@=  -@* :+  %%  .#=  %+  *@= :@+  -@+',
+    '  #%:  -@-  +@. :@:   %*  *@   %*     :@=     +@   +@:    .@-  %%   @*  %%  +@   +@',
+    '   *@. *%   @*  #%   =@.  %#  +@:     +@      @*   %*     *%  .@=  +@. :@-  %*   %*',
+    '*+ =+  :#. +=  .@=   *%-  ##-.=%-     :%=.:  :@+: -%.     %#-  *= -*.  *#  :@+: .@+:',
+    '               *%',
+    '            +*-*',
   ],
 };
 
@@ -88,6 +107,10 @@ interface Live {
 export class GravityAscii implements OnInit, AfterViewInit, OnDestroy {
   @Input() alt = '';
 
+  /** Lower-res grid (fewer, lighter bodies) on small screens. */
+  private readonly grid =
+    typeof window !== 'undefined' && window.innerWidth < 768 ? GRID_SM : GRID_LG;
+
   cells: Cell[] = [];
 
   @ViewChild('container') private containerRef!: ElementRef<HTMLElement>;
@@ -119,8 +142,8 @@ export class GravityAscii implements OnInit, AfterViewInit, OnDestroy {
   constructor(private ngZone: NgZone) {}
 
   ngOnInit(): void {
-    for (let r = 0; r < GRID.rows; r++) {
-      const line = GRID.lines[r] ?? '';
+    for (let r = 0; r < this.grid.rows; r++) {
+      const line = this.grid.lines[r] ?? '';
       for (let c = 0; c < line.length; c++) {
         if (line[c] !== ' ') this.cells.push({ ch: line[c], col: c, row: r });
       }
@@ -172,10 +195,10 @@ export class GravityAscii implements OnInit, AfterViewInit, OnDestroy {
     const W = host.clientWidth;
     if (W === 0) return;
 
-    this.cw = W / GRID.cols; // full content width
+    this.cw = W / this.grid.cols; // full content width
     this.ch = this.cw / this.CHAR_ASPECT;
-    this.bandH = GRID.rows * this.ch;
-    this.offsetX = (W - GRID.cols * this.cw) / 2; // 0 at full width; centers if ever capped
+    this.bandH = this.grid.rows * this.ch;
+    this.offsetX = (W - this.grid.cols * this.cw) / 2; // 0 at full width; centers if ever capped
     // Reserve the fall zone up-front (name on top, empty room below) so the
     // layout never shifts and the letters can never reach the legal line.
     this.worldH = this.bandH * this.FALL_FACTOR;
@@ -211,7 +234,7 @@ export class GravityAscii implements OnInit, AfterViewInit, OnDestroy {
       this.engine = engine;
 
       const t = 200;
-      const blockW = GRID.cols * this.cw;
+      const blockW = this.grid.cols * this.cw;
       const left = this.offsetX;
       const right = this.offsetX + blockW;
       Composite.add(engine.world, [
@@ -227,10 +250,11 @@ export class GravityAscii implements OnInit, AfterViewInit, OnDestroy {
         const cx = this.offsetX + cell.col * this.cw + this.cw / 2;
         const cy = cell.row * this.ch + this.ch / 2;
         const body = Bodies.rectangle(cx, cy, this.cw * 0.72, this.ch * 0.72, {
-          // collisions ON → characters stack into a pile instead of overlapping
-          restitution: 0.15,
-          friction: 0.6,
-          frictionAir: 0.012,
+          // collisions OFF between characters (group -1) so ~780 bodies stay light;
+          // they still land on the floor. Small fall → minimal overlap.
+          collisionFilter: { group: -1 },
+          restitution: 0.1,
+          frictionAir: 0.02,
         });
         Composite.add(engine.world, body);
         this.live.push({ el: ref.nativeElement, body });
