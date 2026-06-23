@@ -8,12 +8,24 @@
 }
 
 .footer-inner {
+  position: relative; /* offsetParent for the name layer + stacking context */
   width: 100vw;
   margin-left: -1rem;
   padding: 2.5rem 1.5rem 1.5rem 1rem;
   border-top: 1px solid color-mix(in srgb, #1a1a1a 22%, transparent);
   /* display:grid (12 cols) comes from .global-grid */
   row-gap: 2.5rem;
+}
+
+/* ── Stacking: name layer behind, content (links/legal) in front ── */
+.footer-wordmark {
+  z-index: 0;
+}
+.footer-social,
+.footer-meta,
+.footer-legal {
+  position: relative;
+  z-index: 1;
 }
 
 /* ── Shared label ────────────────────────────── */
@@ -140,10 +152,22 @@
   gap: 0.4rem 1.5rem;
   padding-top: 1.25rem;
   border-top: 1px solid color-mix(in srgb, #1a1a1a 12%, transparent);
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
   font-weight: 300;
-  color: var(--color-base-secondary);
+  color: #1a1a1a;
+}
+
+.footer-made {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.footer-sun {
+  width: 0.95em;
+  height: 0.95em;
+  display: inline-block;
 }
 
 /* ── Responsive ──────────────────────────────── */

@@ -43,12 +43,14 @@ interface Letter {
       display: inline-block;
       white-space: pre;
       pointer-events: none;
+      opacity: 0.5;
       font-family: var(--font-serif);
       font-weight: 700;
       font-style: italic;
       font-size: clamp(2.5rem, 11vw, 9rem);
       line-height: 1;
       color: var(--color-accent);
+      overflow: visible;
     }
     .gw__l {
       display: inline-block;
@@ -84,7 +86,10 @@ export class GravityWord implements OnInit, AfterViewInit, OnDestroy {
   private started = false;
   private inView = false;
 
-  constructor(private ngZone: NgZone) {}
+  constructor(
+    private ngZone: NgZone,
+    private hostEl: ElementRef<HTMLElement>,
+  ) {}
 
   ngOnInit(): void {
     this.chars = Array.from(this.text);
@@ -164,11 +169,16 @@ export class GravityWord implements OnInit, AfterViewInit, OnDestroy {
       this.engine = engine;
 
       const t = 200;
+      // Extend the ceiling up to the footer top (behind the links) so the
+      // letters can travel up there; the floor stays where it is now.
+      const ceil = -this.hostEl.nativeElement.offsetTop;
+      const wallCy = (ceil + this.worldH) / 2;
+      const wallH = this.worldH - ceil + t * 2;
       Composite.add(engine.world, [
-        Bodies.rectangle(W / 2, this.worldH + t / 2, W + t * 2, t, { isStatic: true }), // floor
-        Bodies.rectangle(W / 2, -t / 2, W + t * 2, t, { isStatic: true }), // ceiling
-        Bodies.rectangle(-t / 2, this.worldH / 2, t, this.worldH + t * 2, { isStatic: true }), // left
-        Bodies.rectangle(W + t / 2, this.worldH / 2, t, this.worldH + t * 2, { isStatic: true }), // right
+        Bodies.rectangle(W / 2, this.worldH + t / 2, W + t * 2, t, { isStatic: true }), // floor (unchanged)
+        Bodies.rectangle(W / 2, ceil - t / 2, W + t * 2, t, { isStatic: true }), // ceiling at footer top
+        Bodies.rectangle(-t / 2, wallCy, t, wallH, { isStatic: true }), // left
+        Bodies.rectangle(W + t / 2, wallCy, t, wallH, { isStatic: true }), // right
       ]);
 
       for (const m of measured) {
