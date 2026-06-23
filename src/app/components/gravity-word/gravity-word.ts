@@ -45,6 +45,7 @@ interface Letter {
       pointer-events: none;
       font-family: var(--font-serif);
       font-weight: 700;
+      font-style: italic;
       font-size: clamp(2.5rem, 11vw, 9rem);
       line-height: 1;
       color: var(--color-accent);
