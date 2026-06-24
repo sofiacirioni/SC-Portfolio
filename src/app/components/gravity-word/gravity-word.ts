@@ -41,9 +41,8 @@ interface Letter {
     .gw {
       position: relative;
       display: block;
-      /* full-bleed: the play area spans the whole viewport width, word centered */
-      width: 100vw;
-      margin-left: -1rem;
+      /* spans the content width (aligned to the page margins), word centered */
+      width: 100%;
       text-align: center;
       white-space: pre;
       pointer-events: none;
@@ -147,7 +146,6 @@ export class GravityWord implements OnInit, AfterViewInit, OnDestroy {
     if (naturalH === 0) return;
     this.lineH = naturalH;
     this.worldH = this.lineH * this.FALL_FACTOR;
-    host.style.width = `${host.getBoundingClientRect().width}px`;
     host.style.height = `${this.worldH}px`;
   }
 
