@@ -11,7 +11,7 @@
   position: relative; /* offsetParent for the name layer + stacking context */
   width: 100vw;
   margin-left: -1rem;
-  padding: 2.5rem 1.5rem 1.5rem 1rem;
+  padding: 2.5rem 1rem 1.5rem 1rem;
   border-top: 1px solid color-mix(in srgb, #1a1a1a 22%, transparent);
   /* display:grid (12 cols) comes from .global-grid */
   row-gap: 2.5rem;
