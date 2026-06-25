@@ -1,132 +1,101 @@
 <section class="projects-section" #sectionEl>
 
-  <span class="projects-section-label">[ Projects ]</span>
-
   <!-- ════════════════════════════════════════════
-       INDEX VIEW — minimal table-of-contents look.
-       No background fill, no border-radius.
-       Hover reveals a preview image + project title.
+       SCROLL-CENTER REVEAL
+       Images flow past in alternating left/right
+       columns. The active project's name stays at
+       the page center; images move. Click expands.
        ════════════════════════════════════════════ -->
-  <div class="projects-index" [class.is-hidden]="activeIndex !== null">
+  <div class="pj-flow" [class.is-focusing]="centerVisible() && !openProject_()">
+
     @for (project of projects; track project.id; let i = $index) {
-
-      <div
-        class="project-idx-item"
-        (click)="openProject(i)"
-        tabindex="0"
-        role="button"
-        [attr.aria-label]="'Open ' + project.id + ': ' + project.title"
-        (keydown.enter)="openProject(i)"
-        (keydown.space)="$event.preventDefault(); openProject(i)"
-      >
-        <!-- Number: always visible on top of image -->
-        <span class="project-num project-num--index">{{ project.id }}</span>
-
-        <!-- Image fills the entire item on hover (no margins) -->
-        <div class="project-idx-img" aria-hidden="true"></div>
-
-        <!-- Overlay info: title + areas — visible on hover, on top of image -->
-        <div class="project-idx-hover-info" aria-hidden="true">
-          <h3 class="project-idx-title">{{ project.title }}</h3>
-          <p class="project-idx-areas">{{ project.tags.join(' · ') }}</p>
-        </div>
+      <div class="pj-row" [class.is-right]="i % 2 === 1">
+        <button
+          type="button"
+          class="pj-img"
+          #projectImg
+          [attr.data-id]="project.id"
+          [class.is-active]="activeId() === project.id"
+          (click)="openProject(project, $event)"
+          [attr.aria-label]="'Open ' + project.id + ': ' + project.title"
+        >
+          <span class="pj-img-num">{{ project.id }}</span>
+        </button>
       </div>
-
     }
+
+  </div>
+
+  <!-- Centered name overlay — fixed to the viewport middle, decorative -->
+  <div class="pj-center" [class.is-visible]="centerVisible() && !openProject_()" aria-hidden="true">
+    <p class="pj-center-title">{{ activeProject()?.title }}</p>
+    <p class="pj-center-sub">{{ activeProject()?.subtitle }}</p>
   </div>
 
   <!-- ════════════════════════════════════════════
-       DETAIL VIEW — full expansion on click.
-       Other projects disappear; this one fills the
-       entire row. Navigation arrows at edges.
+       DETAIL OVERLAY — image expands to center,
+       problem / solution / tools revealed.
        ════════════════════════════════════════════ -->
-  <div class="project-detail"
-       [class.is-visible]="activeIndex !== null">
+  @if (openProject_(); as project) {
+    <div class="pj-overlay">
+      <div class="pj-overlay-dim" #overlayDim (click)="closeProject()"></div>
 
-    @if (activeProject) {
-
-      <!-- Edge navigation: previous -->
-      <button
-        class="project-nav project-nav--prev"
-        [class.is-disabled]="activeIndex === 0"
-        (click)="navigate(-1)"
-        aria-label="Previous project"
+      <div
+        class="pj-detail"
+        #dialogEl
+        tabindex="-1"
+        role="dialog"
+        aria-modal="true"
+        [attr.aria-label]="project.title"
+        (keydown)="onDialogKey($event)"
       >
-        <span class="nav-icon">←</span>
-      </button>
+        <button class="pj-detail-close" type="button" (click)="closeProject()" aria-label="Close">✕</button>
 
-      <!-- Edge navigation: next -->
-      <button
-        class="project-nav project-nav--next"
-        [class.is-disabled]="activeIndex === projects.length - 1"
-        (click)="navigate(1)"
-        aria-label="Next project"
-      >
-        <span class="nav-icon">→</span>
-      </button>
+        <div class="pj-detail-img" #detailImg aria-hidden="true">
+          <span class="pj-img-num">{{ project.id }}</span>
+        </div>
 
-      <!-- Content — CSS grid: [info col] [gap] [main img] [gap] [secondary img] -->
-      <div class="project-detail-inner" #detailInner>
+        <div class="pj-detail-body" #detailBody>
+          <span class="pj-detail-num">{{ project.id }}</span>
+          <h2 class="pj-detail-title">{{ project.title }}</h2>
+          <p class="pj-detail-subtitle">{{ project.subtitle }}</p>
 
-        <!-- Left column: header + info stacked vertically -->
-        <div class="project-detail-left">
-
-          <div class="project-detail-header">
-            <button class="project-back" (click)="closeProject()" aria-label="Back to project list">
-              ← index
-            </button>
-            <span class="project-num">{{ activeProject.id }}</span>
+          <div class="pj-detail-block">
+            <span class="pj-detail-label">[ Problem ]</span>
+            <p class="pj-detail-text">{{ project.problem }}</p>
           </div>
 
-          <div class="project-detail-info">
-            <h2 class="project-detail-title">{{ activeProject.title }}</h2>
-            <p class="project-detail-tags">{{ formatTags(activeProject.tags) }}</p>
-            <p class="project-detail-desc">{{ activeProject.description }}</p>
+          <div class="pj-detail-block">
+            <span class="pj-detail-label">[ Solution ]</span>
+            <p class="pj-detail-text">{{ project.solution }}</p>
+          </div>
 
-            <div class="project-detail-links">
-              @if (activeProject.githubUrl) {
-                <a
-                  class="project-link"
-                  [href]="activeProject.githubUrl"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+          <div class="pj-detail-block">
+            <span class="pj-detail-label">[ Tools ]</span>
+            <ul class="pj-detail-tools">
+              @for (tool of project.tools; track tool) {
+                <li>{{ tool }}</li>
+              }
+            </ul>
+          </div>
+
+          @if (project.githubUrl || project.liveUrl) {
+            <div class="pj-detail-links">
+              @if (project.githubUrl) {
+                <a class="pj-detail-link" [href]="project.githubUrl" target="_blank" rel="noopener noreferrer">
                   See on Github&nbsp;↗
                 </a>
               }
-              @if (activeProject.liveUrl) {
-                <a
-                  class="project-link"
-                  [href]="activeProject.liveUrl"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+              @if (project.liveUrl) {
+                <a class="pj-detail-link" [href]="project.liveUrl" target="_blank" rel="noopener noreferrer">
                   Live site&nbsp;↗
                 </a>
               }
             </div>
-
-            <div class="project-role">
-              <span class="project-role-label">[ My role ]</span>
-              <ul class="project-role-list">
-                @for (role of activeProject.roles; track role) {
-                  <li>{{ role }}</li>
-                }
-              </ul>
-            </div>
-          </div>
-
+          }
         </div>
-
-        <!-- Main image: spans the full grid-row height -->
-        <div class="project-img-main" aria-hidden="true"></div>
-
-        <!-- Secondary image: square, anchored top-right -->
-        <div class="project-img-secondary" aria-hidden="true"></div>
-
       </div>
-
-    }
-  </div>
+    </div>
+  }
 
 </section>

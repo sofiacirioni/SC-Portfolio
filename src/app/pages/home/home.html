@@ -43,18 +43,15 @@
     <app-about />
 
     <!--
-      Projects intro — intro phrases + ASCII animation TBD.
+      Projects intro — editorial lead-in line, revealed with a clip-path mask.
       id="projects" anchors the "See projects" hero button.
     -->
-    <section class="projects-intro global-grid" id="projects">
-      <div class="projects-phrases">
-        <p class="projects-phrase">BUILDING TANGIBLE SOLUTIONS</p>
-        <p class="projects-phrase">CREATING MEANINGFUL PATHS</p>
-        <p class="projects-phrase">CREATING MEMORABLE EXPERIENCES</p>
-      </div>
-
-      <!-- ASCII animation / visual element goes here -->
-      <div class="projects-ascii-placeholder" aria-hidden="true"></div>
+    <section class="projects-intro" id="projects">
+      <span class="projects-intro-label">[ Selected work ]</span>
+      <p class="projects-intro-line">
+        <span class="projects-intro-mask" #introMask>Each one started messy.</span>
+        <span class="projects-intro-mask" #introMask><em>This is where it landed.</em></span>
+      </p>
     </section>
 
     <!-- Projects accordion — 4 expandable cards -->

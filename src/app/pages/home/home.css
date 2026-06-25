@@ -153,55 +153,41 @@
 
 /* ── Projects intro ──────────────────────────── */
 /*
-  Placeholder section bridging About and the future Projects section.
-  Uses the same global-grid and padding-inline as the rest of the page.
-  Content (phrases + ASCII animation) will be defined later.
+  Editorial lead-in between About and the Projects scroll experience.
+  A single serif line revealed left-to-right with a clip-path mask.
 */
 .projects-intro {
-  padding-block: 5rem 6rem;
+  padding-block: 8rem 4rem;
   padding-inline: 1rem;
 }
 
-/* Phrases — left half, bottom-aligned */
-.projects-phrases {
-  grid-column: 1 / span 6;
-  grid-row: 1;
-  align-self: end;
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.projects-phrase {
-  font-family: var(--font-mono);
-  font-size: var(--text-h2);
-  font-weight: 400;
-  color: var(--color-accent);
-  line-height: 1.05;
-  margin: 0;
-  text-transform: uppercase;
-}
-
-/* ASCII / animation placeholder — right half, spans both grid rows */
-.projects-ascii-placeholder {
-  grid-column: 7 / span 6;
-  grid-row: 1 / span 2;
-  align-self: start;
-  min-height: 20rem;
-  border-radius: 8px;
-  background: color-mix(in srgb, var(--color-accent) 5%, transparent);
-}
-
-/* [Projects] section label — bottom left, below phrases */
-.projects-label {
-  grid-column: 1;
-  grid-row: 2;
-  align-self: end;
-  padding-top: 2.5rem;
+.projects-intro-label {
+  display: block;
   font-family: var(--font-mono);
   font-size: 0.7rem;
   font-weight: 300;
   color: var(--color-base-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.projects-intro-line {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 5vw, 3.4rem);
+  font-weight: 500;
+  line-height: 1.12;
+  color: #1a1a1a;
+}
+
+.projects-intro-line em {
+  font-style: italic;
+  color: var(--color-accent);
+}
+
+/* Each line is its own mask; revealed by GSAP (see home.ts) */
+.projects-intro-mask {
+  display: block;
+  clip-path: inset(0 100% 0 0);
 }
 
 @keyframes scroll-arrow {
