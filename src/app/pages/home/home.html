@@ -8,13 +8,16 @@
       <app-hero />
 
       <div class="hero-lower">
-        <section class="phrase-section" aria-label="Inspire through design">
+        <section class="phrase-section" aria-label="From the clouds to the code">
           <app-scramble-phrase
             [lines]="phraseLines"
             [baseDelayS]="4"
-            fontSize="6rem"
+            fontSize="clamp(2.25rem, 6.5vw, 4.5rem)"
             (complete)="onPhraseComplete()"
           />
+          <p class="hero-subline" [class.phrase-ready]="phraseReady">
+            Translating wild ideas into functional experiences through design and code.
+          </p>
         </section>
 
         <div class="hero-cta" [class.phrase-ready]="phraseReady">

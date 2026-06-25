@@ -27,8 +27,8 @@ export class Home implements AfterViewInit, OnDestroy {
   private readonly smoothScroll = inject(SmoothScrollService);
 
   readonly phraseLines: ScrambleWordDef[][] = [
-    [{ text: 'Design' }, { text: 'that' }],
-    [{ text: 'inspires', font: 'serif' }],
+    [{ text: 'From' }, { text: 'the' }, { text: 'clouds', font: 'serif' }],
+    [{ text: 'to' }, { text: 'the' }, { text: 'code' }],
   ];
 
   phraseReady = false;

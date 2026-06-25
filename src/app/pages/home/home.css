@@ -90,6 +90,22 @@
   pointer-events: none;
 }
 
+/* Subline — fades in once the scramble settles, sits under the phrase */
+.hero-subline {
+  margin: 1.5rem 0 0;
+  max-width: 34rem;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.45;
+  color: rgb(0 0 0 / 0.6);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.hero-subline.phrase-ready {
+  opacity: 1;
+}
+
 .hero-cta {
   flex-shrink: 0;
   padding-top: 4rem;
