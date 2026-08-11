@@ -8,14 +8,18 @@ export class ScrollRevealService {
   /**
    * Sequential scroll reveal: each group animates after the previous one,
    * staggered by `staggerDelay` seconds. All groups share the same trigger
-   * element (usually the section). Re-triggers on every viewport crossing.
+   * element (usually the section). Groups are arrays of elements that animate
+   * simultaneously within each step.
    *
-   * Groups are arrays of elements that animate simultaneously within each step.
+   * `once` (default true): reveal a single time on first entry, then stop
+   * observing — the content stays put instead of fading out on exit (which
+   * looked jarring and could leave the section blank if only partially
+   * scrolled). Pass `once: false` for the old bidirectional behavior.
    */
   revealSequential(
     trigger: HTMLElement,
     groups: HTMLElement[][],
-    staggerDelay = 0.18,
+    { staggerDelay = 0.18, once = true }: { staggerDelay?: number; once?: boolean } = {},
   ): () => void {
     const allEls = groups.flat();
     gsap.set(allEls, { opacity: 0 });
@@ -43,7 +47,9 @@ export class ScrollRevealService {
               });
               tweens.push(tween);
             });
-          } else {
+            // Reveal once and keep it — no exit animation, no re-trigger.
+            if (once) observer.disconnect();
+          } else if (!once) {
             // Smooth exit — fade out with a short movement instead of instant snap
             const exitY = entry.boundingClientRect.bottom <= 0 ? -24 : 24;
             const exitTween = gsap.to(allEls, {
@@ -55,7 +61,8 @@ export class ScrollRevealService {
             tweens.push(exitTween);
           }
         },
-        { threshold: 0.28 },
+        // Trigger a touch earlier when one-shot so tall sections don't sit blank.
+        { threshold: once ? 0.12 : 0.28 },
       );
 
       observer.observe(trigger);

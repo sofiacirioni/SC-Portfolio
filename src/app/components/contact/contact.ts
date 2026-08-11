@@ -1,14 +1,15 @@
-import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, signal, ViewChild } from '@angular/core';
 import {
   ScramblePhraseComponent,
   ScrambleWordDef,
 } from '../scramble-phrase/scramble-phrase';
 import { PillBtnComponent } from '../pill-btn/pill-btn';
+import { AsciiVideo } from '../ascii-video/ascii-video';
 import { ScrollRevealService } from '../../services/scroll-reveal.service';
 
 @Component({
   selector: 'app-contact',
-  imports: [ScramblePhraseComponent, PillBtnComponent],
+  imports: [ScramblePhraseComponent, PillBtnComponent, AsciiVideo],
   templateUrl: './contact.html',
   styleUrl: './contact.css',
 })
@@ -17,24 +18,22 @@ export class ContactSection implements AfterViewInit, OnDestroy {
   private cleanupReveal?: () => void;
   private visibilityObserver?: IntersectionObserver;
 
-  constructor(
-    private scrollReveal: ScrollRevealService,
-    private ngZone: NgZone,
-  ) {}
+  constructor(private scrollReveal: ScrollRevealService) {}
 
   ngAfterViewInit(): void {
     this.cleanupReveal = this.scrollReveal.reveal(this.sectionEl.nativeElement);
 
-    // Start the phrase scramble only once the section enters the viewport.
-    // IntersectionObserver isn't zone-patched, so re-enter Angular's zone to
-    // make the @if update.
+    // Start the phrase scramble only once the section is comfortably in view
+    // (rootMargin trims the bottom 35% so it fires when the section has scrolled
+    // well onto the screen — not the instant its top edge peeks in). The signal
+    // write schedules change detection on its own (the app is zoneless).
     this.visibilityObserver = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
         this.visibilityObserver?.disconnect();
-        this.ngZone.run(() => (this.phraseVisible = true));
+        this.phraseVisible.set(true);
       },
-      { threshold: 0.25 },
+      { threshold: 0, rootMargin: '0px 0px -35% 0px' },
     );
     this.visibilityObserver.observe(this.sectionEl.nativeElement);
   }
@@ -56,17 +55,18 @@ export class ContactSection implements AfterViewInit, OnDestroy {
     ],
   ];
 
-  phraseIndex = 0;
-  /** Controls @if — starts false, set to true when section enters viewport */
-  phraseVisible = false;
-  /** Triggers CSS fade-out before swap */
-  phraseExiting = false;
+  /** Index of the phrase currently shown (alternates). */
+  readonly phraseIndex = signal(0);
+  /** Controls @if — starts false, set to true when section enters viewport. */
+  readonly phraseVisible = signal(false);
+  /** Triggers the CSS fade-out before a swap. */
+  readonly phraseExiting = signal(false);
 
   private cycleTimer: ReturnType<typeof setTimeout> | null = null;
   private exitTimer: ReturnType<typeof setTimeout> | null = null;
 
   get currentLines(): ScrambleWordDef[][] {
-    return this.phraseGroups[this.phraseIndex];
+    return this.phraseGroups[this.phraseIndex()];
   }
 
   /** Called when the current phrase's scramble-in animation finishes */
@@ -75,14 +75,14 @@ export class ContactSection implements AfterViewInit, OnDestroy {
   }
 
   private startExit(): void {
-    this.phraseExiting = true;
+    this.phraseExiting.set(true);
     this.exitTimer = setTimeout(() => {
-      this.phraseVisible = false;
-      this.phraseExiting = false;
+      this.phraseVisible.set(false);
+      this.phraseExiting.set(false);
       // One extra tick lets Angular destroy the old component before recreating
       setTimeout(() => {
-        this.phraseIndex = (this.phraseIndex + 1) % this.phraseGroups.length;
-        this.phraseVisible = true;
+        this.phraseIndex.set((this.phraseIndex() + 1) % this.phraseGroups.length);
+        this.phraseVisible.set(true);
       }, 50);
     }, 500);
   }

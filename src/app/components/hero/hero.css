@@ -22,8 +22,9 @@ pre {
   line-height: 1.1;
   letter-spacing: 0;
 
-  /* Test: ASCII clouds in the electric accent (was --color-cloud) */
-  color: var(--color-accent);
+  /* Softer cloud tone (was --color-accent) — pairs with the backdrop opacity
+     so text scrolling over the fixed band stays legible. */
+  color: var(--color-cloud);
   background: transparent;
   border: none;
 
@@ -47,38 +48,3 @@ pre {
   pointer-events: none;
 }
 
-.pause-btn {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-
-  background: transparent;
-  border: 1px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
-  color: var(--color-primary);
-  cursor: pointer;
-
-  opacity: 0;
-  transition: opacity 0.2s ease, border-color 0.2s ease;
-}
-
-section:hover .pause-btn {
-  opacity: 1;
-}
-
-.pause-btn:hover {
-  border-color: var(--color-primary);
-}
-
-.icon {
-  font-size: 0.6rem;
-  line-height: 1;
-  letter-spacing: -0.05em;
-}

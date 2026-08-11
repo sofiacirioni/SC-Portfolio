@@ -1,0 +1,41 @@
+.ascii-video {
+  position: relative;
+  width: 100%;
+  /* Initial area so the IntersectionObserver can start the loop before the
+     first frame sets the real height via updateScale(). */
+  min-height: 10rem;
+  overflow: hidden;
+}
+
+pre {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  /* Overridden by updateScale() to fill the host width */
+  transform: translateX(-50%) scale(0.5);
+  transform-origin: top center;
+
+  font-family: var(--font-mono);
+  font-size: 16px;
+  line-height: 1.1;
+  letter-spacing: 0;
+
+  color: currentColor;
+  background: transparent;
+  white-space: pre;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+/* Hidden source: kept in the render tree (not display:none, which can pause
+   decoding) but pushed off-screen and invisible. */
+.ascii-video__source {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  left: -9999px;
+  top: 0;
+  opacity: 0;
+  pointer-events: none;
+}

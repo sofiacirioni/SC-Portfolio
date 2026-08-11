@@ -1,100 +1,207 @@
-<section class="projects-section" #sectionEl>
+<section class="projects-section">
 
   <!-- ════════════════════════════════════════════
-       SCROLL-CENTER REVEAL
-       Images flow past in alternating left/right
-       columns. The active project's name stays at
-       the page center; images move. Click expands.
+       INLINE ACCORDION INDEX
+       Rows: title + subtitle. Hover pops a video
+       preview card; click opens the detail in place.
        ════════════════════════════════════════════ -->
-  <div class="pj-flow" [class.is-focusing]="centerVisible() && !openProject_()">
+  <ul class="pj-list">
+    @for (project of projects; track project.id) {
+      <li class="pj-item" [class.is-open]="isOpen(project.id)">
 
-    @for (project of projects; track project.id; let i = $index) {
-      <div class="pj-row" [class.is-right]="i % 2 === 1">
+        <!-- ── Row header (toggle) ── -->
         <button
+          class="pj-head"
           type="button"
-          class="pj-img"
-          #projectImg
-          [attr.data-id]="project.id"
-          [class.is-active]="activeId() === project.id"
-          (click)="openProject(project, $event)"
-          [attr.aria-label]="'Open ' + project.id + ': ' + project.title"
+          [attr.aria-expanded]="isOpen(project.id)"
+          [attr.aria-controls]="'pj-detail-' + project.id"
+          (click)="toggle(project.id, w)"
+          (mouseenter)="onHover(project, $event)"
+          (mouseleave)="onLeave()"
         >
-          <span class="pj-img-num">{{ project.id }}</span>
+          <span class="pj-head-num">{{ project.id }}</span>
+          <span class="pj-head-main">
+            <span class="pj-head-title">{{ project.title }}</span>
+            <span class="pj-head-sub">{{ project.subtitle }}</span>
+          </span>
+          <span class="pj-head-toggle" aria-hidden="true"></span>
         </button>
-      </div>
-    }
 
-  </div>
+        <!-- ── Detail (expands in place via GSAP height) ── -->
+        <div class="pj-detail-wrap" #w [id]="'pj-detail-' + project.id" role="region">
+          <div class="pj-detail-inner">
 
-  <!-- Centered name overlay — fixed to the viewport middle, decorative -->
-  <div class="pj-center" [class.is-visible]="centerVisible() && !openProject_()" aria-hidden="true">
-    <p class="pj-center-title">{{ activeProject()?.title }}</p>
-    <p class="pj-center-sub">{{ activeProject()?.subtitle }}</p>
-  </div>
+            <div class="pj-detail-top">
 
-  <!-- ════════════════════════════════════════════
-       DETAIL OVERLAY — image expands to center,
-       problem / solution / tools revealed.
-       ════════════════════════════════════════════ -->
-  @if (openProject_(); as project) {
-    <div class="pj-overlay">
-      <div class="pj-overlay-dim" #overlayDim (click)="closeProject()"></div>
+              <!-- Left: main preview + links -->
+              <div class="pj-media-col">
+                <div class="pj-media">
+                  @if (isOpen(project.id) && project.preview; as media) {
+                    @if (media.type === 'video') {
+                      <video
+                        class="pj-media-el"
+                        appPauseOffscreen
+                        [src]="media.src"
+                        muted
+                        loop
+                        autoplay
+                        playsinline
+                        controls
+                        preload="metadata"
+                      ></video>
+                    } @else {
+                      <img class="pj-media-el" [src]="media.src" [alt]="project.title" />
+                    }
+                  } @else {
+                    <span class="pj-media-ph">{{ project.id }}</span>
+                  }
+                </div>
 
-      <div
-        class="pj-detail"
-        #dialogEl
-        tabindex="-1"
-        role="dialog"
-        aria-modal="true"
-        [attr.aria-label]="project.title"
-        (keydown)="onDialogKey($event)"
-      >
-        <button class="pj-detail-close" type="button" (click)="closeProject()" aria-label="Close">✕</button>
+                @if (project.githubUrl || project.liveUrl || project.demoUrl) {
+                  <div class="pj-media-links">
+                    @if (project.demoUrl) {
+                      <a class="pj-media-link" [href]="project.demoUrl" target="_blank" rel="noopener noreferrer">
+                        <span class="pj-media-link__text">Interactive demo</span>
+                        <app-arrow-icon [angle]="-135" />
+                      </a>
+                    }
+                    @if (project.githubUrl) {
+                      <a class="pj-media-link" [href]="project.githubUrl" target="_blank" rel="noopener noreferrer">
+                        <span class="pj-media-link__text">See on Github</span>
+                        <app-arrow-icon [angle]="-135" />
+                      </a>
+                    }
+                    @if (project.liveUrl) {
+                      <a class="pj-media-link" [href]="project.liveUrl" target="_blank" rel="noopener noreferrer">
+                        <span class="pj-media-link__text">Live site</span>
+                        <app-arrow-icon [angle]="-135" />
+                      </a>
+                    }
+                  </div>
+                }
+              </div>
 
-        <div class="pj-detail-img" #detailImg aria-hidden="true">
-          <span class="pj-img-num">{{ project.id }}</span>
-        </div>
+              <!-- Right: problem + solution, then the resource frames -->
+              <div class="pj-meta">
+                <div class="pj-block">
+                  <span class="pj-block-label">[ Problem ]</span>
+                  <p class="pj-block-text">{{ project.problem }}</p>
+                </div>
+                <div class="pj-block">
+                  <span class="pj-block-label">[ Solution ]</span>
+                  <p class="pj-block-text">{{ project.solution }}</p>
+                </div>
 
-        <div class="pj-detail-body" #detailBody>
-          <span class="pj-detail-num">{{ project.id }}</span>
-          <h2 class="pj-detail-title">{{ project.title }}</h2>
-          <p class="pj-detail-subtitle">{{ project.subtitle }}</p>
+                @if (project.gallery; as gallery) {
+                  <div class="pj-gallery">
+                    @for (tile of gallery; track $index; let t = $index) {
+                      @if (tile.kind === 'video') {
+                        <button
+                          class="pj-gallery-frame pj-gallery-frame--video is-clickable"
+                          type="button"
+                          aria-label="Open video"
+                          (mouseenter)="onTileEnter($event)"
+                          (mouseleave)="onTileLeave($event)"
+                          (click)="openVideoLightbox(project, tile.src!, $event)"
+                        >
+                          @if (isOpen(project.id)) {
+                            <video
+                              class="pj-gallery-vid"
+                              [src]="tile.src"
+                              muted
+                              loop
+                              playsinline
+                              preload="metadata"
+                            ></video>
+                          }
+                          <span class="pj-gallery-play" aria-hidden="true"></span>
+                        </button>
+                      } @else {
+                        <span
+                          class="pj-gallery-frame pj-gallery-frame--vector"
+                          [class.pj-gallery-frame--n4]="tile.images?.length === 4"
+                          [class.pj-gallery-frame--static]="tile.images?.length === 1"
+                          [class.pj-gallery-frame--darken]="tile.darken"
+                          [style.--f]="t"
+                        >
+                          @if (isOpen(project.id)) {
+                            @for (img of tile.images ?? []; track img; let k = $index) {
+                              <img class="pj-gallery-img" [src]="img" alt="" [style.--k]="k" />
+                            }
+                          }
+                        </span>
+                      }
+                    }
+                  </div>
+                }
+              </div>
 
-          <div class="pj-detail-block">
-            <span class="pj-detail-label">[ Problem ]</span>
-            <p class="pj-detail-text">{{ project.problem }}</p>
-          </div>
-
-          <div class="pj-detail-block">
-            <span class="pj-detail-label">[ Solution ]</span>
-            <p class="pj-detail-text">{{ project.solution }}</p>
-          </div>
-
-          <div class="pj-detail-block">
-            <span class="pj-detail-label">[ Tools ]</span>
-            <ul class="pj-detail-tools">
-              @for (tool of project.tools; track tool) {
-                <li>{{ tool }}</li>
-              }
-            </ul>
-          </div>
-
-          @if (project.githubUrl || project.liveUrl) {
-            <div class="pj-detail-links">
-              @if (project.githubUrl) {
-                <a class="pj-detail-link" [href]="project.githubUrl" target="_blank" rel="noopener noreferrer">
-                  See on Github&nbsp;↗
-                </a>
-              }
-              @if (project.liveUrl) {
-                <a class="pj-detail-link" [href]="project.liveUrl" target="_blank" rel="noopener noreferrer">
-                  Live site&nbsp;↗
-                </a>
-              }
             </div>
-          }
+
+            <!-- Role + Tools -->
+            <div class="pj-blocks">
+              <div class="pj-block">
+                <span class="pj-block-label">[ Role ]</span>
+                <p class="pj-block-text">{{ project.role }}</p>
+              </div>
+              <div class="pj-block">
+                <span class="pj-block-label">[ Tools ]</span>
+                <ul class="pj-block-tools">
+                  @for (tool of project.tools; track tool) {
+                    <li>{{ tool }}</li>
+                  }
+                </ul>
+              </div>
+            </div>
+
+          </div>
         </div>
-      </div>
+
+      </li>
+    }
+  </ul>
+
+  <!-- Cursor-following video preview shown while hovering a row -->
+  <div class="pj-hover-preview" #hoverPreview [class.is-visible]="!!hoverProject()" aria-hidden="true">
+    @if (hoverProject(); as hp) {
+      @if (hp.preview?.type === 'video') {
+        <video [src]="hp.preview!.src" muted loop autoplay playsinline preload="metadata"></video>
+      }
+    }
+  </div>
+
+  <!-- Functionality-video lightbox (portaled to <body> on open) -->
+  @if (lightbox(); as lb) {
+    <div
+      class="pj-lightbox"
+      #lightboxEl
+      tabindex="-1"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Video viewer"
+      (click)="closeLightbox()"
+      (keydown)="onLightboxKey($event)"
+    >
+      <button class="pj-lightbox-close" type="button" (click)="closeLightbox()" aria-label="Close">✕</button>
+
+      @if (lb.videos.length > 1) {
+        <button class="pj-lightbox-nav pj-lightbox-prev" type="button" (click)="lightboxPrev($event)" aria-label="Previous">‹</button>
+        <button class="pj-lightbox-nav pj-lightbox-next" type="button" (click)="lightboxNext($event)" aria-label="Next">›</button>
+      }
+
+      <video
+        class="pj-lightbox-media"
+        [src]="lb.videos[lb.index]"
+        controls
+        autoplay
+        loop
+        playsinline
+        (click)="$event.stopPropagation()"
+      ></video>
+
+      @if (lb.videos.length > 1) {
+        <span class="pj-lightbox-count">{{ lb.index + 1 }} / {{ lb.videos.length }}</span>
+      }
     </div>
   }
 

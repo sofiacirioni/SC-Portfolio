@@ -6,9 +6,11 @@ import {
   NgZone,
   OnDestroy,
   QueryList,
+  ViewChild,
   ViewChildren,
 } from '@angular/core';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SmoothScrollService } from '../../services/smooth-scroll.service';
 import { Nav } from '../../components/nav/nav';
 import { Hero } from '../../components/hero/hero';
@@ -38,7 +40,11 @@ export class Home implements AfterViewInit, OnDestroy {
   private readonly ngZone = inject(NgZone);
 
   @ViewChildren('introMask') private introMasks!: QueryList<ElementRef<HTMLElement>>;
+  @ViewChild('heroBackdrop') private heroBackdrop!: ElementRef<HTMLElement>;
+  @ViewChild('footerAnchor', { read: ElementRef })
+  private footerAnchor!: ElementRef<HTMLElement>;
   private introObserver?: IntersectionObserver;
+  private backdropFade?: ScrollTrigger;
 
   readonly phraseLines: ScrambleWordDef[][] = [
     [{ text: 'From' }, { text: 'the' }, { text: 'clouds', font: 'serif' }],
@@ -65,6 +71,34 @@ export class Home implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.smoothScroll.init();
     this.setupIntroReveal();
+    this.setupBackdropFade();
+  }
+
+  /**
+   * Fades the fixed ASCII backdrop out as the footer scrolls into view, so the
+   * closing section reads as a clean opaque sheet instead of the band lingering
+   * pinned near the top. Scrubbed → tied directly to scroll position.
+   */
+  private setupBackdropFade(): void {
+    const backdrop = this.heroBackdrop?.nativeElement;
+    const footer = this.footerAnchor?.nativeElement;
+    if (!backdrop || !footer) return;
+
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+
+    this.ngZone.runOutsideAngular(() => {
+      const tween = gsap.to(backdrop, {
+        opacity: 0,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: footer,
+          start: 'top 90%',
+          end: 'top 40%',
+          scrub: true,
+        },
+      });
+      this.backdropFade = tween.scrollTrigger;
+    });
   }
 
   /** Reveals the CTA + scroll hint once the hero phrase finishes scrambling. */
@@ -112,5 +146,6 @@ export class Home implements AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     this.smoothScroll.destroy();
     this.introObserver?.disconnect();
+    this.backdropFade?.kill();
   }
 }

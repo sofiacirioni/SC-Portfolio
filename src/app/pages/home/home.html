@@ -3,10 +3,18 @@
     <app-nav />
   </header>
 
-  <main class="grid-full">
-    <div class="hero-scene">
-      <app-hero />
+  <!--
+    Fixed ASCII backdrop — the ONLY anchored element. It stays pinned near the
+    top of the viewport while the whole content layer scrolls over/through it.
+    Softened (opacity + cloud tone) so any text passing over it stays legible.
+    aria-hidden + pointer-events:none → never intercepts scroll or clicks.
+  -->
+  <div class="hero-backdrop" #heroBackdrop aria-hidden="true">
+    <app-hero />
+  </div>
 
+  <main class="grid-full content-layer">
+    <div class="hero-scene">
       <div class="hero-lower">
         <section class="phrase-section" aria-label="From the clouds to the code">
           <app-scramble-phrase
@@ -61,6 +69,6 @@
     <app-contact />
 
     <!-- Footer — social, tagline, credits, ASCII placeholder -->
-    <app-site-footer />
+    <app-site-footer #footerAnchor />
   </main>
 </div>

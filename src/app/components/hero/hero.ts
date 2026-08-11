@@ -14,8 +14,6 @@ import {
   styleUrl: './hero.css',
 })
 export class Hero implements AfterViewInit, OnDestroy {
-  isPaused = false;
-
   // ── ASCII conversion (shared by intro + clouds) ────────────────
   /** ASCII grid width in characters. Higher = more detail, smaller scale. */
   private readonly ASCII_COLS = 280;
@@ -77,14 +75,6 @@ export class Hero implements AfterViewInit, OnDestroy {
     this.cloudRef?.nativeElement.pause();
   }
 
-  togglePause(): void {
-    this.isPaused = !this.isPaused;
-    const video = this.activeVideo;
-    if (!video) return;
-    if (this.isPaused) video.pause();
-    else void video.play().catch(() => {});
-  }
-
   // ── Intro "hello" (plays once) ─────────────────────────────────
 
   private startHello(): void {
@@ -128,7 +118,6 @@ export class Hero implements AfterViewInit, OnDestroy {
 
   private renderLoop = (): void => {
     this.rafId = requestAnimationFrame(this.renderLoop);
-    if (this.isPaused) return;
 
     const fps = this.phase === 'hello' ? this.HELLO_FPS : this.CLOUD_FPS;
     const now = performance.now();

@@ -9,6 +9,43 @@
   /* Room for the fixed header that now overlays the top of the page */
   padding-top: 3.5rem;
   align-content: start;
+
+  /*
+    Rendered height of the fixed ASCII band. It scales with the viewport width
+    (the <pre> is scaled to fill the band), and because the glyph grid ratio is
+    constant, that height is a fixed fraction of the band width at every
+    breakpoint. Used to reserve space under the band so the hero phrase lands
+    right below it. Tuned to match hero.ts updateScale() output.
+  */
+  --band-h: calc((100vw - 2rem) * 0.202);
+}
+
+/* ── Fixed ASCII backdrop ─────────────────────────
+   The anchored layer: pinned near the top while the content layer scrolls
+   over it. Sits below content (z:0) and never intercepts pointer events.
+*/
+.hero-backdrop {
+  position: fixed;
+  top: 3.5rem;
+  left: 0;
+  right: 0;
+  z-index: 0;
+  padding-inline: 1rem;
+  pointer-events: none;
+  /* Softened so text scrolling over the band stays legible */
+  opacity: 0.5;
+}
+
+.hero-backdrop app-hero {
+  display: block;
+}
+
+/* ── Content layer ────────────────────────────────
+   Everything except the backdrop. Scrolls over the fixed band; sits above it.
+*/
+.content-layer {
+  position: relative;
+  z-index: 1;
 }
 
 /* ── Fixed header with progressive blur ───────────
@@ -59,13 +96,16 @@
 
 /* ── Hero scene ──────────────────────────────── */
 /*
-  min-height: calc(100svh - 3.5rem) keeps the full hero visible in the
-  viewport (3.5rem ≈ nav bar height) so the boundary-tickers only appear
-  once the user starts scrolling.
+  First screen of the content layer: holds the phrase, CTA and scroll hint.
+  The ASCII band is no longer a child here (it lives in the fixed .hero-backdrop);
+  padding-top: var(--band-h) reserves the band's space so the phrase lands just
+  below it, preserving the original composition. min-height keeps the boundary
+  tickers below the fold until the user scrolls.
 */
 .hero-scene {
   position: relative;
   min-height: calc(100svh - 3.5rem);
+  padding-top: var(--band-h);
 }
 
 /*

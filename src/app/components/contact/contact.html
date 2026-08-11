@@ -6,8 +6,8 @@
   <!-- Phrase + CTA — left 5 columns -->
   <div class="contact-phrase-area">
 
-    <div class="contact-phrase-wrapper" [class.is-exiting]="phraseExiting">
-      @if (phraseVisible) {
+    <div class="contact-phrase-wrapper" [class.is-exiting]="phraseExiting()">
+      @if (phraseVisible()) {
         <app-scramble-phrase
           [lines]="currentLines"
           [baseDelayS]="0"
@@ -23,7 +23,9 @@
 
   </div>
 
-  <!-- ASCII animation placeholder — right 6 columns -->
-  <div class="contact-ascii-placeholder" aria-hidden="true"></div>
+  <!-- ASCII animation — right columns, accent blue -->
+  <div class="contact-ascii" aria-hidden="true">
+    <app-ascii-video src="assets/video/contact-animation.mp4" [cols]="130" [rows]="60" [fps]="14" />
+  </div>
 
 </section>
