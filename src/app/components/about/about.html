@@ -8,15 +8,11 @@
   <div class="about-inner global-grid" #cardEl>
 
     <!-- ══ Intro ══ -->
-    <span class="about-label" #aboutLabel>[ About ]</span>
+    <span class="about-label" #aboutLabel>{{ copy().label }}</span>
 
     <div class="about-intro">
-      <h2 class="about-greeting" #helloEl>Hello, I'm <em>Sofía&nbsp;Cirioni</em></h2>
-      <p class="about-bio" #bioEl>
-        A graphic designer and full-stack developer based in Argentina,
-        specialized in UX/UI. With a strong eye for detail and a focus on
-        making useful interfaces.
-      </p>
+      <h2 class="about-greeting" #helloEl>{{ copy().greeting }} <em>Sofía&nbsp;Cirioni</em></h2>
+      <p class="about-bio" #bioEl>{{ copy().bio }}</p>
     </div>
 
     <!-- Portrait — top-right, half-size (3 cols), black & white -->
@@ -28,9 +24,9 @@
     <div class="about-meta">
 
       <div class="about-meta__col">
-        <h3 class="about-meta__label" #eduLabel>Education</h3>
+        <h3 class="about-meta__label" #eduLabel>{{ copy().education }}</h3>
         <ul class="about-list" #eduContent>
-          @for (item of education; track item.period) {
+          @for (item of education(); track item.period) {
             <li class="about-list__item">
               <span class="about-date">{{ item.period }}</span>
               <p class="about-item-title">{{ item.title }}</p>
@@ -41,9 +37,9 @@
       </div>
 
       <div class="about-meta__col">
-        <h3 class="about-meta__label" #expLabel>Experience</h3>
+        <h3 class="about-meta__label" #expLabel>{{ copy().experience }}</h3>
         <ul class="about-list" #expContent>
-          @for (item of experience; track item.period) {
+          @for (item of experience(); track item.period) {
             <li class="about-list__item">
               <span class="about-date">{{ item.period }}</span>
               <p class="about-item-title">
@@ -55,9 +51,9 @@
       </div>
 
       <div class="about-meta__col">
-        <h3 class="about-meta__label" #langLabel>Languages</h3>
+        <h3 class="about-meta__label" #langLabel>{{ copy().languages }}</h3>
         <ul class="about-list" #langContent>
-          @for (item of languages; track item.lang) {
+          @for (item of languages(); track item.lang) {
             <li class="about-list__item">
               <p class="about-item-title">{{ item.lang }}<span class="about-item-light"> · {{ item.level }}</span></p>
             </li>
@@ -66,9 +62,9 @@
       </div>
 
       <div class="about-meta__col">
-        <h3 class="about-meta__label" #softLabel>Soft skills</h3>
+        <h3 class="about-meta__label" #softLabel>{{ copy().soft }}</h3>
         <ul class="about-list">
-          @for (soft of softSkills; track soft) {
+          @for (soft of softSkills(); track soft) {
             <li class="about-list__item" #softItem>
               <p class="about-item-title">{{ soft }}</p>
             </li>
@@ -80,7 +76,7 @@
 
     <!-- ══ Technical skills — application names only ══ -->
     <div class="about-skills">
-      <span class="about-skills-label" #skillsLabel>Technical skills</span>
+      <span class="about-skills-label" #skillsLabel>{{ copy().technical }}</span>
       <div class="about-skills-list">
         @for (skill of skills; track skill.name) {
           <span class="skill-item" #skillCard>

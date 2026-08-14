@@ -1,5 +1,6 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, computed, ElementRef, inject, OnDestroy, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { ScrollRevealService } from '../../services/scroll-reveal.service';
+import { I18nService } from '../../services/i18n.service';
 
 interface SkillItem {
   name: string;
@@ -46,8 +47,38 @@ export class About implements AfterViewInit, OnDestroy {
   @ViewChildren('softItem')  private softItems!:  QueryList<ElementRef<HTMLElement>>;
 
   private cleanupReveal?: () => void;
+  readonly i18n = inject(I18nService);
 
   constructor(private scrollReveal: ScrollRevealService) {}
+
+  private get es(): boolean {
+    return this.i18n.lang() === 'es';
+  }
+
+  /** Section labels + intro copy per language. */
+  readonly copy = computed(() =>
+    this.i18n.lang() === 'es'
+      ? {
+          label: '[ Sobre mí ]',
+          greeting: 'Hola, soy',
+          bio: 'Diseñadora gráfica y desarrolladora full-stack radicada en Argentina, especializada en UX/UI. Con un fuerte ojo para el detalle y foco en crear interfaces útiles.',
+          education: 'Educación',
+          experience: 'Experiencia',
+          languages: 'Idiomas',
+          soft: 'Habilidades blandas',
+          technical: 'Habilidades técnicas',
+        }
+      : {
+          label: '[ About ]',
+          greeting: "Hello, I'm",
+          bio: 'A graphic designer and full-stack developer based in Argentina, specialized in UX/UI. With a strong eye for detail and a focus on making useful interfaces.',
+          education: 'Education',
+          experience: 'Experience',
+          languages: 'Languages',
+          soft: 'Soft skills',
+          technical: 'Technical skills',
+        },
+  );
 
   ngAfterViewInit(): void {
     const el = (ref: ElementRef<HTMLElement>) => ref.nativeElement;
@@ -69,27 +100,51 @@ export class About implements AfterViewInit, OnDestroy {
     this.cleanupReveal?.();
   }
 
-  readonly education: EducationItem[] = [
-    {
-      period: '2024 – present',
-      title: 'Technical Degree in Programming',
-      institution: 'UTN – Facultad Regional Córdoba.',
-    },
-    {
-      period: '2022 – 2024',
-      title: 'Technical Degree in Graphic Design',
-      institution: 'UPC – Facultad de Artes Aplicadas.',
-    },
-  ];
+  readonly education = computed<EducationItem[]>(() =>
+    this.es
+      ? [
+          {
+            period: '2024 – 2026',
+            title: 'Tecnicatura en Programación',
+            institution: 'UTN – Facultad Regional Córdoba.',
+          },
+          {
+            period: '2022 – 2024',
+            title: 'Tecnicatura en Diseño Gráfico',
+            institution: 'UPC – Facultad de Artes Aplicadas.',
+          },
+        ]
+      : [
+          {
+            period: '2024 – 2026',
+            title: 'Technical Degree in Programming',
+            institution: 'UTN – Facultad Regional Córdoba.',
+          },
+          {
+            period: '2022 – 2024',
+            title: 'Technical Degree in Graphic Design',
+            institution: 'UPC – Facultad de Artes Aplicadas.',
+          },
+        ],
+  );
 
-  readonly experience: ExperienceItem[] = [
-    { period: '2025 – present', role: 'Graphic designer', detail: 'freelance' },
-  ];
+  readonly experience = computed<ExperienceItem[]>(() =>
+    this.es
+      ? [{ period: '2025 – presente', role: 'Diseñadora gráfica', detail: 'freelance' }]
+      : [{ period: '2025 – present', role: 'Graphic designer', detail: 'freelance' }],
+  );
 
-  readonly languages = [
-    { lang: 'English', level: 'B1' },
-    { lang: 'Spanish', level: 'Native' },
-  ];
+  readonly languages = computed(() =>
+    this.es
+      ? [
+          { lang: 'Inglés', level: 'B1' },
+          { lang: 'Español', level: 'Nativo' },
+        ]
+      : [
+          { lang: 'English', level: 'B1' },
+          { lang: 'Spanish', level: 'Native' },
+        ],
+  );
 
   readonly skills: SkillItem[] = [
     { name: 'Figma', icon: 'figma-logo.svg', level: 2 },
@@ -104,12 +159,11 @@ export class About implements AfterViewInit, OnDestroy {
     { name: 'GitHub', icon: 'github-logo.svg', level: 2 },
   ];
 
-  readonly softSkills: string[] = [
-    'Fast learner',
-    'Self-taught',
-    'Agile methodologies',
-    'Problem-solving',
-  ];
+  readonly softSkills = computed<string[]>(() =>
+    this.es
+      ? ['Aprendizaje rápido', 'Autodidacta', 'Metodologías ágiles', 'Resolución de problemas']
+      : ['Fast learner', 'Self-taught', 'Agile methodologies', 'Problem-solving'],
+  );
 
   iconUrl(icon: string): string {
     return `url(assets/SVG/${icon})`;

@@ -1,25 +1,28 @@
 <section class="contact-section global-grid" id="contact" #sectionEl>
 
   <!-- Section label -->
-  <span class="contact-label">[ Contact ]</span>
+  <span class="contact-label">{{ copy().label }}</span>
 
   <!-- Phrase + CTA — left 5 columns -->
   <div class="contact-phrase-area">
 
     <div class="contact-phrase-wrapper" [class.is-exiting]="phraseExiting()">
       @if (phraseVisible()) {
-        <app-scramble-phrase
-          [lines]="currentLines"
-          [baseDelayS]="0"
-          fontSize="4.5rem"
-          [idleMinMs]="15000"
-          [idleMaxMs]="25000"
-          (complete)="onPhraseComplete()"
-        />
+        <!-- Re-keyed by language so a toggle re-scrambles in the new language -->
+        @for (lc of [i18n.lang()]; track lc) {
+          <app-scramble-phrase
+            [lines]="currentLines"
+            [baseDelayS]="0"
+            fontSize="clamp(2.5rem, 11vw, 4.5rem)"
+            [idleMinMs]="15000"
+            [idleMaxMs]="25000"
+            (complete)="onPhraseComplete()"
+          />
+        }
       }
     </div>
 
-    <app-pill-btn label="Send an email" href="mailto:sofiacirioni07@gmail.com" />
+    <app-pill-btn [label]="copy().cta" href="mailto:sofiacirioni07@gmail.com" />
 
   </div>
 

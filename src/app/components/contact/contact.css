@@ -47,3 +47,34 @@
   align-self: center;
   color: var(--color-accent);
 }
+
+/* ── Mobile: single column stack ─────────────── */
+/*
+  On phones the 12-col split crushed the animation (5 cols) and wrapped the
+  label. Stack to one column: label → full-width animation (now legible) →
+  phrase with the button cleanly centered below it.
+*/
+@media (max-width: 640px) {
+  .contact-section {
+    grid-template-columns: 1fr;
+    padding-block: 4rem 3rem;
+  }
+  .contact-label {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .contact-ascii {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: stretch;
+    margin-top: 1rem;
+  }
+  .contact-phrase-area {
+    grid-column: 1;
+    grid-row: 3;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+    margin-top: 2.5rem;
+  }
+}

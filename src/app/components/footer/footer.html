@@ -3,7 +3,7 @@
 
     <!-- ── Social links (text, not buttons) ───────── -->
     <nav class="footer-social" aria-label="Social links">
-      <span class="footer-label">[ Social ]</span>
+      <span class="footer-label">{{ copy().social }}</span>
       <ul class="footer-links">
         <li>
           <a href="mailto:sofiacirioni07@gmail.com">
@@ -30,8 +30,8 @@
 
     <!-- ── Closing note + back to top (right) ──────── -->
     <div class="footer-meta">
-      <p class="footer-note">design that <em>inspires</em> —<br>let's make it move.</p>
-      <a class="footer-top" href="#top">Back to top<span class="footer-link-arrow">↑</span></a>
+      <p class="footer-note" [innerHTML]="copy().note"></p>
+      <a class="footer-top" href="#top">{{ copy().top }}<span class="footer-link-arrow">↑</span></a>
     </div>
 
     <!-- ── Name (IBM Plex Serif bold) with gravity letters ──────── -->
@@ -40,8 +40,8 @@
     <!-- ── Legal line ──────────────────────────────── -->
     <div class="footer-legal">
       <span>© 2026 Sofía Cirioni</span>
-      <span>All rights reserved</span>
-      <span class="footer-made">Made in Argentina <img class="footer-sun" src="assets/images/arg-sun.png" alt="" aria-hidden="true" /></span>
+      <span>{{ copy().rights }}</span>
+      <span class="footer-made">{{ copy().made }} <img class="footer-sun" src="assets/images/arg-sun.png" alt="" aria-hidden="true" /></span>
     </div>
 
   </div>

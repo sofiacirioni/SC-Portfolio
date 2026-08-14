@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, computed, ElementRef, inject, OnDestroy, signal, ViewChild } from '@angular/core';
 import {
   ScramblePhraseComponent,
   ScrambleWordDef,
@@ -6,6 +6,7 @@ import {
 import { PillBtnComponent } from '../pill-btn/pill-btn';
 import { AsciiVideo } from '../ascii-video/ascii-video';
 import { ScrollRevealService } from '../../services/scroll-reveal.service';
+import { I18nService } from '../../services/i18n.service';
 
 @Component({
   selector: 'app-contact',
@@ -17,6 +18,14 @@ export class ContactSection implements AfterViewInit, OnDestroy {
   @ViewChild('sectionEl') private sectionEl!: ElementRef<HTMLElement>;
   private cleanupReveal?: () => void;
   private visibilityObserver?: IntersectionObserver;
+  readonly i18n = inject(I18nService);
+
+  /** Section label + CTA per language. */
+  readonly copy = computed(() =>
+    this.i18n.lang() === 'es'
+      ? { label: '[ Contacto ]', cta: 'Enviar un email' }
+      : { label: '[ Contact ]', cta: 'Send an email' },
+  );
 
   constructor(private scrollReveal: ScrollRevealService) {}
 
@@ -42,18 +51,17 @@ export class ContactSection implements AfterViewInit, OnDestroy {
    * Two phrases that alternate every 10 s.
    * Each phrase is an array of lines; each line is an array of word defs.
    */
-  private readonly phraseGroups: ScrambleWordDef[][][] = [
-    [
-      [{ text: 'Want' }, { text: 'to', font: 'serif' }],
-      [{ text: 'work' }],
-      [{ text: 'together?' }],
-    ],
-    [
-      [{ text: "Let's" }],
-      [{ text: 'get' }, { text: 'in' }],
-      [{ text: 'touch', font: 'serif' }],
-    ],
-  ];
+  private readonly phraseGroups = computed<ScrambleWordDef[][][]>(() =>
+    this.i18n.lang() === 'es'
+      ? [
+          [[{ text: '¿Creamos' }], [{ text: 'juntos?', font: 'serif' }]],
+          [[{ text: 'Conversemos', font: 'serif' }]],
+        ]
+      : [
+          [[{ text: 'Want' }, { text: 'to', font: 'serif' }], [{ text: 'work' }], [{ text: 'together?' }]],
+          [[{ text: "Let's" }], [{ text: 'get' }, { text: 'in' }], [{ text: 'touch', font: 'serif' }]],
+        ],
+  );
 
   /** Index of the phrase currently shown (alternates). */
   readonly phraseIndex = signal(0);
@@ -66,11 +74,14 @@ export class ContactSection implements AfterViewInit, OnDestroy {
   private exitTimer: ReturnType<typeof setTimeout> | null = null;
 
   get currentLines(): ScrambleWordDef[][] {
-    return this.phraseGroups[this.phraseIndex()];
+    return this.phraseGroups()[this.phraseIndex()];
   }
 
   /** Called when the current phrase's scramble-in animation finishes */
   onPhraseComplete(): void {
+    // A language toggle can recreate the phrase and fire this again — don't
+    // stack cycle timers.
+    if (this.cycleTimer !== null) clearTimeout(this.cycleTimer);
     this.cycleTimer = setTimeout(() => this.startExit(), 10_000);
   }
 
@@ -81,7 +92,7 @@ export class ContactSection implements AfterViewInit, OnDestroy {
       this.phraseExiting.set(false);
       // One extra tick lets Angular destroy the old component before recreating
       setTimeout(() => {
-        this.phraseIndex.set((this.phraseIndex() + 1) % this.phraseGroups.length);
+        this.phraseIndex.set((this.phraseIndex() + 1) % this.phraseGroups().length);
         this.phraseVisible.set(true);
       }, 50);
     }, 500);
