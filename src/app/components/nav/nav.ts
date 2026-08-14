@@ -1,17 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { I18nService, Lang } from '../../services/i18n.service';
 
 const NAV_ITEMS = ['About', 'Projects', 'Contact'] as const;
 type NavItem = (typeof NAV_ITEMS)[number];
 
 /**
  * Grid column position for each nav item in the 12-col global grid.
- * Each old 6-col position maps to: old_col × 2 → right edge of that pair.
- * About: old col 2 → col 4 | Projects: old col 4 → col 8 | Contact: old col 6 → col 12
+ * Re-spread to 4 / 7 / 10 so the far-right column (12) is free for the
+ * language toggle, keeping an even spacing across the bar.
  */
 const NAV_COLUMNS: Record<NavItem, number> = {
   About: 4,
-  Projects: 8,
-  Contact: 12,
+  Projects: 7,
+  Contact: 10,
 };
 
 /** In-page anchor target for each nav item (matches section ids on the home page) */
@@ -21,6 +22,12 @@ const NAV_HREFS: Record<NavItem, string> = {
   Contact: '#contact',
 };
 
+/** Display labels per language (keys stay English for hrefs/columns). */
+const NAV_LABELS: Record<Lang, Record<NavItem, string>> = {
+  en: { About: 'About', Projects: 'Projects', Contact: 'Contact' },
+  es: { About: 'Sobre mí', Projects: 'Proyectos', Contact: 'Contacto' },
+};
+
 @Component({
   selector: 'app-nav',
   imports: [],
@@ -28,7 +35,13 @@ const NAV_HREFS: Record<NavItem, string> = {
   styleUrl: './nav.css',
 })
 export class Nav {
+  readonly i18n = inject(I18nService);
   items: NavItem[] = [...NAV_ITEMS];
   navColumns = NAV_COLUMNS;
   navHrefs = NAV_HREFS;
+
+  /** Reactive: reads the lang signal so the template updates on toggle. */
+  label(item: NavItem): string {
+    return NAV_LABELS[this.i18n.lang()][item];
+  }
 }

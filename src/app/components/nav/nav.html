@@ -4,8 +4,20 @@
     <a
       class="nav-link"
       [href]="navHrefs[item]"
-      [attr.data-label]="item"
+      [attr.data-label]="label(item)"
       [style.grid-column]="navColumns[item]"
-    >{{ item }}</a>
+    >{{ label(item) }}</a>
   }
+
+  <!-- Language toggle (EN default) — far-right column -->
+  <button
+    class="nav-lang"
+    type="button"
+    (click)="i18n.toggle()"
+    [attr.aria-label]="i18n.lang() === 'en' ? 'Cambiar a español' : 'Switch to English'"
+  >
+    <span class="nav-lang-opt" [class.is-active]="i18n.lang() === 'en'">EN</span>
+    <span class="nav-lang-sep" aria-hidden="true">/</span>
+    <span class="nav-lang-opt" [class.is-active]="i18n.lang() === 'es'">ES</span>
+  </button>
 </nav>

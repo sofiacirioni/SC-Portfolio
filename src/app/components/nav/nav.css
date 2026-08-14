@@ -44,6 +44,9 @@
   position: relative;
   font-family: var(--font-body);
   font-size: 0.778rem;
+  /* Fixed line-height so the serif-italic swap on hover never changes the
+     link's box height (which was nudging the whole bar taller). */
+  line-height: 1.6;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: rgb(0 0 0 / 0.5);
@@ -92,4 +95,39 @@
 
 .nav-link:hover::after {
   width: 100%;
+}
+
+/* ── Language toggle ─────────────────────────── */
+.nav-lang {
+  grid-column: 12;
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  user-select: none;
+}
+
+.nav-lang-opt {
+  color: rgb(0 0 0 / 0.4);
+  transition: color 0.15s ease;
+}
+
+.nav-lang-opt.is-active {
+  color: black;
+  font-weight: 700;
+}
+
+.nav-lang-sep {
+  color: rgb(0 0 0 / 0.25);
+}
+
+.nav-lang:hover .nav-lang-opt:not(.is-active) {
+  color: var(--color-accent);
 }
