@@ -153,23 +153,20 @@
 .pj-media {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 10;
-  background: var(--color-base-accent);
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .pj-media-el {
+  /* Video shows at its own aspect ratio (no colored plate, no letterbox bands) */
   width: 100%;
-  height: 100%;
-  /* contain → never crop the recording (letterboxes if aspect differs) */
-  object-fit: contain;
+  height: auto;
   display: block;
 }
 
 .pj-media-ph {
+  display: block;
+  padding: 3rem 0;
+  text-align: center;
   font-family: var(--font-mono);
   font-size: 0.8rem;
   font-weight: 300;

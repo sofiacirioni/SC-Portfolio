@@ -6,7 +6,7 @@
        preview card; click opens the detail in place.
        ════════════════════════════════════════════ -->
   <ul class="pj-list">
-    @for (project of projects; track project.id) {
+    @for (project of projects(); track project.id) {
       <li class="pj-item" [class.is-open]="isOpen(project.id)">
 
         <!-- ── Row header (toggle) ── -->
@@ -57,23 +57,29 @@
                   }
                 </div>
 
-                @if (project.githubUrl || project.liveUrl || project.demoUrl) {
+                @if (project.githubUrl || project.liveUrl || project.demoUrl || project.refUrl) {
                   <div class="pj-media-links">
                     @if (project.demoUrl) {
                       <a class="pj-media-link" [href]="project.demoUrl" target="_blank" rel="noopener noreferrer">
-                        <span class="pj-media-link__text">Interactive demo</span>
+                        <span class="pj-media-link__text">{{ copy().demo }}</span>
                         <app-arrow-icon [angle]="-135" />
                       </a>
                     }
                     @if (project.githubUrl) {
                       <a class="pj-media-link" [href]="project.githubUrl" target="_blank" rel="noopener noreferrer">
-                        <span class="pj-media-link__text">See on Github</span>
+                        <span class="pj-media-link__text">{{ copy().github }}</span>
                         <app-arrow-icon [angle]="-135" />
                       </a>
                     }
                     @if (project.liveUrl) {
                       <a class="pj-media-link" [href]="project.liveUrl" target="_blank" rel="noopener noreferrer">
-                        <span class="pj-media-link__text">Live site</span>
+                        <span class="pj-media-link__text">{{ copy().live }}</span>
+                        <app-arrow-icon [angle]="-135" />
+                      </a>
+                    }
+                    @if (project.refUrl) {
+                      <a class="pj-media-link" [href]="project.refUrl.href" target="_blank" rel="noopener noreferrer">
+                        <span class="pj-media-link__text">{{ project.refUrl.label }}</span>
                         <app-arrow-icon [angle]="-135" />
                       </a>
                     }
@@ -84,11 +90,11 @@
               <!-- Right: problem + solution, then the resource frames -->
               <div class="pj-meta">
                 <div class="pj-block">
-                  <span class="pj-block-label">[ Problem ]</span>
+                  <span class="pj-block-label">{{ copy().problem }}</span>
                   <p class="pj-block-text">{{ project.problem }}</p>
                 </div>
                 <div class="pj-block">
-                  <span class="pj-block-label">[ Solution ]</span>
+                  <span class="pj-block-label">{{ copy().solution }}</span>
                   <p class="pj-block-text">{{ project.solution }}</p>
                 </div>
 
@@ -141,11 +147,11 @@
             <!-- Role + Tools -->
             <div class="pj-blocks">
               <div class="pj-block">
-                <span class="pj-block-label">[ Role ]</span>
+                <span class="pj-block-label">{{ copy().role }}</span>
                 <p class="pj-block-text">{{ project.role }}</p>
               </div>
               <div class="pj-block">
-                <span class="pj-block-label">[ Tools ]</span>
+                <span class="pj-block-label">{{ copy().tools }}</span>
                 <ul class="pj-block-tools">
                   @for (tool of project.tools; track tool) {
                     <li>{{ tool }}</li>

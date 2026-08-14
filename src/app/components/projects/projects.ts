@@ -1,6 +1,8 @@
 import {
   Component,
+  computed,
   ElementRef,
+  inject,
   NgZone,
   OnDestroy,
   signal,
@@ -9,6 +11,7 @@ import {
 import gsap from 'gsap';
 import { ArrowIcon } from '../arrow-icon/arrow-icon';
 import { PauseOffscreenVideo } from '../../directives/pause-offscreen-video';
+import { I18nService } from '../../services/i18n.service';
 
 export interface ProjectMedia {
   type: 'video' | 'image';
@@ -42,6 +45,8 @@ export interface Project {
   liveUrl?: string;
   /** Interactive walkthrough / prototype link. */
   demoUrl?: string;
+  /** Optional reference link (e.g. the original work this is based on). */
+  refUrl?: { label: string; href: string };
   /** Large preview (also used for the hover preview card). */
   preview?: ProjectMedia;
   /** Resource tiles shown in the expanded detail. */
@@ -51,6 +56,7 @@ export interface Project {
 /** Asset roots. */
 const PV = 'assets/images/projects/previsar/';
 const LCC = 'assets/images/projects/lcc/';
+const TEG = 'assets/images/projects/teg/';
 const VD = 'assets/video/';
 
 /**
@@ -79,7 +85,32 @@ export class ProjectsSection implements OnDestroy {
   @ViewChild('lightboxEl') private lightboxEl?: ElementRef<HTMLElement>;
   private keyHandler?: (e: KeyboardEvent) => void;
 
+  readonly i18n = inject(I18nService);
+
   constructor(private ngZone: NgZone) {}
+
+  /** Block + link labels per language. */
+  readonly copy = computed(() =>
+    this.i18n.lang() === 'es'
+      ? {
+          problem: '[ Problema ]',
+          solution: '[ Solución ]',
+          role: '[ Rol ]',
+          tools: '[ Herramientas ]',
+          demo: 'Demo interactiva',
+          github: 'Ver en GitHub',
+          live: 'Sitio en vivo',
+        }
+      : {
+          problem: '[ Problem ]',
+          solution: '[ Solution ]',
+          role: '[ Role ]',
+          tools: '[ Tools ]',
+          demo: 'Interactive demo',
+          github: 'See on Github',
+          live: 'Live site',
+        },
+  );
 
   isOpen(id: string): boolean {
     return this.openIds().has(id);
@@ -249,7 +280,26 @@ export class ProjectsSection implements OnDestroy {
     if (this.keyHandler) document.removeEventListener('keydown', this.keyHandler);
   }
 
-  readonly projects: Project[] = [
+  /** Language-reactive project list: English base + Spanish text overlay. */
+  readonly projects = computed<Project[]>(() => {
+    if (this.i18n.lang() !== 'es') return this.projectsEn;
+    return this.projectsEn.map((p) => {
+      const o = this.esOverrides[p.id];
+      if (!o) return p;
+      return {
+        ...p,
+        title: o.title ?? p.title,
+        subtitle: o.subtitle,
+        problem: o.problem,
+        solution: o.solution,
+        role: o.role,
+        tools: o.tools,
+        refUrl: p.refUrl && o.refLabel ? { ...p.refUrl, label: o.refLabel } : p.refUrl,
+      };
+    });
+  });
+
+  private readonly projectsEn: Project[] = [
     {
       id: 'P-01',
       title: 'PreVisar',
@@ -274,6 +324,36 @@ export class ProjectsSection implements OnDestroy {
     },
     {
       id: 'P-02',
+      title: 'TEG online',
+      subtitle: 'The war-strategy board game, online',
+      problem:
+        'TEG is a tactics-and-strategy war game built to be played around a table — but getting everyone in the same room is the hard part.',
+      solution:
+        "A web version you can play with friends through a room code, or against bots. It faithfully adapts Yetem's classic board game and stages the whole experience in a 20th-century wartime setting — pulling the player into the conflict in first person, through a custom design system and hand-crafted assets.",
+      role: 'Academic group project I later took over on my own — refactoring the entire front-end, finishing incomplete features, and creating the whole design system and assets with AI tools.',
+      tools: ['Angular', 'Java', 'Spring Boot', 'Docker', 'UX/UI Design', 'AI (imagery & development)'],
+      githubUrl: 'https://github.com/sofiacirioni/2025-TPI-TEG',
+      refUrl: { label: 'Original game by Yetem', href: 'https://yetem.com/juegos/t-e-g-tradicional/' },
+      preview: { type: 'video', src: VD + 'teg-preview.mp4' },
+      // Three functionality clips (create game, gameplay, victory) + one tile
+      // that cycles the custom game assets: emblem, medal and hand cursors.
+      gallery: [
+        { kind: 'video', src: VD + 'teg-crear-partida.mp4' },
+        { kind: 'video', src: VD + 'teg-partida.mp4' },
+        { kind: 'video', src: VD + 'teg-win.mp4' },
+        {
+          kind: 'cycle',
+          images: [
+            TEG + 'teg-logo.webp',
+            TEG + 'teg-medal.webp',
+            TEG + 'teg-cursor-default.svg',
+            TEG + 'teg-cursor-pointer.svg',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'P-03',
       title: 'Lab management\nsystem',
       subtitle: 'Running a clinical laboratory end to end',
       problem:
@@ -292,17 +372,49 @@ export class ProjectsSection implements OnDestroy {
         { kind: 'cycle', darken: true, images: [LCC + 'lcc-logo.png'] },
       ],
     },
-    {
-      id: 'P-03',
-      title: 'TEG online',
-      subtitle: 'The war-strategy board game, online',
-      problem:
-        'TEG is a tactics-and-strategy war game built to be played around a table — but getting everyone in the same room is the hard part.',
-      solution:
-        'A web version you can play with friends through a room code, or against bots — set in the 20th century and faithful to the classic analog game.',
-      role: 'Academic group project I later took over on my own — refactoring the entire front-end, finishing incomplete features, and creating the whole design system and assets with AI tools.',
-      tools: ['Angular', 'Java', 'Spring Boot', 'Docker', 'Design system'],
-      githubUrl: 'https://github.com/sofiacirioni/2025-TPI-TEG',
-    },
   ];
+
+  /** Spanish text overlay, merged onto the English base by `projects`. */
+  private readonly esOverrides: Record<
+    string,
+    {
+      title?: string;
+      subtitle: string;
+      problem: string;
+      solution: string;
+      role: string;
+      tools: string[];
+      refLabel?: string;
+    }
+  > = {
+    'P-01': {
+      subtitle: 'Pre-chequeo automático de expedientes profesionales',
+      problem:
+        'Los expedientes profesionales son conjuntos de documentos separados, y suelen llegar con problemas evitables — formatos incorrectos, escaneos de baja calidad, montos inconsistentes, piezas faltantes. Los revisores gastan su tiempo en chequeos administrativos en lugar del contenido técnico, ralentizando el proceso y perjudicando a quienes esperan por él.',
+      solution:
+        'Una app web que valida cada archivo antes de que llegue a un revisor — chequeando formato, calidad de escaneo, coherencia de montos y completitud, y marcando lo que está mal. Los revisores reciben archivos limpios y pueden enfocarse en el contenido técnico.',
+      role: 'Desarrolladora única — diseñé y construí todo el producto de punta a punta, del front al back, con un flujo asistido por IA.',
+      tools: ['Angular', 'Spring Boot', 'Java', 'Docker', 'APIs de IA', 'Mercado Pago', 'GitHub', 'Jira', 'Diseño UX/UI'],
+    },
+    'P-02': {
+      subtitle: 'El juego de mesa de estrategia bélica, online',
+      problem:
+        'TEG es un juego de guerra de táctica y estrategia pensado para jugarse alrededor de una mesa — pero juntar a todos en la misma sala es lo difícil.',
+      solution:
+        'Una versión web para jugar con amigos mediante un código de sala, o contra bots. Adapta fielmente el clásico juego de mesa de Yetem y ambienta toda la experiencia en un contexto bélico del siglo XX — metiendo al jugador en el conflicto en primera persona, a través de un sistema de diseño propio y assets hechos a mano.',
+      role: 'Proyecto académico grupal que después tomé por mi cuenta — refactorizando todo el front-end, terminando funcionalidades incompletas y creando todo el sistema de diseño y los assets con herramientas de IA.',
+      tools: ['Angular', 'Java', 'Spring Boot', 'Docker', 'Diseño UX/UI', 'IA (imágenes y desarrollo)'],
+      refLabel: 'Juego original de Yetem',
+    },
+    'P-03': {
+      title: 'Sistema de gestión\nde laboratorio',
+      subtitle: 'Gestión integral de un laboratorio clínico',
+      problem:
+        'Un laboratorio clínico maneja muchas cosas a la vez — pacientes, turnos, seguimiento de muestras, stock, usuarios, obras sociales, derivaciones — normalmente repartidas en herramientas desconectadas, lo que hace la trazabilidad y el día a día más difíciles de lo que deberían.',
+      solution:
+        'Una plataforma web con backend de microservicios que unifica todo en un solo sistema: pacientes, turnos, seguimiento de muestras, stock, gestión de usuarios, obras sociales y derivaciones.',
+      role: 'Proyecto académico grupal — como desarrolladora del equipo de gestión de usuarios, trabajé principalmente en el front-end: el login, el panel de usuarios y la autenticación con guards de ruta.',
+      tools: ['Angular', 'Java', 'Spring Boot', 'Microservicios', 'Docker', 'GitHub'],
+    },
+  };
 }
