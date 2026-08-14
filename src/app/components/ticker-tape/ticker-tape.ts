@@ -18,6 +18,9 @@ export interface TickerRow {
 /** How many pixel-equivalents of movement per unit of scroll velocity */
 const SPEED_MULTIPLIER = 5;
 
+/** Constant drift (px/frame) so the tape is always moving; scroll adds on top. */
+const BASE_SPEED = 0.4;
+
 @Component({
   selector: 'app-ticker-tape',
   templateUrl: './ticker-tape.html',
@@ -114,7 +117,8 @@ export class TickerTapeComponent implements AfterViewInit, OnDestroy {
 
       if (!this.isVisible) return;
 
-      const speed = Math.abs(this.scrollVelocity) * SPEED_MULTIPLIER;
+      // Always-on drift + scroll intensifies it.
+      const speed = BASE_SPEED + Math.abs(this.scrollVelocity) * SPEED_MULTIPLIER;
 
       this.trackEls.forEach((track, i) => {
         const w = this.copyWidths[i];
@@ -125,7 +129,7 @@ export class TickerTapeComponent implements AfterViewInit, OnDestroy {
         // ── Scroll-driven reveal ──
         // Progress driven by scroll velocity + tiny base so it eventually resolves
         if (!this.isRevealed[i]) {
-          const step = Math.abs(this.scrollVelocity) * 0.04 + 0.0015;
+          const step = Math.abs(this.scrollVelocity) * 0.04 + 0.006;
           this.revealProgress[i] = Math.min(1, this.revealProgress[i] + step);
 
           const pct = this.revealProgress[i];

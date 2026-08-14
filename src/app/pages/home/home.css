@@ -90,8 +90,9 @@
 .boundary-tickers {
   position: relative;
   z-index: 20;
-  width: 100vw;
-  margin-left: -1rem;
+  /* Full-bleed aligned to the page margins (margin-inline, not width:100vw,
+     which overflows by the scrollbar width and forces horizontal scroll). */
+  margin-inline: -1rem;
 }
 
 /* ── Hero scene ──────────────────────────────── */
@@ -215,7 +216,9 @@
   font-family: var(--font-serif);
   font-size: clamp(1.8rem, 5vw, 3.4rem);
   font-weight: 500;
-  line-height: 1.12;
+  /* Roomier than 1.12 so the first line's descenders (the "y" in "messy")
+     aren't covered by the second line stacking right underneath. */
+  line-height: 1.22;
   color: #1a1a1a;
 }
 
@@ -228,6 +231,26 @@
 .projects-intro-mask {
   display: block;
   clip-path: inset(0 100% 0 0);
+}
+
+/* ── Responsive ──────────────────────────────── */
+/*
+  On phones the phrase + CTA can't share a row without crushing the headline
+  to a ~160px column. Stack them: phrase takes the full width, CTA drops below.
+*/
+@media (max-width: 640px) {
+  .hero-lower {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin-top: -1.5rem;
+  }
+  .hero-cta {
+    padding-top: 0;
+  }
+  .projects-intro {
+    padding-block: 5rem 3rem;
+  }
 }
 
 @keyframes scroll-arrow {

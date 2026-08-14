@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
   Component,
+  computed,
   ElementRef,
   inject,
   NgZone,
@@ -12,6 +13,7 @@ import {
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SmoothScrollService } from '../../services/smooth-scroll.service';
+import { I18nService } from '../../services/i18n.service';
 import { Nav } from '../../components/nav/nav';
 import { Hero } from '../../components/hero/hero';
 import {
@@ -38,6 +40,7 @@ import { ArrowIcon } from '../../components/arrow-icon/arrow-icon';
 export class Home implements AfterViewInit, OnDestroy {
   private readonly smoothScroll = inject(SmoothScrollService);
   private readonly ngZone = inject(NgZone);
+  readonly i18n = inject(I18nService);
 
   @ViewChildren('introMask') private introMasks!: QueryList<ElementRef<HTMLElement>>;
   @ViewChild('heroBackdrop') private heroBackdrop!: ElementRef<HTMLElement>;
@@ -46,16 +49,48 @@ export class Home implements AfterViewInit, OnDestroy {
   private introObserver?: IntersectionObserver;
   private backdropFade?: ScrollTrigger;
 
-  readonly phraseLines: ScrambleWordDef[][] = [
-    [{ text: 'From' }, { text: 'the' }, { text: 'clouds', font: 'serif' }],
-    [{ text: 'to' }, { text: 'the' }, { text: 'code' }],
-  ];
+  /** Hero phrase word defs per language (last accent word rendered in serif). */
+  readonly phraseLines = computed<ScrambleWordDef[][]>(() =>
+    this.i18n.lang() === 'es'
+      ? [
+          [{ text: 'La' }, { text: 'cabeza' }, { text: 'en' }, { text: 'las' }, { text: 'nubes,', font: 'serif' }],
+          [{ text: 'las' }, { text: 'manos' }, { text: 'en' }, { text: 'el' }, { text: 'código.' }],
+        ]
+      : [
+          [{ text: 'Head' }, { text: 'in' }, { text: 'the' }, { text: 'clouds,', font: 'serif' }],
+          [{ text: 'hands' }, { text: 'in' }, { text: 'the' }, { text: 'code.' }],
+        ],
+  );
+
+  /** Simple hero / intro copy per language. */
+  readonly copy = computed(() =>
+    this.i18n.lang() === 'es'
+      ? {
+          subline:
+            'convirtiendo ideas dispersas en productos concretos a través del diseño y el código',
+          cta: 'Ver proyectos',
+          scroll: 'Desliza',
+          introLabel: '[ Trabajo seleccionado ]',
+          introLine1: 'Cada uno empezó siendo un caos.',
+          introLine2: 'Acá es donde aterrizó.',
+        }
+      : {
+          subline:
+            'turning scattered ideas into concrete products through design and code',
+          cta: 'See projects',
+          scroll: 'Scroll',
+          introLabel: '[ Selected work ]',
+          introLine1: 'Each one started messy.',
+          introLine2: 'This is where it landed.',
+        },
+  );
 
   phraseReady = false;
 
   /**
-   * 4 full-width ticker rows (100vw).
-   * Positioned at the Hero/About boundary — span both sections visually.
+   * Full-width ticker rows positioned at the Hero/About boundary. Decorative
+   * typographic texture — kept in English and all-caps for a single consistent
+   * voice, regardless of the page language.
    */
   readonly fullTickerRows: TickerRow[] = [
     {
@@ -63,8 +98,12 @@ export class Home implements AfterViewInit, OnDestroy {
       direction: 1,
     },
     {
-      text: '// DESIGNING TO EMPATHIZE // enjoy doing unconventional designs conventionally',
+      text: '// DESIGNING TO EMPATHIZE // UNCONVENTIONAL DESIGNS DONE CONVENTIONALLY',
       direction: -1,
+    },
+    {
+      text: '// FROM SCATTERED IDEAS TO SHIPPED PRODUCTS // WHERE DESIGN MEETS CODE',
+      direction: 1,
     },
   ];
 

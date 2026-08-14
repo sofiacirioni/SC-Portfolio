@@ -16,26 +16,32 @@
   <main class="grid-full content-layer">
     <div class="hero-scene">
       <div class="hero-lower">
-        <section class="phrase-section" aria-label="From the clouds to the code">
-          <app-scramble-phrase
-            [lines]="phraseLines"
-            [baseDelayS]="4"
-            fontSize="clamp(2.25rem, 6.5vw, 4.5rem)"
-            (complete)="onPhraseComplete()"
-          />
+        <section
+          class="phrase-section"
+          [attr.aria-label]="i18n.lang() === 'es' ? 'La cabeza en las nubes, las manos en el código' : 'Head in the clouds, hands in the code'"
+        >
+          <!-- Re-keyed by language so the scramble re-inits with the new words -->
+          @for (lc of [i18n.lang()]; track lc) {
+            <app-scramble-phrase
+              [lines]="phraseLines()"
+              [baseDelayS]="phraseReady ? 0 : 4"
+              fontSize="clamp(2.25rem, 6.5vw, 4.5rem)"
+              (complete)="onPhraseComplete()"
+            />
+          }
           <p class="hero-subline" [class.phrase-ready]="phraseReady">
-            Translating wild ideas into functional experiences through design and code.
+            {{ copy().subline }}
           </p>
         </section>
 
         <div class="hero-cta" [class.phrase-ready]="phraseReady">
-          <app-pill-btn label="See projects" href="#projects" />
+          <app-pill-btn [label]="copy().cta" href="#projects" />
         </div>
       </div>
 
       <div class="scroll-hint" [class.phrase-ready]="phraseReady" aria-hidden="true">
         <app-arrow-icon class="scroll-hint__arrow" />
-        <span class="scroll-hint__label">Scroll</span>
+        <span class="scroll-hint__label">{{ copy().scroll }}</span>
       </div>
     </div>
 
@@ -55,10 +61,10 @@
       id="projects" anchors the "See projects" hero button.
     -->
     <section class="projects-intro" id="projects">
-      <span class="projects-intro-label">[ Selected work ]</span>
+      <span class="projects-intro-label">{{ copy().introLabel }}</span>
       <p class="projects-intro-line">
-        <span class="projects-intro-mask" #introMask>Each one started messy.</span>
-        <span class="projects-intro-mask" #introMask><em>This is where it landed.</em></span>
+        <span class="projects-intro-mask" #introMask>{{ copy().introLine1 }}</span>
+        <span class="projects-intro-mask" #introMask><em>{{ copy().introLine2 }}</em></span>
       </p>
     </section>
 
