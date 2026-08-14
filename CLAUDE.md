@@ -32,15 +32,16 @@ La documentación completa vive en `/docs/` — este archivo es un índice opera
 | Componente | Estado | Notas |
 |------------|--------|-------|
 | `services/scroll-reveal.service.ts` | ✅ Completo | `reveal()` + `revealSequential()`, bidireccional, exit suave, threshold 0.22/0.28 |
-| `nav/` | ✅ Completo | Underline serif italic on hover, `::before` reserva ancho |
+| `services/i18n.service.ts` | ✅ Completo | `lang` signal EN/ES (default EN), `toggle()`, persiste en localStorage + `<html lang>`. Copy colocado por componente (`computed` según `lang()`) |
+| `nav/` | ✅ Completo | Labels traducibles (cols 4/7/10), toggle de idioma `EN/ES` en col 12, `line-height: 1.6` fijo (el hover serif ya no cambia la altura de la barra) |
 | `hero/` | ✅ Completo | ASCII 85f@30fps (welcome) → 608f@10fps (nubes loop), scramble phrase, ResizeObserver scale |
 | `scramble-phrase/` | ✅ Completo | Reutilizable, `lines: ScrambleWordDef[][]`, idle scramble, `complete` EventEmitter |
 | `pill-btn/` | ✅ Completo | CTA reutilizable, hover `--color-primary`, active `--color-accent` |
-| `ticker-tape/` | ✅ Completo | Scroll-velocity driven, reveal scroll-driven desde los extremos por clip-path, `SPEED_MULTIPLIER = 5` |
-| `about/` | ✅ Completo | Reveal secuencial por bloques (card → intro → edu → exp → lang → skills), `@ViewChildren` para skill cards |
-| `projects/` | ✅ Completo | Acordeón, nav GSAP crossfade (fade-out → swap → fade-in+y), `border-top` en detail view, info col 340px |
-| `contact/` | ✅ Completo | Scramble inicia al entrar en viewport (IntersectionObserver), botón `mailto:sofiacirioni07@gmail.com` alineado arriba |
-| `footer/` | ✅ Completo | Social links, tagline IBM Plex Serif italic, go-top |
+| `ticker-tape/` | ✅ Completo | 3 filas (EN, mayúsculas). Drift base constante (`BASE_SPEED = 0.4`) + scroll lo intensifica (`SPEED_MULTIPLIER = 5`). Reveal scroll-driven por clip-path |
+| `about/` | ✅ Completo | Reveal secuencial por bloques. Data + labels traducibles vía `computed` |
+| `projects/` | ✅ Completo | Acordeón; **TEG = P-02** (preview video + galería + link a Yetem); video del detalle sin recuadro de color (aspect propio); base EN + overlay ES (`esOverrides`) |
+| `contact/` | ✅ Completo | Frases scramble EN/ES (re-key por idioma), `fontSize` en `clamp()`; en mobile stack de 1 col (label → ASCII full-width → frase → botón) |
+| `footer/` | ✅ Completo | Legal en grid 3-col (izq/centro/der), copy EN/ES, full-bleed con `margin-inline: -1rem` (no `100vw`, evita overflow por scrollbar) |
 
 ---
 
@@ -121,11 +122,51 @@ La documentación completa vive en `/docs/` — este archivo es un índice opera
 
 ---
 
+### Sesión 4 — 2026-08-14
+
+**Rama:** `feature/hero-video-ascii` → mergeada (fast-forward) a `develop` y `main`
+
+**Trabajo realizado:**
+
+#### Proyecto TEG (nuevo, P-02)
+- Reordenado: PreVisar (P-01), **TEG (P-02)**, Lab (P-03). Numeración correlativa
+- Assets propios optimizados con ffmpeg (instalado `--no-save`, removido después):
+  - Videos → `assets/video/`: `teg-preview.mp4` (main), `teg-crear-partida.mp4`, `teg-partida.mp4`, `teg-win.mp4` (H.264 crf 30, 1280px, sin audio)
+  - Imágenes → `assets/images/projects/teg/`: `teg-logo.webp`, `teg-medal.webp` (PNG→WebP 480px), `teg-cursor-default.svg`, `teg-cursor-pointer.svg`
+- Galería: 3 clips de funcionalidad + 1 tile que cicla los assets (logo, medalla, cursores)
+- Link a `refUrl` "Original game by Yetem" (`yetem.com`)
+- **Video del detalle sin recuadro de color**: `.pj-media` sin `aspect-ratio`/`background`, el `<video>` va a su relación propia (`height: auto`)
+
+#### i18n — toggle de idioma EN/ES
+- `services/i18n.service.ts`: `lang` signal (default EN), `toggle()`, persistencia localStorage + `<html lang>`
+- Toggle `EN/ES` en la barra; copy colocado por componente (`computed` según `i18n.lang()`)
+- Hero y frases de contacto se **re-crean** al cambiar idioma (`@for` keyed por `lang`) porque el scramble solo lee `lines` en `ngOnInit`
+- Proyectos: base EN + overlay ES (`esOverrides`, merge por id)
+- Ticker queda fijo en inglés (textura decorativa)
+
+#### Copy
+- Hero: "Head in the clouds, hands in the code" / ES "La cabeza en las nubes, las manos en el código" + subline nuevo
+- Intro proyectos: "Each one started messy. / This is where it landed." (+ `line-height: 1.22` para no tapar el descender de la "y")
+- Footer note: "Still have an idea up in the air? / Let's land it." (ES: "…Vamos a concretarla.")
+
+#### Layout / responsive / márgenes
+- **Fix márgenes**: `footer/.footer-inner` y `home/.boundary-tickers` pasaron de `width: 100vw` (incluía el scrollbar → overflow y margen derecho corrido) a `margin-inline: -1rem`
+- Footer legal en grid 3-col (uno por lado + centro exacto)
+- Hero mobile: `.hero-lower` apila frase + CTA (antes la frase quedaba a ~160px)
+- Contact mobile: stack de 1 col, ASCII full-width, `fontSize` en `clamp()`
+- Nav: `line-height: 1.6` fijo → el hover ya no cambia la altura de la barra
+
+#### Ticker
+- 3 filas (antes 2), inglés + mayúsculas unificadas
+- Drift base constante (`BASE_SPEED = 0.4`) + el scroll lo intensifica
+
+---
+
 ## Próximos pasos probables
 
 - [ ] QA completo según `docs/qa-testing-checklist.md` (grid overlay, animaciones, WCAG contrast, responsive)
-- [ ] Responsive: revisar breakpoints 1024px y 640px en todos los componentes
-- [ ] Placeholders ASCII en Projects intro, Contact y Footer (actualmente vacíos en diseño)
+- [~] Responsive: hecho hero + contact + nav + márgenes; falta pasar el resto de componentes (about, projects, tickers) por mobile
+- [ ] Traducir también las tools de proyectos que son nombres propios queda como está; revisar frases largas ES que apilen en mobile
 - [ ] Deploy / build de producción
 
 ---
