@@ -1,0 +1,6 @@
+# All crawlers welcome
+User-agent: *
+Allow: /
+
+# Add once a domain is live:
+# Sitemap: https://your-domain.com/sitemap.xml
