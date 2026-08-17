@@ -14,7 +14,10 @@ pre {
   transform: translateX(-50%) scale(0.5);
   transform-origin: top center;
 
-  /* Used for the intro → clouds dissolve */
+  /* Hidden until the first real (playing) frame renders — avoids showing a
+     frozen colour block before the video starts. Revealed by the engine. */
+  opacity: 0;
+  /* Used for the reveal + the intro → clouds dissolve */
   transition: opacity 0.5s ease;
 
   font-family: var(--font-mono);

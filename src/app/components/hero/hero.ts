@@ -52,6 +52,7 @@ export class Hero implements AfterViewInit, OnDestroy {
   private onHelloEnded = (): void => this.dissolveToClouds();
 
   private scaleReady = false;
+  private firstFrameShown = false;
   private resizeObserver: ResizeObserver | null = null;
   private gestureKick: (() => void) | null = null;
 
@@ -152,7 +153,9 @@ export class Hero implements AfterViewInit, OnDestroy {
   private drawFrame(): void {
     const video = this.activeVideo;
     const ctx = this.cloudCtx;
-    if (!video || !ctx || video.readyState < 2 || !video.videoWidth) return;
+    // Skip while paused too — otherwise a not-yet-playing video (iOS before the
+    // first gesture) paints a frozen frame that reads as a stray colour block.
+    if (!video || !ctx || video.paused || video.readyState < 2 || !video.videoWidth) return;
 
     // Center-crop the source to the band's aspect so it isn't squished.
     const targetAspect = (this.ASCII_COLS * this.CHAR_ASPECT) / this.ASCII_ROWS;
@@ -212,7 +215,13 @@ export class Hero implements AfterViewInit, OnDestroy {
 
   /** Writes ASCII text straight to the <pre> (no Angular change detection). */
   private renderText(text: string): void {
-    this.preRef.nativeElement.textContent = text;
+    const pre = this.preRef.nativeElement;
+    pre.textContent = text;
+    // Reveal on the first real frame (fades in via the CSS opacity transition).
+    if (!this.firstFrameShown) {
+      this.firstFrameShown = true;
+      pre.style.opacity = '1';
+    }
     if (!this.scaleReady) {
       this.scaleReady = true;
       requestAnimationFrame(() => this.updateScale());
