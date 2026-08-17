@@ -1,6 +1,10 @@
 {
   "name": "portfolio",
   "version": "0.0.0",
+  "description": "Personal portfolio of Sofía Cirioni — designer & developer.",
+  "author": "Sofía Cirioni",
+  "private": true,
+  "license": "UNLICENSED",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
