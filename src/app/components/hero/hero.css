@@ -35,16 +35,20 @@ pre {
 }
 
 /*
-  Source video for the ASCII engine. Kept in the render tree (not display:none,
-  which can pause decoding) but pushed off-screen and invisible.
+  Source video for the ASCII engine. It must stay ON-SCREEN for iOS to keep
+  decoding frames — Safari pauses off-screen / display:none / opacity:0 videos
+  to save power, which froze the ASCII into a solid block. So we keep it filling
+  the band, behind the <pre>, at ~0 opacity (invisible but "visible" to iOS).
 */
 .cloud-source {
   position: absolute;
-  width: 2px;
-  height: 2px;
-  left: -9999px;
   top: 0;
-  opacity: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.02;
+  z-index: -1;
   pointer-events: none;
 }
 
