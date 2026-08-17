@@ -53,6 +53,7 @@ export class Hero implements AfterViewInit, OnDestroy {
 
   private scaleReady = false;
   private resizeObserver: ResizeObserver | null = null;
+  private gestureKick: (() => void) | null = null;
 
   @ViewChild('heroSection') private sectionRef!: ElementRef<HTMLElement>;
   @ViewChild('animPre') private preRef!: ElementRef<HTMLPreElement>;
@@ -70,11 +71,26 @@ export class Hero implements AfterViewInit, OnDestroy {
     this.cloudCanvas.height = this.ASCII_ROWS;
     this.cloudCtx = this.cloudCanvas.getContext('2d', { willReadFrequently: true });
 
+    // iOS/Safari often won't autoplay muted video until the user interacts.
+    // Nudge whichever source is active on the first touch/pointer/scroll so the
+    // frames start advancing (otherwise the ASCII is frozen on one frame).
+    this.ngZone.runOutsideAngular(() => {
+      this.gestureKick = () => this.activeVideo?.play().catch(() => {});
+      document.addEventListener('touchstart', this.gestureKick, { passive: true });
+      document.addEventListener('pointerdown', this.gestureKick, { passive: true });
+      window.addEventListener('scroll', this.gestureKick, { passive: true });
+    });
+
     this.startHello();
   }
 
   ngOnDestroy(): void {
     if (this.rafId !== null) cancelAnimationFrame(this.rafId);
+    if (this.gestureKick) {
+      document.removeEventListener('touchstart', this.gestureKick);
+      document.removeEventListener('pointerdown', this.gestureKick);
+      window.removeEventListener('scroll', this.gestureKick);
+    }
     this.resizeObserver?.disconnect();
     this.helloRef?.nativeElement.removeEventListener('ended', this.onHelloEnded);
     this.helloRef?.nativeElement.pause();
