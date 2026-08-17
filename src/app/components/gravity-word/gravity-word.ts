@@ -68,6 +68,9 @@ interface Letter {
       .gw {
         font-size: clamp(3.5rem, 20vw, 6rem);
         line-height: 1.05;
+        /* Let taps reach the name so the letters can fly on touch. */
+        pointer-events: auto;
+        cursor: pointer;
       }
       .gw__word {
         display: block;
@@ -106,6 +109,7 @@ export class GravityWord implements OnInit, AfterViewInit, OnDestroy {
   private observer?: IntersectionObserver;
   private resizeHandler?: () => void;
   private mouseHandler?: (e: MouseEvent) => void;
+  private tapHandler?: () => void;
   private startTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly mouse = { x: -9999, y: -9999, active: false };
   private started = false;
@@ -122,13 +126,31 @@ export class GravityWord implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.reserve();
+    // Web-font metrics change the line count (1 line vs the wrapped 2). Re-measure
+    // once fonts are ready so the reserved height matches the real layout —
+    // otherwise the second line can spill and look clipped.
+    document.fonts?.ready.then(() => {
+      if (!this.started) this.reserve();
+    });
 
-    if (this.isStatic()) return; // reduced-motion or phone → static, no fall
+    if (this.prefersReducedMotion()) return; // fully static
 
     this.resizeHandler = () => {
       if (!this.started) this.reserve();
     };
     window.addEventListener('resize', this.resizeHandler, { passive: true });
+
+    if (this.isSmallScreen()) {
+      // Touch: keep the name put; tapping it makes the letters fly.
+      this.tapHandler = () => this.start();
+      this.containerRef.nativeElement.addEventListener('click', this.tapHandler);
+      this.observer = new IntersectionObserver(
+        ([entry]) => (this.inView = entry.isIntersecting),
+        { threshold: 0.2 },
+      );
+      this.observer.observe(this.hostEl.nativeElement);
+      return;
+    }
 
     this.observer = new IntersectionObserver(
       ([entry]) => {
@@ -148,6 +170,7 @@ export class GravityWord implements OnInit, AfterViewInit, OnDestroy {
     if (this.tickerFn) gsap.ticker.remove(this.tickerFn);
     if (this.resizeHandler) window.removeEventListener('resize', this.resizeHandler);
     if (this.mouseHandler) window.removeEventListener('mousemove', this.mouseHandler);
+    if (this.tapHandler) this.containerRef?.nativeElement.removeEventListener('click', this.tapHandler);
     this.observer?.disconnect();
     if (this.engine) {
       Composite.clear(this.engine.world, false);
@@ -161,16 +184,12 @@ export class GravityWord implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * On phones the letters fall/scatter and get clipped at the bottom edge, and
-   * there's no mouse to enjoy the physics anyway — so the word stays static
-   * (stacked two lines) instead of dropping.
+   * On phones there's no mouse, and the auto-fall dropped the letters low
+   * enough to clip at the bottom edge. So on touch the word stays put and the
+   * letters fly only when the user taps it.
    */
   private isSmallScreen(): boolean {
     return window.matchMedia?.('(max-width: 640px)').matches ?? false;
-  }
-
-  private isStatic(): boolean {
-    return this.prefersReducedMotion() || this.isSmallScreen();
   }
 
   /** Reserve the fall room up-front (word on top, empty below) — no layout shift. */
@@ -180,8 +199,14 @@ export class GravityWord implements OnInit, AfterViewInit, OnDestroy {
     const naturalH = host.getBoundingClientRect().height;
     if (naturalH === 0) return;
     this.lineH = naturalH;
-    // No drop room when the word is static — just a touch of breathing space.
-    this.worldH = this.lineH * (this.isStatic() ? 1.08 : this.FALL_FACTOR);
+    // Reduced-motion: no drop room. Phone: a slightly tighter drop so the
+    // tapped letters stay within view. Desktop: the full cinematic band.
+    const factor = this.prefersReducedMotion()
+      ? 1.08
+      : this.isSmallScreen()
+        ? 1.3
+        : this.FALL_FACTOR;
+    this.worldH = this.lineH * factor;
     host.style.height = `${this.worldH}px`;
   }
 

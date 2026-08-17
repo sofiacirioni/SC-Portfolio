@@ -22,9 +22,9 @@ export class Hero implements AfterViewInit, OnDestroy {
    */
   private readonly isMobile = window.matchMedia?.('(max-width: 640px)').matches ?? false;
   /** ASCII grid width in characters. Higher = more detail, smaller scale. */
-  private readonly ASCII_COLS = this.isMobile ? 84 : 280;
+  private readonly ASCII_COLS = this.isMobile ? 140 : 280;
   /** ASCII grid height in characters. Tuned for a wide cinematic band. */
-  private readonly ASCII_ROWS = this.isMobile ? 11 : 36;
+  private readonly ASCII_ROWS = this.isMobile ? 18 : 36;
   /** Monospace char width / height ratio — used to center-crop without distortion. */
   private readonly CHAR_ASPECT = 0.5;
   /** Luminance → glyph ramp, sparse (dark) → dense (bright). */
