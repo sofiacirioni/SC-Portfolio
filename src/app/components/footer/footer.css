@@ -194,7 +194,6 @@
   }
   .footer-wordmark {
     grid-row: 3;
-    font-size: clamp(2rem, 16vw, 4rem);
   }
   .footer-legal {
     grid-row: 4;

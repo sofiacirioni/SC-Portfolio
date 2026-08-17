@@ -31,9 +31,9 @@ interface Letter {
   selector: 'app-gravity-word',
   imports: [],
   template: `<span class="gw" #container role="img" [attr.aria-label]="text">@for (
-      ch of chars;
+      word of wordChars;
       track $index
-    ) {<span class="gw__l" #letter aria-hidden="true">{{ ch === ' ' ? ' ' : ch }}</span>}</span>`,
+    ) {<span class="gw__word">@for (ch of word; track $index) {<span class="gw__l" #letter aria-hidden="true">{{ ch === ' ' ? ' ' : ch }}</span>}</span>}</span>`,
   styles: `
     :host {
       display: block;
@@ -44,16 +44,37 @@ interface Letter {
       /* spans the content width (aligned to the page margins), word centered */
       width: 100%;
       text-align: center;
-      white-space: pre;
+      white-space: normal;
       pointer-events: none;
       opacity: 0.2;
       font-family: var(--font-serif);
       font-weight: 700;
       font-style: italic;
-      font-size: clamp(2.5rem, 11vw, 9rem);
+      font-size: clamp(3rem, 12vw, 10rem);
       line-height: 1;
       color: var(--color-accent);
       overflow: visible;
+    }
+    /* Each word is an atomic unit. Inline on desktop (one line); on phones it
+       becomes block so the name stacks (Sofía / Cirioni) and can grow bigger
+       without overflowing the right edge. */
+    .gw__word {
+      display: inline-block;
+    }
+    .gw__word + .gw__word {
+      margin-left: 0.28em;
+    }
+    @media (max-width: 640px) {
+      .gw {
+        font-size: clamp(3.5rem, 20vw, 6rem);
+        line-height: 1.05;
+      }
+      .gw__word {
+        display: block;
+      }
+      .gw__word + .gw__word {
+        margin-left: 0;
+      }
     }
     .gw__l {
       display: inline-block;
@@ -65,7 +86,8 @@ interface Letter {
 export class GravityWord implements OnInit, AfterViewInit, OnDestroy {
   @Input() text = '';
 
-  chars: string[] = [];
+  /** The name split into words, each an array of characters. */
+  wordChars: string[][] = [];
 
   @ViewChild('container') private containerRef!: ElementRef<HTMLElement>;
   @ViewChildren('letter') private letterEls!: QueryList<ElementRef<HTMLElement>>;
@@ -95,7 +117,7 @@ export class GravityWord implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.chars = Array.from(this.text);
+    this.wordChars = this.text.split(' ').map((word) => Array.from(word));
   }
 
   ngAfterViewInit(): void {
