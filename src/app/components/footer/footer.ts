@@ -15,19 +15,24 @@ export class SiteFooter implements AfterViewInit, OnDestroy {
   private cleanupReveal?: () => void;
   readonly i18n = inject(I18nService);
 
-  /** Footer copy per language (`note` carries an <em> accent → innerHTML). */
+  /**
+   * Footer copy per language. The note is split into parts so the accent word
+   * lives in the template (`<em>`) and gets the component's scoped styling —
+   * an innerHTML-injected `<em>` misses Angular's encapsulation attribute and
+   * would render without the accent colour.
+   */
   readonly copy = computed(() =>
     this.i18n.lang() === 'es'
       ? {
           social: '[ Redes ]',
-          note: '¿Tenés una idea todavía <em>en el aire</em>?<br>Vamos a concretarla.',
+          note: { line1: '¿Tenés una idea todavía en el aire?', pre: 'Vamos a ', accent: 'concretarla', post: '.' },
           top: 'Volver arriba',
           rights: 'Todos los derechos reservados',
           made: 'Hecho en Argentina',
         }
       : {
           social: '[ Social ]',
-          note: "Still have an idea <em>up in the air</em>?<br>Let's land it.",
+          note: { line1: 'Still have an idea up in the air?', pre: "Let's ", accent: 'land it', post: '.' },
           top: 'Back to top',
           rights: 'All rights reserved',
           made: 'Made in Argentina',

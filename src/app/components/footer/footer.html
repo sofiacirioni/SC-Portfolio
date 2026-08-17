@@ -30,7 +30,7 @@
 
     <!-- ── Closing note + back to top (right) ──────── -->
     <div class="footer-meta">
-      <p class="footer-note" [innerHTML]="copy().note"></p>
+      <p class="footer-note">{{ copy().note.line1 }}<br>{{ copy().note.pre }}<em>{{ copy().note.accent }}</em>{{ copy().note.post }}</p>
       <a class="footer-top" href="#top">{{ copy().top }}<span class="footer-link-arrow">↑</span></a>
     </div>
 
