@@ -97,6 +97,18 @@
   width: 100%;
 }
 
+/* Phones: compress spacing/size so all items (incl. EN/ES) fit one row */
+@media (max-width: 640px) {
+  .site-nav {
+    gap: 0.5rem;
+  }
+  .nav-link,
+  .nav-lang {
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+  }
+}
+
 /* ── Language toggle ─────────────────────────── */
 .nav-lang {
   grid-column: 12;

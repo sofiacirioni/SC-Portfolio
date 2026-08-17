@@ -123,7 +123,7 @@ export class GravityWord implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.reserve();
 
-    if (this.prefersReducedMotion()) return; // stay static
+    if (this.isStatic()) return; // reduced-motion or phone → static, no fall
 
     this.resizeHandler = () => {
       if (!this.started) this.reserve();
@@ -160,6 +160,19 @@ export class GravityWord implements OnInit, AfterViewInit, OnDestroy {
     return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
   }
 
+  /**
+   * On phones the letters fall/scatter and get clipped at the bottom edge, and
+   * there's no mouse to enjoy the physics anyway — so the word stays static
+   * (stacked two lines) instead of dropping.
+   */
+  private isSmallScreen(): boolean {
+    return window.matchMedia?.('(max-width: 640px)').matches ?? false;
+  }
+
+  private isStatic(): boolean {
+    return this.prefersReducedMotion() || this.isSmallScreen();
+  }
+
   /** Reserve the fall room up-front (word on top, empty below) — no layout shift. */
   private reserve(): void {
     const host = this.containerRef.nativeElement;
@@ -167,7 +180,8 @@ export class GravityWord implements OnInit, AfterViewInit, OnDestroy {
     const naturalH = host.getBoundingClientRect().height;
     if (naturalH === 0) return;
     this.lineH = naturalH;
-    this.worldH = this.lineH * this.FALL_FACTOR;
+    // No drop room when the word is static — just a touch of breathing space.
+    this.worldH = this.lineH * (this.isStatic() ? 1.08 : this.FALL_FACTOR);
     host.style.height = `${this.worldH}px`;
   }
 
