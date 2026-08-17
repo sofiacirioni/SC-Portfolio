@@ -2,5 +2,4 @@
 User-agent: *
 Allow: /
 
-# Add once a domain is live:
-# Sitemap: https://your-domain.com/sitemap.xml
+Sitemap: https://sofiacirioni.com/sitemap.xml
