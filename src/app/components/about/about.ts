@@ -117,12 +117,12 @@ export class About implements AfterViewInit, OnDestroy {
       : [
           {
             period: '2024 – 2026',
-            title: 'Technical Degree in Programming',
+            title: 'Associate Degree in Programming',
             institution: 'UTN – Facultad Regional Córdoba.',
           },
           {
             period: '2022 – 2024',
-            title: 'Technical Degree in Graphic Design',
+            title: 'Associate Degree in Graphic Design',
             institution: 'UPC – Facultad de Artes Aplicadas.',
           },
         ],
