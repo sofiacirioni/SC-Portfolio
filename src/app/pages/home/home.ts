@@ -53,11 +53,11 @@ export class Home implements AfterViewInit, OnDestroy {
   readonly phraseLines = computed<ScrambleWordDef[][]>(() =>
     this.i18n.lang() === 'es'
       ? [
-          [{ text: 'La' }, { text: 'cabeza' }, { text: 'en' }, { text: 'las' }, { text: 'nubes,', font: 'serif' }],
+          [{ text: 'Las' }, { text: 'ideas' }, { text: 'en' }, { text: 'las' }, { text: 'nubes,', font: 'serif' }],
           [{ text: 'las' }, { text: 'manos' }, { text: 'en' }, { text: 'el' }, { text: 'código.' }],
         ]
       : [
-          [{ text: 'Head' }, { text: 'in' }, { text: 'the' }, { text: 'clouds,', font: 'serif' }],
+          [{ text: 'Ideas' }, { text: 'in' }, { text: 'the' }, { text: 'clouds,', font: 'serif' }],
           [{ text: 'hands' }, { text: 'in' }, { text: 'the' }, { text: 'code.' }],
         ],
   );
