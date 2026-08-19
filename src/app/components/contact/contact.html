@@ -3,7 +3,7 @@
   <!-- Section label -->
   <span class="contact-label">{{ copy().label }}</span>
 
-  <!-- Phrase + CTA — left 5 columns -->
+  <!-- Phrase — left 5 columns -->
   <div class="contact-phrase-area">
 
     <div class="contact-phrase-wrapper" [class.is-exiting]="phraseExiting()">
@@ -22,9 +22,11 @@
       }
     </div>
 
-    <app-pill-btn [label]="copy().cta" href="mailto:sofiacirioni07@gmail.com" />
-
   </div>
+
+  <!-- CTA — in the empty cols 6–7 gutter between phrase and animation on wide
+       screens, stacked under the phrase below that -->
+  <app-pill-btn class="contact-cta" [label]="copy().cta" href="mailto:sofiacirioni07@gmail.com" />
 
   <!-- ASCII animation — right columns, accent blue -->
   <div class="contact-ascii" aria-hidden="true">
