@@ -41,8 +41,9 @@
                       <video
                         class="pj-media-el"
                         appPauseOffscreen
+                        [muted]="true"
                         [src]="media.src"
-                        muted
+                        (loadedmetadata)="primeVideo($event)"
                         loop
                         autoplay
                         playsinline
@@ -171,7 +172,15 @@
   <div class="pj-hover-preview" #hoverPreview [class.is-visible]="!!hoverProject()" aria-hidden="true">
     @if (hoverProject(); as hp) {
       @if (hp.preview?.type === 'video') {
-        <video [src]="hp.preview!.src" muted loop autoplay playsinline preload="metadata"></video>
+        <video
+          [muted]="true"
+          [src]="hp.preview!.src"
+          (loadedmetadata)="primeVideo($event)"
+          loop
+          autoplay
+          playsinline
+          preload="auto"
+        ></video>
       }
     }
   </div>

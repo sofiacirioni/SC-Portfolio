@@ -146,6 +146,20 @@ export class ProjectsSection implements OnDestroy {
     }
   }
 
+  /**
+   * Kicks a freshly-mounted <video> into playing. The `muted` *attribute* only
+   * takes effect when the parser builds the element; Angular creates it via the
+   * DOM, so the property has to be set explicitly ([muted]="true" in the
+   * template) or the browser treats the clip as unmuted and blocks autoplay
+   * until the page has seen a user gesture. Belt and braces: re-assert `muted`
+   * and call play() once the metadata is in.
+   */
+  primeVideo(ev: Event): void {
+    const v = ev.target as HTMLVideoElement;
+    v.muted = true;
+    void v.play().catch(() => {});
+  }
+
   // ── Gallery video tiles (play on hover only) ──────────────────
 
   onTileEnter(ev: Event): void {
